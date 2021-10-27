@@ -69,6 +69,9 @@ class Permissions:
     def __init__(self, data) -> None:
         self.raw = self.resolve(self, data)
     
+    def __repr__(self) -> str:
+        return '<Permissions %d>' % len(self.raw)
+    
     def has(self, perm: object) -> bool:
         return perm in self.raw
     

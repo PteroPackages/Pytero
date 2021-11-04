@@ -1,19 +1,36 @@
 from .app_requests import AppRequestManager
+from typing import Any, Dict
+from time import time
 
 
 class PteroApp:
     def __init__(self, domain: str, auth: str, **kwargs):
         self.domain = domain.removesuffix('/')
         self.auth = auth
-        self.options = None
+        self.options: Dict[str, Any] = None
         
-        self.ready_at: int = None
+        self.ready_at: float = None
         self.ping: float = None
         
         self.requests = AppRequestManager(self)
     
-    async def connect(self):
+    def __repr__(self) -> str:
+        return '<PteroApp %i>' % self.ping or -1
+    
+    async def connect(self) -> bool:
         if self.ready_at:
             raise Exception('pteroapp already connected')
         
-        return NotImplemented
+        start = time()
+        await self.requests.ping()
+        self.ping = time() - start
+        self.ready_at = time()
+        return True
+    
+    async def close(self) -> None:
+        if not self.ready_at:
+            return
+        
+        await self.requests.session.close()
+        self.ping = None
+        self.ready_at = None

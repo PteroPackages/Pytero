@@ -1,4 +1,4 @@
-from .apprequestmanager import AppRequestManager
+from .app_requests import AppRequestManager
 
 
 class PteroApp:

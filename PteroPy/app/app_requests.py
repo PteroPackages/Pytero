@@ -1,4 +1,5 @@
 from .pteroapp import PteroApp
+from ..structures.errors import RequestError, PteroAPIError
 from json import loads
 from aiohttp import ClientSession
 
@@ -18,10 +19,10 @@ class AppRequestManager:
     
     async def make(self, path, method: str = 'GET', params: dict = None):
         if self.client.ping is None:
-            raise Exception('attempted request before application was ready')
+            raise RequestError('attempted request before application was ready')
         
         if self.suspended:
-            raise Exception('[429] application is ratelimited')
+            raise RequestError('[429] application is ratelimited')
         
         body: str = None
         if params is not None:
@@ -39,22 +40,24 @@ class AppRequestManager:
                 return await response.json()
             
             if response.status in (400, 404, 422):
-                # TODO: PteroAPIError class
-                raise Exception('PTEROAPIERROR')
+                data = await response.json()
+                raise PteroAPIError(data)
             
-            if response.status == 401: raise Exception('[401] unauthorised api request')
-            if response.status == 403: raise Exception('[403] endpoint forbidden')
+            if response.status == 401: raise RequestError('[401] unauthorised api request')
+            if response.status == 403: raise RequestError('[403] endpoint forbidden')
             if response.status == 429:
                 self.suspended = True
-                raise Exception('[429] application is ratelimited')
+                raise RequestError('[429] application is ratelimited')
             
-            raise Exception('Pterodactyl API returned an invalid or malformed payload: %d'
+            raise RequestError('Pterodactyl API returned an invalid or malformed payload: %d'
                             % response.status)
     
     async def ping(self) -> bool:
         try:
             self.client.ping = -1
             await self.make('/api/application')
-        except Exception as e:
-            # TODO: requires PteroAPIError class
-            raise e
+        except (Exception, PteroAPIError) as e:
+            if isinstance(e, PteroAPIError):
+                return True
+            else:
+                raise e

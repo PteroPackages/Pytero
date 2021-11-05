@@ -18,7 +18,7 @@ class ApplicationServerManager:
     def default_feature_limits(self) -> Dict[str, int]:
         return {'databases': 5, 'backups': 1}
     
-    def __patch(self, data: object) -> Union[ApplicationServer, Dict[int, ApplicationServer]]:
+    def __patch(self, data: dict) -> Union[ApplicationServer, Dict[int, ApplicationServer]]:
         if data['data']:
             res = {}
             for o in data['data']:

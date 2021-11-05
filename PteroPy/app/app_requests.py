@@ -32,25 +32,25 @@ class AppRequestManager:
                 body = loads(params)
         
         async with self.session.get(self.client.domain + path,
-                                    body=body, headers=self.headers) as response:
-            if response.status in (201, 204):
+                                    body=body, headers=self.headers) as res:
+            if res.status in (201, 204):
                 return
             
-            if response.status == 200:
-                return await response.json()
+            if res.status == 200:
+                return await res.json()
             
-            if response.status in (400, 404, 422):
-                data = await response.json()
+            if res.status in (400, 404, 422):
+                data = await res.json()
                 raise PteroAPIError(data)
             
-            if response.status == 401: raise RequestError('[401] unauthorised api request')
-            if response.status == 403: raise RequestError('[403] endpoint forbidden')
-            if response.status == 429:
+            if res.status == 401: raise RequestError('[401] unauthorised api request')
+            if res.status == 403: raise RequestError('[403] endpoint forbidden')
+            if res.status == 429:
                 self.suspended = True
                 raise RequestError('[429] application is ratelimited')
             
             raise RequestError('Pterodactyl API returned an invalid or malformed payload: %d'
-                            % response.status)
+                            % res.status)
     
     async def ping(self) -> bool:
         try:

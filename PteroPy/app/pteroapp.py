@@ -18,7 +18,7 @@ class PteroApp:
         return '<PteroApp %i>' % self.ping or -1
     
     async def connect(self) -> bool:
-        if self.ready_at:
+        if self.ready_at is not None:
             raise Exception('pteroapp already connected')
         
         start = time()
@@ -28,7 +28,7 @@ class PteroApp:
         return True
     
     async def close(self) -> None:
-        if not self.ready_at:
+        if self.ready_at is None:
             return
         
         await self.requests.session.close()

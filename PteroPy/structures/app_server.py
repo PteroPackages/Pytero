@@ -5,7 +5,7 @@ from typing import Optional
 
 
 class ApplicationServer:
-    def __init__(self, client: PteroApp, data: object) -> None:
+    def __init__(self, client: PteroApp, data: dict) -> None:
         self.client = client
         self.id: int = data['id']
         self.uuid: str = data['uuid']
@@ -13,7 +13,7 @@ class ApplicationServer:
         self.created_at: float = data['created_at']
         self.__patch(data)
     
-    def __patch(self, data: object) -> None:
+    def __patch(self, data: dict) -> None:
         self.updated_at: float = data['updated_at'] or self.updated_at or None
         self.external_id: str = data['external_id'] or self.external_id
         self.name: str = data['name'] or self.name
@@ -32,7 +32,7 @@ class ApplicationServer:
         return '<%s %d>' % (self.__class__.__name__, self.id)
     
     def __dict__(self) -> dict:
-        return { k: getattr(self, k) for k in dir(self) if not k.startswith('__') }
+        return { k: getattr(self, k) for k in dir(self) if not k.startswith('_') }
     
     async def update_details(self, **kwargs):
         return NotImplemented

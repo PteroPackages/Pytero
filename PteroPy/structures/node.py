@@ -4,11 +4,11 @@ from typing import Optional
 class Node:
     def __init__(self, client, data: dict) -> None:
         self.client = client
+        self.id: int = data['id']
+        self.uuid: str = data['uuid']
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
-        self.id: int = data['id']
-        self.uuid: str = data['uuid']
         self.public: bool = data['public']
         self.name: str = data['name'] or self.name
         self.description: Optional[str] = data['description']
@@ -30,7 +30,7 @@ class Node:
         return '<Node %d>' % self.id
     
     def __dict__(self) -> dict:
-        return { k: getattr(self, k) for k in dir(self) if not k.startswith('__') }
+        return { k: getattr(self, k) for k in dir(self) if not k.startswith('_') }
     
     async def getconfig(self):
         return NotImplemented

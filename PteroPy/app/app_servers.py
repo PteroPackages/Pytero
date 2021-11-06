@@ -1,5 +1,6 @@
-from PteroPy.structures.users import PteroUser
 from .pteroapp import PteroApp
+from .endpoints import SERVERS_GET, SERVERS_MAIN
+from ..structures.users import PteroUser
 from ..structures.app_server import ApplicationServer
 from typing import Dict, List, Optional, Union
 
@@ -42,8 +43,16 @@ class ApplicationServerManager:
         
         return None
     
-    async def fetch(self, id: int = None, force: bool = False, include: List[str] = []):
-        return NotImplemented
+    async def fetch(self, _id: int = None, force: bool = False, include: List[str] = []):
+        if _id is not None:
+            if not force:
+                s = self.cache.get(_id)
+                if s: return s
+        
+        data: dict = await self.client.requests.make(
+            SERVERS_GET(_id) if _id is not None else SERVERS_MAIN
+        )
+        return self.__patch(data)
     
     async def query(self, entity, filter: str = None, sort: str = None):
         return NotImplemented

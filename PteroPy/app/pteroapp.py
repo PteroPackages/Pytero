@@ -1,4 +1,5 @@
 from .app_requests import AppRequestManager
+from .app_servers import ApplicationServerManager
 from typing import Any, Dict
 from time import time
 
@@ -13,6 +14,7 @@ class PteroApp:
         self.ping: float = None
         
         self.requests = AppRequestManager(self)
+        self.servers = ApplicationServerManager(self)
     
     def __repr__(self) -> str:
         return '<PteroApp %i>' % self.ping or -1

@@ -1,4 +1,5 @@
 # dirs
+__pycache__/
 tests/
 
 # files

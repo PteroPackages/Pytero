@@ -26,4 +26,5 @@ setup(name='pteropy',
             'License :: OSI Approved :: MIT License',
             'Intended Audience :: Developers',
             'Operating System :: OS Independent',
-            'Programming Language :: Python :: 3.9'])
+            'Programming Language :: Python :: 3.9',
+            'Programming Language :: Python :: 3.10'])

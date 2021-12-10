@@ -1,11 +1,10 @@
-from ..app.pteroapp import PteroApp
 from .node import Node
 from .users import PteroUser
 from typing import Optional
 
 
 class ApplicationServer:
-    def __init__(self, client: PteroApp, data: dict) -> None:
+    def __init__(self, client, data: dict) -> None:
         self.client = client
         self.id: int = data['id']
         self.uuid: str = data['uuid']

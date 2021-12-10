@@ -1,4 +1,3 @@
-from .pteroapp import PteroApp
 from .endpoints import SERVERS_GET, SERVERS_MAIN
 from ..structures.users import PteroUser
 from ..structures.app_server import ApplicationServer
@@ -6,7 +5,7 @@ from typing import Dict, List, Optional, Union
 
 
 class ApplicationServerManager:
-    def __init__(self, client: PteroApp) -> None:
+    def __init__(self, client) -> None:
         self.client = client
         self.cache: Dict[int, ApplicationServer] = {}
     

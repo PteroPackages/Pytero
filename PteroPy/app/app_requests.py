@@ -1,4 +1,3 @@
-from .pteroapp import PteroApp
 from ..structures.errors import RequestError, PteroAPIError
 from json import loads
 from aiohttp import ClientSession
@@ -11,7 +10,7 @@ class AppRequestManager:
         'Accept': 'application/json'
     }
     
-    def __init__(self, client: PteroApp) -> None:
+    def __init__(self, client) -> None:
         self.client = client
         self.headers['Authorization'] = 'Bearer '+ client.auth
         self.session = ClientSession()

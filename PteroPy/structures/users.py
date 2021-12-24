@@ -1,60 +1,78 @@
+from typing import List
+
+
 class BaseUser:
     def __init__(self, client, data: dict) -> None:
         self.client = client
         self.id: int = data['id']
+        self.username: str
+        self.email: str
+        self.firstname: str
+        self.lastname: str
+        self.language: str
+        
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
-        self.username: str = data['username'] or self.username
-        self.email: str = data['email'] or self.email
-        self.firstname: str = data['firstname'] or self.firstname
-        self.lastname: str = data['lastname'] or self.lastname
-        self.language: str = data['language'] or self.language
+        self.username = data.get('username', self.username)
+        self.email = data.get('email'. self.email)
+        self.firstname = data.get('firstname', self.firstname)
+        self.lastname = data.get('lastname', self.lastname)
+        self.language = data.get('language', self.language)
     
     def __str__(self) -> str:
         return self.firstname +' '+ self.lastname
     
     def __repr__(self) -> str:
         return '<%s %d>' % (self.__class__.__name__, self.id)
-    
-    def __dict__(self) -> dict:
-        return { k: getattr(self, k) for k in dir(self) if not k.startswith('_') }
 
 
 class PteroUser(BaseUser):
     def __init__(self, client, data: dict) -> None:
         super().__init__(client, data)
+        
         self.uuid: str = data['uuid']
         self.created_at: str = data['created_at']
+        self.external_id: str
+        self.is_admin: bool
+        self.tfa: bool
+        self.updated_at: str
+        self.relationships = NotImplemented
+        
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
         super().__patch(data)
-        self.external_id: str = data['external_id'] or self.external_id
-        self.is_admin: bool = data['root_admin'] or self.is_admin
-        self.tfa: bool = data['2fa'] or self.tfa
-        self.updated_at: str = data['updated_at'] or self.updated_at
-        self.relationships = NotImplemented
+        
+        self.external_id = data.get('external_id', self.external_id)
+        self.is_admin = data.get('is_admin', self.is_admin)
+        self.tfa = data.get('2fa', self.tfa)
+        self.updated_at = data.get('updated_at', self.updated_at)
     
-    async def update(self):
+    def update(self):
         return NotImplemented
     
-    async def delete(self):
+    def delete(self):
         return NotImplemented
 
 
 class PteroSubUser(BaseUser):
     def __init__(self, client, data: dict) -> None:
         super().__init__(client, data)
+        
         self.uuid: str = data['uuid']
+        self.image: str
+        self.enabled: bool
+        
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
         super().__patch(data)
-        self.image: str = data['image'] or self.image
-        self.enabled: bool = data['2fa_enabled'] or self.enabled
+        
+        self.image = data.get('image', self.image)
+        self.enabled = data.get('2fa_enabled', self.enabled)
     
-    async def set_permissions(data: object):
+    def set_permissions(data: object):
         return NotImplemented
 
 
@@ -64,29 +82,29 @@ class ClientUser(BaseUser):
         super().__patch(data)
         
         self.is_admin: bool = data['is_admin']
-        self.tokens = []
-        self.apikeys = []
+        self.tokens: List[str] = []
+        self.apikeys: List[str] = []
     
-    async def get_2fa_code(self):
+    def get_2fa_code(self):
         return NotImplemented
     
-    async def enable_2fa(self, code: str):
+    def enable_2fa(self, code: str):
         return NotImplemented
     
-    async def disable_2fa(self, password: str):
+    def disable_2fa(self, password: str):
         return NotImplemented
     
-    async def update_email(self, email: str, password: str):
+    def update_email(self, email: str, password: str):
         return NotImplemented
     
-    async def update_password(self, old_pass: str, new_pass: str):
+    def update_password(self, old_pass: str, new_pass: str):
         return NotImplemented
     
-    async def fetch_keys(self):
+    def fetch_keys(self):
         return NotImplemented
     
-    async def create_key(self):
+    def create_key(self):
         return NotImplemented
     
-    async def delete_key(self, key: str):
+    def delete_key(self, key: str):
         return NotImplemented

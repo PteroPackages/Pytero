@@ -1,6 +1,6 @@
-from .endpoints import SERVERS_GET, SERVERS_MAIN
+from ..app.endpoints import SERVERS_GET, SERVERS_MAIN
 from ..structures.users import PteroUser
-from ..structures.app_server import ApplicationServer
+from ..structures.servers import ApplicationServer
 from typing import Dict, List, Optional, Union
 
 
@@ -48,16 +48,16 @@ class ApplicationServerManager:
                 s = self.cache.get(_id)
                 if s: return s
         
-        data: dict = await self.client.requests.make(
+        data: dict = self.client.requests.get(
             SERVERS_GET(_id) if _id is not None else SERVERS_MAIN
         )
         return self.__patch(data)
     
-    async def query(self, entity, filter: str = None, sort: str = None):
+    def query(self, entity, filter: str = None, sort: str = None):
         return NotImplemented
     
-    async def create(self, user: PteroUser, **options):
+    def create(self, user: PteroUser, **options):
         return NotImplemented
     
-    async def delete(self, id: int, force: bool = False):
+    def delete(self, id: int, force: bool = False):
         return NotImplemented

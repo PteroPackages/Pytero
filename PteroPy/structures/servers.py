@@ -10,6 +10,7 @@ class ApplicationServer:
         self.uuid: str = data['uuid']
         self.identifier: str = data['identifier']
         self.created_at: float = data['created_at']
+        
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
@@ -30,29 +31,26 @@ class ApplicationServer:
     def __repr__(self) -> str:
         return '<%s %d>' % (self.__class__.__name__, self.id)
     
-    def __dict__(self) -> dict:
-        return { k: getattr(self, k) for k in dir(self) if not k.startswith('_') }
-    
-    async def update_details(self, **kwargs):
+    def update_details(self, **kwargs):
         return NotImplemented
     
-    async def fetch_owner(self) -> Optional[PteroUser]:
+    def fetch_owner(self) -> Optional[PteroUser]:
         return NotImplemented
     
-    async def update_build(self, build: dict):
+    def update_build(self, build: dict):
         return NotImplemented
     
-    async def update_startup(self, startup: dict):
+    def update_startup(self, startup: dict):
         return NotImplemented
     
-    async def suspend(self) -> bool:
+    def suspend(self) -> bool:
         # TODO: endpoint
         return False
     
-    async def unsuspend(self) -> bool:
+    def unsuspend(self) -> bool:
         # TODO: endpoint
         return False
     
-    async def reinstall(self) -> bool:
+    def reinstall(self) -> bool:
         # TODO: endpoint
         return False

@@ -1,6 +1,5 @@
 class RequestError(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    pass
 
 
 class PteroAPIError(Exception):
@@ -10,5 +9,4 @@ class PteroAPIError(Exception):
 
 
 class WebSocketError(Exception):
-    def __init__(self, *args: object) -> None:
-        super().__init__(*args)
+    pass

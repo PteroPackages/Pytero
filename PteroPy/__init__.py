@@ -6,10 +6,10 @@ Author: Devonte <https://github.com/devnote-dev>
 License: MIT
 '''
 
-__title__ = 'pteropy'
+__title__ = 'PteroPy'
 __author__ = 'Devonte'
 __copyright__ = 'MIT'
-__version__ = '0.0.1a'
+__version__ = '0.0.2a'
 
 from .app import *
 from .structures import *

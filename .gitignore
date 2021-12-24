@@ -1,6 +1,6 @@
 # Hidden directories
 __pycache__/
-test/
 
 # Hidden files/types/executables
 *.pyc
+*.test.py

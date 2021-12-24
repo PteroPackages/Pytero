@@ -1,5 +1,6 @@
 from ..structures.errors import PteroAPIError, RequestError
 import asyncio
+from time import time
 from json import loads
 from aiohttp import ClientSession
 from typing import Any, Coroutine, Dict, Union
@@ -86,11 +87,25 @@ class RequestManager:
         return await self._make(path, 'DELETE')
     
     async def ping(self) -> Coroutine[bool, None, None]:
+        self.client.ping = -1
+        now = time()
         try:
-            self.client.ping = -1
             await self.get('/api/application')
-        except (Exception, PteroAPIError) as e:
+        except Exception as e:
             if isinstance(e, PteroAPIError):
+                self.client.ping = time() - now
                 return True
             else:
                 raise e
+    
+    async def close(self):
+        if self.session is None:
+            return
+        
+        try:
+            await self.session.close()
+        except:
+            pass
+        
+        self.session = None
+        self.suspended = False

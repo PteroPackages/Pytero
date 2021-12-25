@@ -48,7 +48,7 @@ class ApplicationServerManager:
                 s = self.cache.get(_id)
                 if s: return s
         
-        data: dict = self.client.requests.get(
+        data: dict = await self.client.requests.get(
             SERVERS_GET(_id) if _id is not None else SERVERS_MAIN
         )
         return self.__patch(data)

@@ -1,30 +1,28 @@
-from typing import List
+from .permissions import PermissionResolvable
+from typing import Optional, List
 
 
 class BaseUser:
     def __init__(self, client, data: dict) -> None:
         self.client = client
         self.id: int = data['id']
-        self.username: str
-        self.email: str
-        self.firstname: str
-        self.lastname: str
-        self.language: str
         
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
-        self.username = data.get('username', self.username)
-        self.email = data.get('email'. self.email)
-        self.firstname = data.get('firstname', self.firstname)
-        self.lastname = data.get('lastname', self.lastname)
-        self.language = data.get('language', self.language)
+        self.username: str = data.get('username')
+        self.email: str = data.get('email')
+        self.firstname: str = data.get('firstname')
+        self.lastname: str = data.get('lastname')
+        self.language: str = data.get('language')
     
     def __str__(self) -> str:
         return self.firstname +' '+ self.lastname
     
     def __repr__(self) -> str:
-        return '<%s %d>' % (self.__class__.__name__, self.id)
+        return '<%s id=%d firstname=%s lastname=%s>' % (
+            self.__class__.__name__, self.id, self.firstname, self.lastname
+        )
 
 
 class PteroUser(BaseUser):
@@ -33,10 +31,6 @@ class PteroUser(BaseUser):
         
         self.uuid: str = data['uuid']
         self.created_at: str = data['created_at']
-        self.external_id: str
-        self.is_admin: bool
-        self.tfa: bool
-        self.updated_at: str
         self.relationships = NotImplemented
         
         self.__patch(data)
@@ -44,10 +38,10 @@ class PteroUser(BaseUser):
     def __patch(self, data: dict) -> None:
         super().__patch(data)
         
-        self.external_id = data.get('external_id', self.external_id)
-        self.is_admin = data.get('is_admin', self.is_admin)
-        self.tfa = data.get('2fa', self.tfa)
-        self.updated_at = data.get('updated_at', self.updated_at)
+        self.external_id: Optional[str] = data.get('external_id', None)
+        self.is_admin: bool = data.get('is_admin', False)
+        self.two_factor: bool = data.get('2fa', False)
+        self.updated_at: float = data.get('updated_at', 0.0)
     
     def update(self):
         return NotImplemented
@@ -61,18 +55,16 @@ class PteroSubUser(BaseUser):
         super().__init__(client, data)
         
         self.uuid: str = data['uuid']
-        self.image: str
-        self.enabled: bool
         
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
         super().__patch(data)
         
-        self.image = data.get('image', self.image)
-        self.enabled = data.get('2fa_enabled', self.enabled)
+        self.image: Optional[str] = data.get('image', None)
+        self.enabled: bool = data.get('2fa_enabled', False)
     
-    def set_permissions(data: object):
+    def set_permissions(data: PermissionResolvable):
         return NotImplemented
 
 

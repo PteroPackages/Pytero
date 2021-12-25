@@ -1,6 +1,6 @@
 from .node import Node
 from .users import PteroUser
-from typing import Optional
+from typing import Any, Dict, Optional
 
 
 class ApplicationServer:
@@ -10,26 +10,31 @@ class ApplicationServer:
         self.uuid: str = data['uuid']
         self.identifier: str = data['identifier']
         self.created_at: float = data['created_at']
+        self.user: Optional[PteroUser] = None
+        self.node: Optional[Node] = None
         
         self.__patch(data)
     
     def __patch(self, data: dict) -> None:
-        self.updated_at: float = data['updated_at'] or self.updated_at or None
-        self.external_id: str = data['external_id'] or self.external_id
-        self.name: str = data['name'] or self.name
-        self.description: Optional[str] = data['description'] if len(data['description']) else None
-        self.suspended: bool = data['suspended'] or self.suspended
-        self.limits: dict = data['limits'] or self.limits
-        self.feature_limits: dict = data['feature_limits'] or self.feature_limits
-        self.user: int = data['user'] or self.user
-        self.owner: Optional[PteroUser] = None
-        self.node_id: int = data['node'] or self.node_id
-        self.node: Optional[Node] = None
-        self.allocation: int = data['allocation'] or self.allocation
-        self.nest: int = data['nest'] or self.nest
+        self.updated_at: float = data.get('updated_at', 0.0)
+        self.external_id: Optional[str] = data.get('external_id', None)
+        self.name: str = data.get('name')
+        self.description: Optional[str] = data.get('description', None)
+        self.suspended: bool = data.get('suspended', False)
+        self.limits: Dict[str, Any] = data.get('limits', {})
+        self.feature_limits: Dict[str, Any] = data.get('feature_limits', {})
+        self.user_id: int = data.get('user')
+        self.node_id: int = data.get('node')
+        self.allocation: int = data.get('allocation', -1)
+        self.nest_id: int = data.get('nest', -1)
+    
+    def __str__(self) -> str:
+        return self.name
     
     def __repr__(self) -> str:
-        return '<%s %d>' % (self.__class__.__name__, self.id)
+        return '<ApplicationServer id=%d name=%s suspended=%s>' % (
+            self.id, self.name, str(self.suspended)
+        )
     
     def update_details(self, **kwargs):
         return NotImplemented

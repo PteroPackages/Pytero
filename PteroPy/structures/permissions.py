@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Iterator, List
+from typing import Dict, Iterator, List, TypeVar
 
 
 class Flags(Enum):
@@ -56,6 +56,7 @@ class Flags(Enum):
     def to_dict(cls) -> Dict[str, int]:
         return {k: getattr(cls, k) for k in dir(cls) if k.isupper()}
 
+PermissionResolvable = TypeVar('PermissionResolvable', List[str], List[int], Dict[str, int])
 
 def diff(perms: list) -> bool:
     base = type(perms[0])

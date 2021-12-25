@@ -1,5 +1,4 @@
-from ..managers.requests import RequestManager
-from ..managers.servers import ApplicationServerManager
+from ..managers import ApplicationServerManager, NodeManager, RequestManager
 from typing import Any, Dict
 from time import time
 
@@ -11,6 +10,7 @@ class PteroApp:
         self.options: Dict[str, Any] = {}
         self.ready_at: float = 0.0
         self.ping: float = -1.0
+        self.nodes = NodeManager(self)
         self.requests: RequestManager = None
         self.servers = ApplicationServerManager(self)
     

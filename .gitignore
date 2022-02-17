@@ -3,4 +3,5 @@ __pycache__/
 
 # Hidden files/types/executables
 *.pyc
+test.py
 *.test.py

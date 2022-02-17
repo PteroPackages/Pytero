@@ -1,5 +1,5 @@
 from enum import Enum
-from typing import Dict, Iterator, List, TypeVar
+from typing import Dict, List
 
 
 class Flags(Enum):
@@ -53,10 +53,9 @@ class Flags(Enum):
     ADMIN_WEBSOCKET_INSTALL = 42
     ADMIN_WEBSOCKET_TRANSFER = 43
 
-    def to_dict(cls) -> Dict[str, int]:
-        return {k: getattr(cls, k) for k in dir(cls) if k.isupper()}
+    def __dict__(cls) -> Dict[str, int]:
+        return { k: getattr(cls, k) for k in dir(cls) if k.isupper() }
 
-PermissionResolvable = TypeVar('PermissionResolvable', List[str], List[int], Dict[str, int])
 
 def diff(perms: list) -> bool:
     base = type(perms[0])
@@ -73,17 +72,11 @@ class Permissions:
     def __repr__(self) -> str:
         return '<Permissions %d>' % len(self.raw)
     
-    def __contains__(self, perm: str) -> bool:
-        return perm in self.raw
-    
-    def __iter__(self) -> Iterator[str]:
-        return iter(self.raw.keys())
-    
     def has(self, perm: object) -> bool:
         return perm in self.raw
     
     def is_admin(self) -> bool:
-        for f in list(self):
+        for f in self.to_list():
             if 'ADMIN' in f:
                 return True
         
@@ -100,8 +93,8 @@ class Permissions:
         if diff(perms):
             raise TypeError('permissions must be all strings or all ints')
         
-        keys = Flags.to_dict()
-        vals = {keys[k]: k for k in keys.keys()}
+        keys = dict(Flags)
+        vals = { keys[k]: k for k in keys.keys() }
         res = {}
         for p in perms:
             if keys.get(p):
@@ -114,14 +107,17 @@ class Permissions:
         return res
     
     def serialize(self) -> Dict[str, bool]:
-        return {k: bool(self.raw.get(k)) for k in Flags.to_dict()}
+        return { k: bool(self.raw.get(k)) for k in dict(Flags) }
+    
+    def to_list(self) -> List[str]:
+        return [k for k in self.raw]
     
     def to_strings(self) -> List[str]:
-        return [f.lower().replace('_', '.') for f in list(self)]
+        return [f.lower().replace('_', '.') for f in self.to_list()]
     
     @staticmethod
     def from_strings(cls, perms: List[str]) -> Dict[str, int]:
-        keys = Flags.to_dict()
+        keys = dict(Flags)
         res = {}
         for p in perms:
             p = p.lower().replace('.', '_')

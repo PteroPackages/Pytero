@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from PteroPy import __version__
+from Pytero import __version__
 
 
 with open('./README.md') as file:
@@ -8,12 +8,12 @@ with open('./README.md') as file:
 
 
 setup(
-    name='PteroPy',
+    name='Pytero',
     author='Devonte',
-    url='https://github.com/PteroPackages/PteroPy',
+    url='https://github.com/PteroPackages/Pytero',
     license='MIT',
     version=__version__,
-    packages=find_packages('PteroPy'),
+    packages=find_packages('Pytero'),
     description='An updated and flexible API wrapper for the Pterodactyl API!',
     long_description=long_desc,
     long_desription_content_type='text/markdown',

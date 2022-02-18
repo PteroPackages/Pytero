@@ -1,8 +1,9 @@
 from ..structures.users import PteroUser
+from ..types import PteroApp
 
 
 class UserManager:
-    def __init__(self, client) -> None:
+    def __init__(self, client: PteroApp) -> None:
         self.client = client
         self.cache: dict[int, PteroUser] = {}
     

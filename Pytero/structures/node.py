@@ -1,8 +1,9 @@
 from typing import Optional
+from ..types import PteroApp
 
 
 class Node:
-    def __init__(self, client, data: dict[str,]) -> None:
+    def __init__(self, client: PteroApp, data: dict[str,]) -> None:
         self.client = client
         self.id: int = data['id']
         self.uuid: str = data['uuid']

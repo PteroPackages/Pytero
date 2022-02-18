@@ -1,10 +1,11 @@
 from ..structures.node import Node
+from ..types import PteroApp
 
 
 class NodeManager:
     default_include: tuple[str] = ('allocations', 'locations', 'servers')
     
-    def __init__(self, client) -> None:
+    def __init__(self, client: PteroApp) -> None:
         self.client = client
         self.cache: dict[int, Node] = {}
     

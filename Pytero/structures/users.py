@@ -1,5 +1,8 @@
+from ..types import PteroApp
+
+
 class BaseUser:
-    def __init__(self, client, data: dict[str,]) -> None:
+    def __init__(self, client: PteroApp, data: dict[str,]) -> None:
         self.client = client
         self._patch(data)
     
@@ -19,7 +22,7 @@ class BaseUser:
 
 
 class PteroUser(BaseUser):
-    def __init__(self, client, data: dict[str,]) -> None:
+    def __init__(self, client: PteroApp, data: dict[str,]) -> None:
         super().__init__(client, data)
         self._patch(data)
     
@@ -41,7 +44,7 @@ class PteroUser(BaseUser):
 
 
 class PteroSubUser(BaseUser):
-    def __init__(self, client, data: dict[str,]) -> None:
+    def __init__(self, client: PteroApp, data: dict[str,]) -> None:
         super().__init__(client, data)
         self._patch(data)
     
@@ -56,7 +59,7 @@ class PteroSubUser(BaseUser):
 
 
 class ClientUser(BaseUser):
-    def __init__(self, client, data: dict[str,]) -> None:
+    def __init__(self, client: PteroApp, data: dict[str,]) -> None:
         super().__init__(client, data)
         super()._patch(data)
         

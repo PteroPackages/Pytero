@@ -42,7 +42,9 @@ class RequestManager(EventManager):
         
         await self.__debug('attempting to start session')
         async with ClientSession() as session:
-            await self.__debug('attemping to perform request')
+            await self.__debug(
+                'attemping to perform request to %s'
+                % self.domain + path)
             async with getattr(session, method.lower())(
                     self.domain + path,
                     params=body,
@@ -88,7 +90,7 @@ class RequestManager(EventManager):
     
     async def __debug(self, message: str) -> None:
         try:
-            await super().emit_event('debug', message)
+            await super().emit_event('debug', '[debug]'+ message)
         except:
             pass
     

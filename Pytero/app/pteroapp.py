@@ -1,5 +1,6 @@
 from time import time
 from typing import Callable
+from .node_manager import NodeManager
 from .user_manager import UserManager
 from ..requests import RequestError, PteroAPIError, RequestManager
 
@@ -13,6 +14,7 @@ class PteroApp:
         self.ready_at = 0.0
         self.ping = -1.0
         
+        self.nodes = NodeManager(self)
         self.requests = RequestManager('Application', self.domain, self.auth)
         self.users = UserManager(self)
     

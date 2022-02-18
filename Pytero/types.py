@@ -2,7 +2,7 @@ from dataclasses import dataclass
 from typing import Callable
 
 
-class RequestManager:
+class _RequestManager:
     get_headers: Callable[[], dict[str, str]]
     _make: Callable[[str, str, dict | None], dict[str,] | None]
     rget: Callable[[str], dict[str,] | None]
@@ -14,14 +14,14 @@ class RequestManager:
     on_debug: Callable[[str], None]
 
 
-class PteroApp:
+class _PteroApp:
     domain: str
     auth: str
     options: None
     ready_at: float
     ping: float
     connect: Callable[[], bool]
-    requests: RequestManager
+    requests: _RequestManager
 
 
 @dataclass

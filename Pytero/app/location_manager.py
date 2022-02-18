@@ -18,7 +18,9 @@ class LocationManager:
     def __delitem__(self, loc_id: int):
         del self.cache[loc_id]
     
-    def _patch(self, data: dict[str,]) -> NodeLocation | dict[int, NodeLocation]:
+    def _patch(
+            self,
+            data: dict[str,]) -> NodeLocation | dict[int, NodeLocation]:
         if data.get('data'):
             res: dict[int, NodeLocation] = {}
             
@@ -39,6 +41,6 @@ class LocationManager:
         
         data = await self.client.requests.rget(
             '/api/applicaton/locations%s'
-            % (('/'+ str(loc_id)) if loc_id else '')
-        )
+            % (('/'+ str(loc_id)) if loc_id else ''))
+        
         return self._patch(data)

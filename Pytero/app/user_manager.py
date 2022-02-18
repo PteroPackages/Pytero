@@ -46,19 +46,15 @@ class UserManager:
             if not force:
                 if user := self.cache.get(user_id):
                     return user
-            
-            data = await self.client.requests.rget(
-                '/api/application/users/%s%d%s' %
-                ('external/' if external else '', user_id,
-                '?include=servers' if with_servers else '')
-            )
-            return self._patch(data)
-        else:
-            data = await self.client.requests.rget(
-                '/api/application/users%s' %
-                '?include=servers' if with_servers else ''
-            )
-            return self._patch(data)
+        
+        data = await self.client.requests.rget(
+            '/api/application/users%s%s'
+            % (
+                ('/external' if external and user_id else ''),
+                ('/'+ str(user_id) if user_id else ''),
+                ('?include=servers' if with_servers else '')))
+        
+        return self._patch(data)
     
     async def create(
         self,

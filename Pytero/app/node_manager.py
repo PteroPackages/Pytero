@@ -62,8 +62,8 @@ class NodeManager:
             '/api/application/nodes%s%s'
             % (
                 ('/' + str(node_id)) if node_id else '',
-                self._parse_include(include))
-        )
+                self._parse_include(include)))
+        
         return self._patch(data)
     
     async def update(

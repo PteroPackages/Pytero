@@ -79,12 +79,12 @@ class Permissions:
     def __len__(self) -> int:
         return len(self.raw)
     
-    def __contains__(self, perm: str):
-        return self.has(perm)
+    def __contains__(self, perms):
+        return self.has(perms)
     
-    def has(self, perm: str) -> bool:
-        # TODO: resolve
-        return perm in self.raw
+    def has(self, perms: dict[str, int] | list[str] | list[int]) -> bool:
+        res = self.resolve(perms)
+        return res in self.raw
     
     def is_admin(self) -> bool:
         for f in self.to_list():

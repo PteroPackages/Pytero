@@ -57,11 +57,16 @@ class RequestManager(EventManager):
                 
                 if response.status in (200, 201):
                     data: dict[str,] = await response.json()
-                    await super().emit_event('receive', data)
+                    try:
+                        await super().emit_event('receive', data)
+                    except:
+                        pass
+                    
                     return data
                 
-                if 400 >= response.status < 500:
-                    raise PteroAPIError(await response.json())
+                if 400 <= response.status < 500:
+                    err: dict[str,] = await response.json()
+                    raise PteroAPIError(err['errors'][0]['code'], err)
                 
                 raise RequestError(
                     'pterodactyl api returned an invalid or unacceptable response (status: %d)'
@@ -84,7 +89,10 @@ class RequestManager(EventManager):
         return await self._make(path, 'DELETE')
     
     async def __debug(self, message: str) -> None:
-        await super().emit_event('debug', message)
+        try:
+            await super().emit_event('debug', message)
+        except:
+            pass
     
     def on_receive(self, func: Callable[[dict[str,]], None]) -> Callable[[dict[str,]], None]:
         super().add_event_slot('receive', func)

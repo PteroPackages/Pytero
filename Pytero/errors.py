@@ -24,3 +24,8 @@ class PteroAPIError(Exception):
         err['status'] = self.statuses[index]
         
         return err
+
+
+class EventError(Exception):
+    '''Raised when there is an error with an event'''
+    pass

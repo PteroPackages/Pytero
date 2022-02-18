@@ -1,5 +1,6 @@
 from time import time
 from typing import Callable
+from .user_manager import UserManager
 from ..requests import RequestError, PteroAPIError, RequestManager
 
 
@@ -13,6 +14,7 @@ class PteroApp:
         self.ping = -1.0
         
         self.requests = RequestManager('Application', self.domain, self.auth)
+        self.users = UserManager(self)
     
     async def connect(self) -> bool:
         if self.ready_at:
@@ -20,16 +22,16 @@ class PteroApp:
         
         start = time()
         try:
-            await self.requests.rget('/application/api')
-        except PteroAPIError:
-            self.ping = time() - start
+            await self.requests.rget('/api/application')
         except Exception as e:
+            if isinstance(e, PteroAPIError):
+                self.ping = time() - start
+                self.ready_at = time()
+                return True
+            
             raise RequestError(
                 'pterodactyl api is unavailable\nresponse: %s' % str(e)
             )
-        
-        self.ready_at = time()
-        return True
     
     def on_receive(self, func: Callable[[dict[str,]], None]):
         return self.requests.on_receive(func)

@@ -1,4 +1,5 @@
 from time import time
+from typing import Callable
 from ..requests import RequestError, PteroAPIError, RequestManager
 
 
@@ -29,3 +30,9 @@ class PteroApp:
         
         self.ready_at = time()
         return True
+    
+    def on_receive(self, func: Callable[[dict[str,]], None]):
+        return self.requests.on_receive(func)
+    
+    def on_debug(self, func: Callable[[str], None]):
+        return self.requests.on_debug(func)

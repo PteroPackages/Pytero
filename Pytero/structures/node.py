@@ -4,11 +4,11 @@ from typing import Optional
 class Node:
     def __init__(self, client, data: dict[str,]) -> None:
         self.client = client
+        self.id: int = data['id']
+        self.uuid: str = data['uuid']
         self._patch(data)
     
     def _patch(self, data: dict[str,]) -> None:
-        self.id: int = data['id']
-        self.uuid: str = data['uuid']
         self.public: bool = data['public']
         self.name: str = data['name'] or self.name
         self.description: Optional[str] = data['description'] or None

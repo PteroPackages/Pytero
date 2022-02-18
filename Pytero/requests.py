@@ -21,7 +21,7 @@ class RequestManager(EventManager):
             raise TypeError('missing authorization for requests')
         
         return {
-            'User-Agent': '%s Pytero v0.0.1a' % self._type,
+            'User-Agent': '%s Pytero v0.1.0' % self._type,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
             'Authorization': 'Bearer %s' % self.auth

@@ -18,5 +18,5 @@ from .structures.users import *
 from .types import Nest, NodeLocation, _RequestManager, _PteroApp
 
 __title__ = 'Pytero'
-__version__ = '0.0.1a'
+__version__ = '0.1.0'
 __license__ = 'MIT'

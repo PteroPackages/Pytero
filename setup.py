@@ -19,13 +19,12 @@ setup(
     long_desription_content_type='text/markdown',
     include_package_data=True,
     install_requires=['aiohttp'],
-    python_requires='>=3.9.0',
+    python_requires='>=3.10.0',
     classifiers=[
         'Development Status :: 3 - Alpha',
         'License :: OSI Approved :: MIT License',
         'Intended Audience :: Developers',
         'Operating System :: OS Independent',
-        'Programming Language :: Python :: 3.9',
         'Programming Language :: Python :: 3.10'
     ]
 )

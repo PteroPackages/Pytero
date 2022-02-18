@@ -45,5 +45,6 @@ class EventManager:
             try:
                 await slot(*args, **kwargs)
             except Exception as e:
-                raise EventError("function failed at event '%s': %s" %
-                                (name, str(e)))
+                raise EventError(
+                    "function failed at event '%s': %s"
+                    % (name, str(e)))

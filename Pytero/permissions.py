@@ -69,6 +69,7 @@ def diff(perms: list) -> bool:
     
     return False
 
+
 class Permissions:
     def __init__(self, data: dict[str, int] | list[str] | list[int]) -> None:
         self.raw = self.resolve(data)

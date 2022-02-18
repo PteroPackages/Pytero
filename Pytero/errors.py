@@ -6,7 +6,10 @@ class EventError(Exception):
 class PteroAPIError(Exception):
     '''The error object received from Pterodactyl when there is an error'''
     
-    def __init__(self, message: str, data: dict[str, list[dict[str, str]]]) -> None:
+    def __init__(
+            self,
+            message: str,
+            data: dict[str, list[dict[str, str]]]) -> None:
         super().__init__(message)
         self.codes: dict[int, str] = {}
         self.details: dict[int, str] = {}

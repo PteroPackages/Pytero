@@ -44,10 +44,9 @@ class RequestManager(EventManager):
         async with ClientSession() as session:
             await self.__debug('attemping to perform request')
             async with getattr(session, method.lower())(
-                self.domain + path,
-                params=body,
-                headers=self.get_headers()
-            ) as response:
+                    self.domain + path,
+                    params=body,
+                    headers=self.get_headers()) as response:
                 await self.__debug('ensuring session close before continuing')
                 await session.close()
                 await self.__debug('received status: %d' % response.status)
@@ -69,9 +68,8 @@ class RequestManager(EventManager):
                     raise PteroAPIError(err['errors'][0]['code'], err)
                 
                 raise RequestError(
-                    'pterodactyl api returned an invalid or unacceptable response (status: %d)'
-                    % response.status
-                )
+                    'pterodactyl api returned an invalid or unacceptable'
+                    ' response (status: %d)' % response.status)
     
     async def rget(self, path: str):
         return await self._make(path, 'GET')
@@ -94,7 +92,10 @@ class RequestManager(EventManager):
         except:
             pass
     
-    def on_receive(self, func: Callable[[dict[str,]], None]) -> Callable[[dict[str,]], None]:
+    def on_receive(
+        self,
+        func: Callable[[dict[str,]], None]
+    ) -> Callable[[dict[str,]], None]:
         super().add_event_slot('receive', func)
         return func
     

@@ -69,15 +69,18 @@ class UserManager:
     ) -> PteroUser:
         data = await self.client.requests.rpost(
             '/api/application/users',
-            {'email': email,
-            'username': username,
-            'first_name': firstname,
-            'last_name': lastname,
-            'password': password}
+            {
+                'email': email,
+                'username': username,
+                'first_name': firstname,
+                'last_name': lastname,
+                'password': password
+            }
         )
         return self._patch(data)
     
     async def delete(self, user_id: int) -> bool:
-        await self.client.requests.rdelete('/api/application/users/%d' % user_id)
+        await self.client.requests.rdelete(
+            '/api/application/users/%d' % user_id)
         del self.cache[user_id]
         return True

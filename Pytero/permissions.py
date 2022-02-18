@@ -1,5 +1,4 @@
 from enum import Enum
-from typing import Dict, List
 
 
 class Flags(Enum):
@@ -53,8 +52,13 @@ class Flags(Enum):
     ADMIN_WEBSOCKET_INSTALL = 42
     ADMIN_WEBSOCKET_TRANSFER = 43
 
-    def __dict__(cls) -> Dict[str, int]:
-        return { k: getattr(cls, k) for k in dir(cls) if k.isupper() }
+    @staticmethod
+    def get_string_keys() -> list[str]:
+        return list(Flags.__members__.keys())
+    
+    @staticmethod
+    def get_key_values() -> list[int]:
+        return list(k.value for k in Flags.__members__.values())
 
 
 def diff(perms: list) -> bool:
@@ -66,11 +70,11 @@ def diff(perms: list) -> bool:
     return False
 
 class Permissions:
-    def __init__(self, data) -> None:
-        self.raw = self.resolve(self, data)
+    def __init__(self, data: dict[str, int] | list[str] | list[int]) -> None:
+        self.raw = self.resolve(data)
     
     def __repr__(self) -> str:
-        return '<Permissions %d>' % len(self.raw)
+        return '<Permissions total=%d>' % len(self.raw)
     
     def has(self, perm: object) -> bool:
         return perm in self.raw
@@ -83,7 +87,7 @@ class Permissions:
         return False
     
     @staticmethod
-    def resolve(cls, perms: object) -> Dict[str, int]:
+    def resolve(perms: dict[str, int] | list[str] | list[int]) -> dict[str, int]:
         if isinstance(perms, dict):
             perms = [k for k in perms.keys()]
         
@@ -93,8 +97,8 @@ class Permissions:
         if diff(perms):
             raise TypeError('permissions must be all strings or all ints')
         
-        keys = dict(Flags)
-        vals = { keys[k]: k for k in keys.keys() }
+        keys = dict(zip(Flags.get_string_keys(), Flags.get_key_values()))
+        vals = {keys[k]: k for k in keys}
         res = {}
         for p in perms:
             if keys.get(p):
@@ -106,21 +110,21 @@ class Permissions:
         
         return res
     
-    def serialize(self) -> Dict[str, bool]:
-        return { k: bool(self.raw.get(k)) for k in dict(Flags) }
+    def serialize(self) -> dict[str, bool]:
+        return {k: k in self.raw for k in Flags.get_string_keys()}
     
-    def to_list(self) -> List[str]:
+    def to_list(self) -> list[str]:
         return [k for k in self.raw]
     
-    def to_strings(self) -> List[str]:
+    def to_strings(self) -> list[str]:
         return [f.lower().replace('_', '.') for f in self.to_list()]
     
     @staticmethod
-    def from_strings(cls, perms: List[str]) -> Dict[str, int]:
-        keys = dict(Flags)
+    def from_strings(perms: list[str]) -> dict[str, int]:
+        keys = dict(zip(Flags.get_string_keys(), Flags.get_key_values()))
         res = {}
         for p in perms:
-            p = p.lower().replace('.', '_')
+            p = p.upper().replace('.', '_')
             if keys.get(p):
                 res[p] = keys[p]
             else:

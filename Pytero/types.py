@@ -34,6 +34,9 @@ class Nest:
     created_at: str
     updated_at: str | None
 
+    def __repr__(self) -> str:
+        return '<Nest id=%d name=%s>' % (self.id, self.name)
+
 
 @dataclass
 class NodeLocation:

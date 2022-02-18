@@ -1,5 +1,6 @@
 from time import time
 from typing import Callable
+from .eggs_manager import EggsManager
 from .location_manager import LocationManager
 from .nest_manager import NestManager
 from .node_manager import NodeManager
@@ -16,6 +17,7 @@ class PteroApp:
         self.ready_at = 0.0
         self.ping = -1.0
         
+        self.eggs = EggsManager(self)
         self.locations = LocationManager(self)
         self.nests = NestManager(self)
         self.nodes = NodeManager(self)

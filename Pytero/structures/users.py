@@ -1,9 +1,9 @@
 class BaseUser:
     def __init__(self, client, data: dict[str,]) -> None:
         self.client = client
-        self.__patch(data)
+        self._patch(data)
     
-    def __patch(self, data: dict[str,]) -> None:
+    def _patch(self, data: dict[str,]) -> None:
         self.id: int = data['id']
         self.username: str = data['username']
         self.email: str = data['email']
@@ -21,10 +21,10 @@ class BaseUser:
 class PteroUser(BaseUser):
     def __init__(self, client, data: dict[str,]) -> None:
         super().__init__(client, data)
-        self.__patch(data)
+        self._patch(data)
     
-    def __patch(self, data: dict[str,]) -> None:
-        super().__patch(data)
+    def _patch(self, data: dict[str,]) -> None:
+        super()._patch(data)
         self.external_id: str = data['external_id']
         self.uuid: str = data['uuid']
         self.is_admin: bool = data['root_admin']
@@ -43,9 +43,9 @@ class PteroUser(BaseUser):
 class PteroSubUser(BaseUser):
     def __init__(self, client, data: dict[str,]) -> None:
         super().__init__(client, data)
-        self.__patch(data)
+        self._patch(data)
     
-    def __patch(self, data: dict[str,]) -> None:
+    def _patch(self, data: dict[str,]) -> None:
         super().__patch(data)
         self.uuid: str = data['uuid']
         self.image: str = data['image']
@@ -58,7 +58,7 @@ class PteroSubUser(BaseUser):
 class ClientUser(BaseUser):
     def __init__(self, client, data: dict[str,]) -> None:
         super().__init__(client, data)
-        super().__patch(data)
+        super()._patch(data)
         
         self.is_admin: bool = data['is_admin']
         self.tokens = []

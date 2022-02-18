@@ -4,9 +4,9 @@ from typing import Optional
 class Node:
     def __init__(self, client, data: dict[str,]) -> None:
         self.client = client
-        self.__patch(data)
+        self._patch(data)
     
-    def __patch(self, data: dict[str,]) -> None:
+    def _patch(self, data: dict[str,]) -> None:
         self.id: int = data['id']
         self.uuid: str = data['uuid']
         self.public: bool = data['public']

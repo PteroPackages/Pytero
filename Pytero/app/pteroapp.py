@@ -1,6 +1,7 @@
 from time import time
 from typing import Callable
 from .location_manager import LocationManager
+from .nest_manager import NestManager
 from .node_manager import NodeManager
 from .user_manager import UserManager
 from ..requests import RequestError, PteroAPIError, RequestManager
@@ -16,6 +17,7 @@ class PteroApp:
         self.ping = -1.0
         
         self.locations = LocationManager(self)
+        self.nests = NestManager(self)
         self.nodes = NodeManager(self)
         self.requests = RequestManager('Application', self.domain, self.auth)
         self.users = UserManager(self)

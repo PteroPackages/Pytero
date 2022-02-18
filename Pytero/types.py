@@ -25,6 +25,17 @@ class _PteroApp:
 
 
 @dataclass
+class Nest:
+    id: int
+    uuid: str
+    author: str
+    name: str
+    description: str
+    created_at: str
+    updated_at: str | None
+
+
+@dataclass
 class NodeLocation:
     id: int
     long: str

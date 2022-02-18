@@ -1,5 +1,5 @@
-class RequestError(Exception):
-    '''Errors received upon requesting a Pterodactyl endpoint'''
+class EventError(Exception):
+    '''Raised when there is an error with an event'''
     pass
 
 
@@ -26,6 +26,6 @@ class PteroAPIError(Exception):
         return err
 
 
-class EventError(Exception):
-    '''Raised when there is an error with an event'''
+class RequestError(Exception):
+    '''Errors received upon requesting a Pterodactyl endpoint'''
     pass

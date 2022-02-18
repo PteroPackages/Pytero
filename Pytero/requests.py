@@ -1,6 +1,6 @@
 from aiohttp import ClientSession
+from json import dumps
 from typing import Callable, Optional
-import json
 from .events import EventManager
 from .errors import RequestError, PteroAPIError
 
@@ -38,7 +38,7 @@ class RequestManager(EventManager):
                 body = params
             else:
                 await self.__debug('sending json payload')
-                body = json.dumps(params)
+                body = dumps(params)
         
         await self.__debug('attempting to start session')
         async with ClientSession() as session:

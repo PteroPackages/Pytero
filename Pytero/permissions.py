@@ -76,6 +76,12 @@ class Permissions:
     def __repr__(self) -> str:
         return '<Permissions total=%d>' % len(self.raw)
     
+    def __len__(self) -> int:
+        return len(self.raw)
+    
+    def __contains__(self, perm: str):
+        return self.has(perm)
+    
     def has(self, perm: str) -> bool:
         # TODO: resolve
         return perm in self.raw

@@ -15,7 +15,7 @@ from .permissions import *
 from .requests import RequestManager
 from .structures.node import Node
 from .structures.users import *
-from .types import Nest, NodeLocation, _RequestManager, _PteroApp
+from .types import Nest, NodeLocation, _PteroApp, _RequestManager
 
 __title__ = 'Pytero'
 __version__ = '0.1.0'

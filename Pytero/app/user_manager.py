@@ -24,7 +24,7 @@ class UserManager:
             res: dict[int, PteroUser] = {}
             
             for obj in data['data']:
-                user = PteroUser(self.client, obj)
+                user = PteroUser(self.client, obj['attributes'])
                 res[user.id] = user
             
             self.cache.update(res)
@@ -48,7 +48,7 @@ class UserManager:
                     return user
         
         data = await self.client.requests.rget(
-            '/api/application/users%s%s'
+            '/api/application/users%s%s%s'
             % (
                 ('/external' if external and user_id else ''),
                 ('/'+ str(user_id) if user_id else ''),

@@ -28,7 +28,7 @@ class Node:
         self.daemon_base: int = data['daemon_base']
     
     def __repr__(self) -> str:
-        return '<Node id=%d>' % self.id
+        return '<Node id=%d name=%s>' % (self.id, self.name)
     
     async def getconfig(self):
         return NotImplemented

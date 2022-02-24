@@ -18,7 +18,8 @@ class BaseUser:
         return self.firstname +' '+ self.lastname
     
     def __repr__(self) -> str:
-        return '<%s id=%d>' % (self.__class__.__name__, self.id)
+        return '<%s id=%d username=%s>' \
+            % (self.__class__.__name__, self.id, self.username)
 
 
 class PteroUser(BaseUser):

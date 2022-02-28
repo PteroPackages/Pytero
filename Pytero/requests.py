@@ -90,7 +90,7 @@ class RequestManager(EventManager):
     
     async def __debug(self, message: str) -> None:
         try:
-            await super().emit_event('debug', '[debug]'+ message)
+            await super().emit_event('debug', '[debug] '+ message)
         except:
             pass
     

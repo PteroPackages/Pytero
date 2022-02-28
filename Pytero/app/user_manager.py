@@ -56,6 +56,36 @@ class UserManager:
         
         return self._patch(data)
     
+    async def query(
+        self,
+        entity: str,
+        *,
+        _filter: str = None,
+        sort: str = None
+    ) -> dict[int, PteroUser]:
+        if _filter is None and sort is None:
+            raise SyntaxError('filter or sort is required for query')
+        
+        url = '/api/application/users'
+        
+        if _filter is not None:
+            if _filter not in ('email', 'uuid', 'username', 'external_id'):
+                raise KeyError("invalid filter option '%s'" % _filter)
+            
+            url += '?filter[%s]=%s' % (_filter, entity)
+        
+        if sort is not None:
+            if sort not in ('id', '-id', 'uuid', '-uuid', None):
+                raise KeyError("invalid sort option '%s'" % sort)
+            
+            if _filter:
+                url += '&sort=' + sort
+            else:
+                url += '?sort=' + sort
+        
+        data = await self.client.requests.rget(url)
+        return self._patch(data)
+    
     async def create(
         self,
         email: str,
@@ -71,6 +101,46 @@ class UserManager:
                 'username': username,
                 'first_name': firstname,
                 'last_name': lastname,
+                'password': password
+            }
+        )
+        return self._patch(data)
+    
+    async def update(
+        self,
+        user_id: int,
+        *,
+        email: str = None,
+        username: str = None,
+        first_name: str = None,
+        last_name: str = None,
+        language: str = None,
+        password: str = None
+    ) -> PteroUser:
+        if not any([
+                email,
+                username,
+                first_name,
+                last_name,
+                language
+            ]):
+            raise KeyError('no arguments provided to update the user')
+        
+        user = await self.fetch(user_id)
+        email = email or user.email
+        username = username or user.username
+        first_name = first_name or user.firstname
+        last_name = last_name or user.lastname
+        language = language or user.language
+        
+        data = await self.client.requests.rpatch(
+            '/api/application/users/%d' % user_id,
+            {
+                'email': email,
+                'username': username,
+                'first_name': first_name,
+                'last_name': last_name,
+                'language': language,
                 'password': password
             }
         )

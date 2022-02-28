@@ -1,4 +1,5 @@
 from ..types import _PteroApp
+from ..util import transform
 
 
 class BaseUser:
@@ -20,6 +21,9 @@ class BaseUser:
     def __repr__(self) -> str:
         return '<%s id=%d username=%s>' \
             % (self.__class__.__name__, self.id, self.username)
+    
+    def to_dict(self) -> dict[str,]:
+        return transform(self, ignore=['client', 'relationships'])
 
 
 class PteroUser(BaseUser):

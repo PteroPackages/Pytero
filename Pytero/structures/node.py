@@ -1,5 +1,6 @@
 from typing import Optional
 from ..types import _PteroApp
+from ..util import transform
 
 
 class Node:
@@ -29,6 +30,9 @@ class Node:
     
     def __repr__(self) -> str:
         return '<Node id=%d name=%s>' % (self.id, self.name)
+    
+    def to_dict(self) -> dict[str,]:
+        return transform(self)
     
     async def getconfig(self):
         return NotImplemented

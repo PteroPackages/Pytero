@@ -71,6 +71,17 @@ def diff(perms: list) -> bool:
 
 
 class Permissions:
+    ALL_CONSOLE = (1, 2, 3, 4)
+    ALL_USER = (5, 6, 7, 8)
+    ALL_FILE = (9, 10, 11, 12, 13, 14)
+    ALL_BACKUP = (15, 16, 17, 18)
+    ALL_ALLOCATION = (19, 20, 21, 22)
+    ALL_STARTUP = (23, 24)
+    ALL_DATABASE = (25, 26, 27, 28, 29)
+    ALL_SCHEDULE = (30, 31, 32, 33)
+    ALL_SETTINGS = (34, 35)
+    ALL_ADMIN = (41, 42, 43)
+    
     def __init__(self, data: dict[str, int] | list[str] | list[int]) -> None:
         self.raw = self.resolve(data)
     
@@ -82,6 +93,11 @@ class Permissions:
     
     def __contains__(self, perms):
         return self.has(perms)
+    
+    @staticmethod
+    def ALL() -> tuple[str]:
+        res = list(range(0, 36)) + [41, 42, 43]
+        return tuple(res)
     
     def has(self, perms: dict[str, int] | list[str] | list[int]) -> bool:
         res = self.resolve(perms)

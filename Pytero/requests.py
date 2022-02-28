@@ -47,7 +47,7 @@ class RequestManager(EventManager):
                 % self.domain + path)
             async with getattr(session, method.lower())(
                     self.domain + path,
-                    params=body,
+                    data=body,
                     headers=self.get_headers()) as response:
                 await self.__debug('ensuring session close before continuing')
                 await session.close()

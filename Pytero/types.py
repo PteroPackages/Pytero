@@ -3,6 +3,7 @@ from typing import Callable
 
 
 class _RequestManager:
+    ping: float
     get_headers: Callable[[], dict[str, str]]
     _make: Callable[[str, str, dict | None], dict[str,] | None]
     rget: Callable[[str], dict[str,] | None]
@@ -18,9 +19,6 @@ class _PteroApp:
     domain: str
     auth: str
     options: None
-    ready_at: float
-    ping: float
-    connect: Callable[[], bool]
     requests: _RequestManager
 
 

@@ -1,8 +1,9 @@
 from aiohttp import ClientSession
 from json import dumps
+from time import time
 from typing import Callable, Optional
 from .events import EventManager
-from .errors import RequestError, PteroAPIError
+from .errors import PteroAPIError, RequestError
 
 
 class RequestManager(EventManager):
@@ -12,6 +13,7 @@ class RequestManager(EventManager):
         self.domain = domain
         self.auth = auth
         self.suspended = False
+        self.ping: float = -1.0
     
     def get_headers(self) -> dict[str, str]:
         if self._type is None:
@@ -24,8 +26,7 @@ class RequestManager(EventManager):
             'User-Agent': '%s Pytero v0.1.0' % self._type,
             'Content-Type': 'application/json',
             'Accept': 'application/json',
-            'Authorization': 'Bearer %s' % self.auth
-        }
+            'Authorization': 'Bearer %s' % self.auth}
     
     async def _make(self, path: str, method: str, **params):
         if method not in ('GET', 'POST', 'PATCH', 'PUT', 'DELETE'):
@@ -45,10 +46,14 @@ class RequestManager(EventManager):
             await self.__debug(
                 'attemping to perform request to %s'
                 % self.domain + path)
+            
+            start = time()
             async with getattr(session, method.lower())(
                     self.domain + path,
                     data=body,
                     headers=self.get_headers()) as response:
+                self.ping = time() - start
+                
                 await self.__debug('ensuring session close before continuing')
                 await session.close()
                 await self.__debug('received status: %d' % response.status)

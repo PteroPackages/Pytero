@@ -3,7 +3,7 @@ from ..types import _PteroApp
 
 
 class NodeManager:
-    default_include: tuple[str] = ('allocations', 'locations', 'servers')
+    DEFAULT_INCLUDE: tuple[str] = ('allocations', 'locations', 'servers')
     
     def __init__(self, client: _PteroApp) -> None:
         self.client = client
@@ -41,7 +41,7 @@ class NodeManager:
             return ''
         
         for op in options:
-            if op not in self.default_include:
+            if op not in self.DEFAULT_INCLUDE:
                 raise KeyError("invalid include option '%s'" % op)
         
         return '?include=%s' % ','.join(options)
@@ -109,19 +109,17 @@ class NodeManager:
         
         data = await self.client.requests.rpatch(
             '/api/application/nodes/%d' % node_id,
-            {
-                'name': name,
-                'location': location,
-                'fqdn': fqdn,
-                'scheme': scheme,
-                'memory': memory,
-                'memory_overallocate': memory_overallocate,
-                'disk': disk,
-                'disk_overallocate': disk_overallocate,
-                'stfp': sftp,
-                'upload_size': upload_size
-            }
-        )
+            name=name,
+            location=location,
+            fqdn=fqdn,
+            scheme=scheme,
+            memory=memory,
+            memory_overallocate=memory_overallocate,
+            disk=disk,
+            disk_overallocate=disk_overallocate,
+            sftp=sftp,
+            upload_size=upload_size)
+        
         return self._patch(data)
     
     async def delete(self, node_id: int) -> bool:

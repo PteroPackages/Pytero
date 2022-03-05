@@ -1,9 +1,9 @@
 def transform(
-        data: object,
-        *,
-        ignore: list[str] = [],
-        cast: dict[str,] = [],
-        maps: dict[str, str] = []
+    data: object,
+    *,
+    ignore: list[str] = [],
+    cast: dict[str,] = [],
+    maps: dict[str, str] = []
 ) -> dict[str,]:
     res = {}
     

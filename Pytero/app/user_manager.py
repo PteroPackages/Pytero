@@ -96,14 +96,12 @@ class UserManager:
     ) -> PteroUser:
         data = await self.client.requests.rpost(
             '/api/application/users',
-            {
-                'email': email,
-                'username': username,
-                'first_name': firstname,
-                'last_name': lastname,
-                'password': password
-            }
-        )
+            email=email,
+            username=username,
+            first_name=firstname,
+            last_name=lastname,
+            password=password)
+        
         return self._patch(data)
     
     async def update(
@@ -112,16 +110,16 @@ class UserManager:
         *,
         email: str = None,
         username: str = None,
-        first_name: str = None,
-        last_name: str = None,
+        firstname: str = None,
+        lastname: str = None,
         language: str = None,
         password: str = None
     ) -> PteroUser:
         if not any([
                 email,
                 username,
-                first_name,
-                last_name,
+                firstname,
+                lastname,
                 language
             ]):
             raise KeyError('no arguments provided to update the user')
@@ -129,21 +127,19 @@ class UserManager:
         user = await self.fetch(user_id)
         email = email or user.email
         username = username or user.username
-        first_name = first_name or user.firstname
-        last_name = last_name or user.lastname
+        firstname = firstname or user.firstname
+        lastname = lastname or user.lastname
         language = language or user.language
         
         data = await self.client.requests.rpatch(
             '/api/application/users/%d' % user_id,
-            {
-                'email': email,
-                'username': username,
-                'first_name': first_name,
-                'last_name': last_name,
-                'language': language,
-                'password': password
-            }
-        )
+            email=email,
+            username=username,
+            first_name=firstname,
+            last_name=lastname,
+            language=language,
+            password=password)
+        
         return self._patch(data)
     
     async def delete(self, user_id: int) -> bool:

@@ -27,7 +27,7 @@ class RequestManager(EventManager):
             'Authorization': 'Bearer %s' % self.auth
         }
     
-    async def _make(self, path: str, method: str, params: dict = None):
+    async def _make(self, path: str, method: str, **params):
         if method not in ('GET', 'POST', 'PATCH', 'PUT', 'DELETE'):
             raise ValueError("invalid http method '%s'" % method)
         
@@ -76,14 +76,14 @@ class RequestManager(EventManager):
     async def rget(self, path: str):
         return await self._make(path, 'GET')
     
-    async def rpost(self, path: str, params: dict = None):
-        return await self._make(path, 'POST', params)
+    async def rpost(self, path: str, **data):
+        return await self._make(path, 'POST', **data)
     
-    async def rpatch(self, path: str, params: dict = None):
-        return await self._make(path, 'PATCH', params)
+    async def rpatch(self, path: str, **data):
+        return await self._make(path, 'PATCH', **data)
     
-    async def rput(self, path: str, params: dict = None):
-        return await self._make(path, 'PUT', params)
+    async def rput(self, path: str, **data):
+        return await self._make(path, 'PUT', **data)
     
     async def rdelete(self, path: str):
         return await self._make(path, 'DELETE')

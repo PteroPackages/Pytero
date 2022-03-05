@@ -2,6 +2,13 @@ from dataclasses import dataclass
 from typing import Callable
 
 
+class _BaseManager:
+    fetch: Callable[...,]
+    get: Callable[...,]
+    update: Callable[...,]
+    delete: Callable[...,]
+
+
 class _RequestManager:
     ping: float
     get_headers: Callable[[], dict[str, str]]
@@ -20,6 +27,9 @@ class _PteroApp:
     auth: str
     options: None
     requests: _RequestManager
+    nests: _BaseManager
+    nodes: _BaseManager
+    users: _BaseManager
 
 
 @dataclass
@@ -34,6 +44,18 @@ class Nest:
 
     def __repr__(self) -> str:
         return '<Nest id=%d name=%s>' % (self.id, self.name)
+
+
+@dataclass
+class NodeConfiguration:
+    debug: bool
+    uuid: str
+    token_id: str
+    token: str
+    api: dict[str, int | str | dict[str, str | bool]]
+    system: dict[str, str | dict[str, int]]
+    allowed_mounts: list[str]
+    remote: str
 
 
 @dataclass

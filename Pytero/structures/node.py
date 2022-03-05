@@ -1,5 +1,5 @@
 from typing import Optional
-from ..types import _PteroApp
+from ..types import NodeConfiguration, _PteroApp
 from ..util import transform
 
 
@@ -16,6 +16,7 @@ class Node:
         self.description: Optional[str] = data['description'] or None
         self.location_id: int = data['location_id']
         self.fqdn: str = data['fqdn']
+        self.config: NodeConfiguration = None
         self.scheme: str = data['scheme']
         self.behind_proxy: bool = data['behind_proxy']
         self.maintenance_mode: bool = data['maintenance_mode']
@@ -34,11 +35,19 @@ class Node:
     def to_dict(self) -> dict[str,]:
         return transform(self)
     
-    async def getconfig(self):
-        return NotImplemented
+    async def getconfig(self, force: bool = False) -> NodeConfiguration:
+        if force or self.config is None:
+            data = await self.client.requests.rget(
+                '/api/application/nodes/%d/configuration' % self.id)
+            
+            self.config = NodeConfiguration(**data)
+        
+        return self.config
     
-    async def update(self, **kwargs):
-        return NotImplemented
+    async def update(self, **data):
+        data = await self.client.nodes.update(**data)
+        self._patch(data)
+        return self
     
     async def delete(self):
         return NotImplemented

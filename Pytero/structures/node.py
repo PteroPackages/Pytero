@@ -38,7 +38,7 @@ class Node:
     async def getconfig(self, force: bool = False) -> NodeConfiguration:
         if force or self.config is None:
             data = await self.client.requests.rget(
-                '/api/application/nodes/%d/configuration' % self.id)
+                '/nodes/%d/configuration' % self.id)
             
             self.config = NodeConfiguration(**data)
         

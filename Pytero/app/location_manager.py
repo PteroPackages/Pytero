@@ -40,7 +40,7 @@ class LocationManager:
                     return loc
         
         data = await self.client.requests.rget(
-            '/api/applicaton/locations%s'
+            '/locations%s'
             % (('/'+ str(loc_id)) if loc_id else ''))
         
         return self._patch(data)

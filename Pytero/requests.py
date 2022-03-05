@@ -41,15 +41,14 @@ class RequestManager(EventManager):
                 await self.__debug('sending json payload')
                 body = dumps(params)
         
+        url = '%s/api/%s%s' % (self.domain, self._type.lower(), path)
         await self.__debug('attempting to start session')
         async with ClientSession() as session:
-            await self.__debug(
-                'attemping to perform request to %s'
-                % self.domain + path)
+            await self.__debug('attemping to perform request to %s' % url)
             
             start = time()
             async with getattr(session, method.lower())(
-                    self.domain + path,
+                    url,
                     data=body,
                     headers=self.get_headers()) as response:
                 self.ping = time() - start

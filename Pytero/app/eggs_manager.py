@@ -42,7 +42,7 @@ class EggsManager:
                     return egg
         
         data = await self.client.requests.rget(
-            '/api/applicaton/nests/%d/eggs%s'
+            '/nests/%d/eggs%s'
             % (nest_id, ('/'+ str(egg_id)) if egg_id else ''))
         
         return self._patch(data)

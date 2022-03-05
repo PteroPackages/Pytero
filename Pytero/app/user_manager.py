@@ -48,7 +48,7 @@ class UserManager:
                     return user
         
         data = await self.client.requests.rget(
-            '/api/application/users%s%s%s'
+            '/users%s%s%s'
             % (
                 ('/external' if external and user_id else ''),
                 ('/'+ str(user_id) if user_id else ''),
@@ -66,7 +66,7 @@ class UserManager:
         if _filter is None and sort is None:
             raise SyntaxError('filter or sort is required for query')
         
-        url = '/api/application/users'
+        url = '/users'
         
         if _filter is not None:
             if _filter not in ('email', 'uuid', 'username', 'external_id'):
@@ -132,7 +132,7 @@ class UserManager:
         language = language or user.language
         
         data = await self.client.requests.rpatch(
-            '/api/application/users/%d' % user_id,
+            '/users/%d' % user_id,
             email=email,
             username=username,
             first_name=firstname,
@@ -143,7 +143,6 @@ class UserManager:
         return self._patch(data)
     
     async def delete(self, user_id: int) -> bool:
-        await self.client.requests.rdelete(
-            '/api/application/users/%d' % user_id)
+        await self.client.requests.rdelete('/users/%d' % user_id)
         del self.cache[user_id]
         return True

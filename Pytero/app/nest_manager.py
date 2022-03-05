@@ -38,7 +38,7 @@ class NestManager:
                     return nest
         
         data = await self.client.requests.rget(
-            '/api/applicaton/nests%s'
+            '/nests%s'
             % (('/'+ str(nest_id)) if nest_id else ''))
         
         return self._patch(data)

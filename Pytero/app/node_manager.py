@@ -53,13 +53,12 @@ class NodeManager:
         force: bool = False,
         include: list[str] = []
     ):
-        if node_id:
-            if not force:
-                if node := self.cache.get(node_id):
-                    return node
+        if node_id and not force:
+            if node := self.cache.get(node_id):
+                return node
         
         data = await self.client.requests.rget(
-            '/api/application/nodes%s%s'
+            '/nodes%s%s'
             % (
                 ('/' + str(node_id)) if node_id else '',
                 self._parse_include(include)))
@@ -108,7 +107,7 @@ class NodeManager:
         upload_size = upload_size or node.upload_size
         
         data = await self.client.requests.rpatch(
-            '/api/application/nodes/%d' % node_id,
+            '/nodes/%d' % node_id,
             name=name,
             location=location,
             fqdn=fqdn,
@@ -124,7 +123,7 @@ class NodeManager:
     
     async def delete(self, node_id: int) -> bool:
         await self.client.requests.rdelete(
-            '/api/application/nodes/%d' % node_id
+            '/nodes/%d' % node_id
         )
         del self.cache[node_id]
         return True

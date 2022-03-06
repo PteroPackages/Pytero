@@ -25,12 +25,12 @@ class LocationManager:
             res: dict[int, NodeLocation] = {}
             
             for obj in data['data']:
-                res[obj['id']] = obj
+                res[obj['id']] = NodeLocation(**obj)
             
             self.cache.update(res)
             return res
         else:
-            self.cache[data['id']] = data
+            self.cache[data['id']] = NodeLocation(**data)
             return data
     
     async def fetch(self, loc_id: int = None, force: bool = False):

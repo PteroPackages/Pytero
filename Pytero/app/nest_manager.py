@@ -23,12 +23,12 @@ class NestManager:
             res: dict[int, Nest] = {}
             
             for obj in data['data']:
-                res[obj['id']] = obj
+                res[obj['id']] = Nest(**obj)
             
             self.cache.update(res)
             return res
         else:
-            self.cache[data['id']] = data
+            self.cache[data['id']] = Nest(**data)
             return data
     
     async def fetch(self, nest_id: int = None, force: bool = False):

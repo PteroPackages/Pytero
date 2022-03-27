@@ -19,7 +19,10 @@ class NestManager:
         del self.cache[nest_id]
     
     def _patch(self, data: dict[str,]) -> Nest | dict[int, Nest]:
-        if data.get('data'):
+        if data.get('data') is not None:
+            if not len(data['data']):
+                return {}
+            
             res: dict[int, Nest] = {}
             
             for obj in data['data']:
@@ -31,14 +34,19 @@ class NestManager:
             self.cache[data['id']] = Nest(**data)
             return data
     
-    async def fetch(self, nest_id: int = None, force: bool = False):
-        if nest_id:
-            if not force:
-                if nest := self.cache.get(nest_id):
-                    return nest
+    async def fetch(
+        self,
+        nest_id: int = None,
+        force: bool = False,
+        page: int = 0,
+        per_page: int = None
+    ):
+        if nest_id and not force:
+            if nest := self.cache.get(nest_id):
+                return nest
         
         data = await self.client.requests.rget(
-            '/nests%s'
-            % (('/'+ str(nest_id)) if nest_id else ''))
+            '/nests%s' % (('/'+ str(nest_id)) if nest_id else ''),
+            page=page, per_page=per_page)
         
         return self._patch(data)

@@ -22,7 +22,10 @@ class NodeManager:
         del self.cache[node_id]
     
     def _patch(self, data: dict[str,]) -> Node | dict[int, Node]:
-        if data.get('data'):
+        if data.get('data') is not None:
+            if not len(data['data']):
+                return {}
+            
             res: dict[int, Node] = {}
             
             for obj in data['data']:
@@ -36,32 +39,26 @@ class NodeManager:
             self.cache[node.id] = node
             return node
     
-    def _parse_include(self, options: list[str]) -> str:
-        if not len(options):
-            return ''
-        
-        for op in options:
-            if op not in self.DEFAULT_INCLUDE:
-                raise KeyError("invalid include option '%s'" % op)
-        
-        return '?include=%s' % ','.join(options)
-    
     async def fetch(
         self,
         node_id: int = None,
         *,
         force: bool = False,
-        include: list[str] = []
+        include: list[str] = [],
+        page: int = 0,
+        per_page: int = None
     ):
         if node_id and not force:
             if node := self.cache.get(node_id):
                 return node
         
+        for i in include:
+            if i not in self.DEFAULT_INCLUDE:
+                raise KeyError("invalid include option '%s'" % i)
+        
         data = await self.client.requests.rget(
-            '/nodes%s%s'
-            % (
-                ('/' + str(node_id)) if node_id else '',
-                self._parse_include(include)))
+            '/nodes%s' % (('/' + str(node_id)) if node_id else ''),
+            include=include, page=page, per_page=per_page)
         
         return self._patch(data)
     

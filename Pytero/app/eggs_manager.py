@@ -19,7 +19,10 @@ class EggsManager:
         del self.cache[nest_id]
     
     def _patch(self, data: dict[str,]) -> dict[str,] | dict[int, dict[str,]]:
-        if data.get('data'):
+        if data.get('data') is not None:
+            if not len(data['data']):
+                return {}
+            
             res: dict[int, dict[str,]] = {}
             
             for obj in data['data']:
@@ -32,10 +35,13 @@ class EggsManager:
             return data
     
     async def fetch(
-            self,
-            nest_id: int,
-            egg_id: int = None,
-            force: bool = False):
+        self,
+        nest_id: int,
+        egg_id: int = None,
+        force: bool = False,
+        page: int = 0,
+        per_page: int = None
+    ):
         if egg_id:
             if not force:
                 if egg := self.cache.get(egg_id):
@@ -43,9 +49,10 @@ class EggsManager:
         
         data = await self.client.requests.rget(
             '/nests/%d/eggs%s'
-            % (nest_id, ('/'+ str(egg_id)) if egg_id else ''))
+            % (nest_id, ('/'+ str(egg_id)) if egg_id else ''),
+            page=page, per_page=per_page)
         
         return self._patch(data)
     
-    def find_eggs_in_nest(self, nest_id: int) -> list[dict[str,]]:
+    def find_in_nest(self, nest_id: int) -> list[dict[str,]]:
         return list(filter(lambda e: e['nest'] == nest_id, self.cache))

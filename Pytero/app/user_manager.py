@@ -20,7 +20,10 @@ class UserManager:
         del self.cache[user_id]
     
     def _patch(self, data: dict[str,]) -> PteroUser | dict[int, PteroUser]:
-        if data.get('data'):
+        if data.get('data') is not None:
+            if not len(data['data']):
+                return {}
+            
             res: dict[int, PteroUser] = {}
             
             for obj in data['data']:
@@ -40,19 +43,21 @@ class UserManager:
         *,
         force: bool = False,
         with_servers: bool = False,
-        external: bool = False
+        external: bool = False,
+        page: int = 0,
+        per_page: int = None
     ):
-        if user_id:
-            if not force:
-                if user := self.cache.get(user_id):
-                    return user
+        if user_id and not force:
+            if user := self.cache.get(user_id):
+                return user
         
         data = await self.client.requests.rget(
-            '/users%s%s%s'
+            '/users%s%s'
             % (
                 ('/external' if external and user_id else ''),
-                ('/'+ str(user_id) if user_id else ''),
-                ('?include=servers' if with_servers else '')))
+                ('/'+ str(user_id) if user_id else '')),
+            include=['servers' if with_servers else None],
+            page=page, per_page=per_page)
         
         return self._patch(data)
     
@@ -61,29 +66,25 @@ class UserManager:
         entity: str,
         *,
         _filter: str = None,
-        sort: str = None
+        sort: str = None,
+        per_page: int = None
     ) -> dict[int, PteroUser]:
         if _filter is None and sort is None:
             raise SyntaxError('filter or sort is required for query')
         
-        url = '/users'
-        
         if _filter is not None:
             if _filter not in ('email', 'uuid', 'username', 'external_id'):
                 raise KeyError("invalid filter option '%s'" % _filter)
-            
-            url += '?filter[%s]=%s' % (_filter, entity)
         
         if sort is not None:
-            if sort not in ('id', '-id', 'uuid', '-uuid', None):
+            if sort not in ('id', '-id', 'uuid', '-uuid'):
                 raise KeyError("invalid sort option '%s'" % sort)
-            
-            if _filter:
-                url += '&sort=' + sort
-            else:
-                url += '?sort=' + sort
         
-        data = await self.client.requests.rget(url)
+        data = await self.client.requests.rget(
+            '/users',
+            filter=(_filter, entity) if _filter else None,
+            sort=sort, per_page=per_page
+        )
         return self._patch(data)
     
     async def create(

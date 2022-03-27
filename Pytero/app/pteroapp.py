@@ -12,7 +12,6 @@ class PteroApp:
     def __init__(self, domain: str, auth: str, **_):
         self.domain = domain.removesuffix('/')
         self.auth = auth
-        self.options = None # TODO: use kwargs
         
         self.allocations = AllocationManager(self)
         self.eggs = EggsManager(self)

@@ -18,7 +18,6 @@ class _RequestManager:
 class _PteroApp:
     domain: str
     auth: str
-    options: None
     requests: _RequestManager
 
 

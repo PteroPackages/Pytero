@@ -32,3 +32,8 @@ class PteroAPIError(Exception):
 class RequestError(Exception):
     '''Errors received upon requesting a Pterodactyl endpoint'''
     pass
+
+
+class ValidationError(Exception):
+    '''Errors received when a request validation fails'''
+    pass

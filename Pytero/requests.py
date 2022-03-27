@@ -3,7 +3,7 @@ from json import dumps
 from time import time
 from typing import Callable, Optional
 from .events import EventManager
-from .errors import PteroAPIError, RequestError
+from .errors import PteroAPIError, RequestError, ValidationError
 
 
 class RequestManager(EventManager):
@@ -28,6 +28,37 @@ class RequestManager(EventManager):
             'Accept': 'application/json',
             'Authorization': 'Bearer %s' % self.auth}
     
+    def _validate_query(self, query: dict[str,]) -> str:
+        res = []
+        
+        if p := query.get('page'):
+            if 1 < p > 50:
+                raise ValidationError('page number must be between 1 and 50')
+            
+            res.append('page=%d' % p)
+        
+        if p := query.get('per_page'):
+            if 1 < p > 100:
+                raise ValidationError('per_page number must be between 1 and 100')
+            
+            res.append('per_page=%d' % p)
+        
+        if p := query.get('filter'):
+            res.append('filter[%s]=%s' % p)
+        
+        if p := query.get('include'):
+            p = list(filter(lambda i: i, p))
+            if len(p):
+                res.append('include=%s' % ','.join(p))
+        
+        if p := query.get('sort'):
+            res.append('sort=%s' % p)
+        
+        if len(res) == 0:
+            return ''
+        
+        return '?' + res[0] + ('&' + '&'.join(res[1:]) if len(res) > 1 else '')
+    
     async def _make(self, path: str, method: str, **params):
         if method not in ('GET', 'POST', 'PATCH', 'PUT', 'DELETE'):
             raise ValueError("invalid http method '%s'" % method)
@@ -41,7 +72,9 @@ class RequestManager(EventManager):
                 await self.__debug('sending json payload')
                 body = dumps(params)
         
-        url = '%s/api/%s%s' % (self.domain, self._type.lower(), path)
+        query = self._validate_query(params)
+        url = '%s/api/%s%s%s' % (self.domain, self._type.lower(), path, query)
+        
         await self.__debug('attempting to start session')
         async with ClientSession() as session:
             await self.__debug('attemping to perform request to %s' % url)
@@ -77,8 +110,8 @@ class RequestManager(EventManager):
                     'pterodactyl api returned an invalid or unacceptable'
                     ' response (status: %d)' % response.status)
     
-    async def rget(self, path: str):
-        return await self._make(path, 'GET')
+    async def rget(self, path: str, **data):
+        return await self._make(path, 'GET', **data)
     
     async def rpost(self, path: str, **data):
         return await self._make(path, 'POST', **data)

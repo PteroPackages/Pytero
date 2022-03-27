@@ -1,3 +1,7 @@
+def select(obj: dict, keys: list[str]) -> dict:
+    return {k: obj[k] for k in obj if k in keys}
+
+
 def transform(
     data: object,
     *,

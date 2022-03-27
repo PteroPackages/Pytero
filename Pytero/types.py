@@ -23,6 +23,16 @@ class _PteroApp:
 
 
 @dataclass
+class Allocation:
+    id: int
+    ip: str
+    alias: str | None
+    port: int
+    notes: str | None
+    assigned: bool
+
+
+@dataclass
 class Nest:
     id: int
     uuid: str

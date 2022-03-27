@@ -1,4 +1,5 @@
 from typing import Callable
+from .allocation_manager import AllocationManager
 from .eggs_manager import EggsManager
 from .location_manager import LocationManager
 from .nest_manager import NestManager
@@ -13,6 +14,7 @@ class PteroApp:
         self.auth = auth
         self.options = None # TODO: use kwargs
         
+        self.allocations = AllocationManager(self)
         self.eggs = EggsManager(self)
         self.locations = LocationManager(self)
         self.nests = NestManager(self)

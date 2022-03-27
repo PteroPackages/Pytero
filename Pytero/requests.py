@@ -65,12 +65,12 @@ class RequestManager(EventManager):
         
         body: Optional[str] = None
         if params is not None:
-            if params.get('raw'):
+            if p := params.get('raw'):
                 await self.__debug('sending raw byte payload')
-                body = params
-            else:
+                body = p
+            elif p := params.get('body'):
                 await self.__debug('sending json payload')
-                body = dumps(params)
+                body = dumps(p)
         
         query = self._validate_query(params)
         url = '%s/api/%s%s%s' % (self.domain, self._type.lower(), path, query)

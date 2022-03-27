@@ -29,6 +29,11 @@ class PteroAPIError(Exception):
         return err
 
 
+class RangeError(Exception):
+    '''Errors received for invalid ranges'''
+    pass
+
+
 class RequestError(Exception):
     '''Errors received upon requesting a Pterodactyl endpoint'''
     pass

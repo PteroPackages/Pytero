@@ -4,6 +4,7 @@ from .eggs_manager import EggsManager
 from .location_manager import LocationManager
 from .nest_manager import NestManager
 from .node_manager import NodeManager
+from .server_manager import AppServerManager
 from .user_manager import UserManager
 from ..requests import RequestManager
 
@@ -19,6 +20,7 @@ class PteroApp:
         self.nests = NestManager(self)
         self.nodes = NodeManager(self)
         self.requests = RequestManager('Application', self.domain, self.auth)
+        self.servers = AppServerManager(self)
         self.users = UserManager(self)
     
     def on_receive(self, func: Callable[[dict[str,]], None]):

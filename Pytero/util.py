@@ -6,8 +6,8 @@ def transform(
     data: object,
     *,
     ignore: list[str] = [],
-    cast: dict[str,] = [],
-    maps: dict[str, str] = []
+    cast: dict[str,] = {},
+    maps: dict[str, str] = {}
 ) -> dict[str,]:
     res = {}
     

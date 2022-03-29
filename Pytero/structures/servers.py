@@ -1,4 +1,5 @@
 from typing import Optional
+from ..errors import AccessError
 from .node import Node
 from ..types import _PteroApp
 from .users import PteroUser
@@ -62,6 +63,9 @@ class AppServer:
         external_id: int = None,
         description: str = None
     ):
+        if not self.usable:
+            raise AccessError(self)
+        
         data = await self.client.servers.update_details(
             self.id,
             name=name,
@@ -83,6 +87,9 @@ class AppServer:
         io: int = None,
         feature_limits: dict[str, int] = {}
     ):
+        if not self.usable:
+            raise AccessError(self)
+        
         data = await self.client.servers.update_build(
             self.id,
             allocation=allocation,
@@ -105,6 +112,9 @@ class AppServer:
         image: str = None,
         skip_scripts: bool = False
     ):
+        if not self.usable:
+            raise AccessError(self)
+        
         data = await self.client.servers.update_startup(
             self.id,
             startup=startup,
@@ -116,20 +126,32 @@ class AppServer:
         return data
     
     async def suspend(self):
+        if not self.usable:
+            raise AccessError(self)
+        
         await self.client.servers.suspend(self.id)
         self.suspended = True
         self.usable = False
     
     async def unsuspend(self):
+        if not self.usable:
+            raise AccessError(self)
+        
         await self.client.servers.unsuspend(self.id)
         self.suspended = False
         self.usable = True
     
     async def reinstall(self):
+        if not self.usable:
+            raise AccessError(self)
+        
         await self.client.servers.reinstall(self.id)
         self.usable = False
     
     async def delete(self, force: bool = False):
+        if not self.usable:
+            raise AccessError(self)
+        
         await self.client.servers.delete(self.id, force)
         self._deleted = True
         self.usable = False

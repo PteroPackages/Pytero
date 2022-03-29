@@ -1,3 +1,13 @@
+class AccessError(Exception):
+    '''Raised when a resource cannot/should not be accessed yet'''
+    
+    def __init__(self, cls) -> None:
+        super().__init__(
+            'resources for %s are not available'
+            % cls.__class__.__name__
+        )
+
+
 class EventError(Exception):
     '''Raised when there is an error with an event'''
     pass

@@ -1,4 +1,7 @@
-def select(obj: dict, keys: list[str]) -> dict:
+from typing import Callable
+
+
+def select(obj: dict, *keys: str) -> dict:
     return {k: obj[k] for k in obj if k in keys}
 
 
@@ -6,7 +9,7 @@ def transform(
     data: object,
     *,
     ignore: list[str] = [],
-    cast: dict[str,] = {},
+    cast: dict[str, Callable[...]] = {},
     maps: dict[str, str] = {}
 ) -> dict[str,]:
     res = {}

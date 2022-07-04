@@ -1,5 +1,5 @@
-from ..types import _PteroApp
-from ..util import transform
+from .types import _PteroApp
+from .util import transform
 
 
 class BaseUser:

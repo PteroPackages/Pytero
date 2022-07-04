@@ -1,4 +1,4 @@
-from ..structures.node import Node
+from ..node import Node
 from ..types import _PteroApp
 
 

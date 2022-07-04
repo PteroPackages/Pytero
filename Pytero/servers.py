@@ -1,9 +1,9 @@
 from typing import Optional
-from ..errors import AccessError
+from .errors import AccessError
 from .node import Node
-from ..types import _PteroApp
+from .types import _PteroApp
 from .users import PteroUser
-from ..util import transform
+from .util import transform
 
 
 class AppServer:

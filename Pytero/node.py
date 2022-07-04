@@ -1,6 +1,6 @@
 from typing import Optional
-from ..types import NodeConfiguration, _PteroApp
-from ..util import transform
+from .types import NodeConfiguration, _PteroApp
+from .util import transform
 
 
 class Node:

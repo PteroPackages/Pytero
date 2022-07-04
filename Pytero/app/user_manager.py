@@ -1,4 +1,4 @@
-from ..structures.users import PteroUser
+from ..users import PteroUser
 from ..types import _PteroApp
 
 

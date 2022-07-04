@@ -1,5 +1,5 @@
 from typing import Optional
-from ..structures.servers import AppServer
+from ..servers import AppServer
 from ..types import _PteroApp
 from ..util import select
 

@@ -1,6 +1,6 @@
 <h1 align="center">Pytero</h1>
-<h3 align="center">An updated and flexible API wrapper for the Pterodactyl API!</h3>
-<p align="center"><img src="https://img.shields.io/badge/discord-invite-5865f2?style=for-the-badge&logo=discord&logoColor=white"> <img src="https://img.shields.io/badge/version-0.1.0-3572A5?style=for-the-badge"> <img src="https://img.shields.io/github/issues/PteroPackages/Pytero.svg?style=for-the-badge">
+<h3 align="center">A flexible API wrapper for the Pterodactyl API</h3>
+<p align="center"><a href="https://discord.com/invite/dwcfTjgn7S" type="_blank"><img src="https://img.shields.io/badge/discord-invite-5865f2?style=for-the-badge&logo=discord&logoColor=white"></a> <img src="https://img.shields.io/badge/version-0.1.0-3572A5?style=for-the-badge"> <img src="https://img.shields.io/github/issues/PteroPackages/Pytero.svg?style=for-the-badge"></p>
 
 ## About
 Pytero is a flexible API wrapper for the Pterodactyl game panel written Python using `async`/`await` syntax. The majority of the wrapper is typed making it perfect for modern-day Python users.
@@ -11,7 +11,6 @@ pip install git+https://github.com/PteroPackages/Pytero.git
 ```
 
 ## Getting Started
-Pytero has 2 separate classes for interacting with the Application and Client API.
 ```python
 import asyncio
 from Pytero import PteroApp

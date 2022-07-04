@@ -14,7 +14,7 @@ setup(
     license='MIT',
     version=__version__,
     packages=find_packages('Pytero'),
-    description='An updated and flexible API wrapper for the Pterodactyl API!',
+    description='A flexible API wrapper for the Pterodactyl API',
     long_description=long_desc,
     long_desription_content_type='text/markdown',
     include_package_data=True,

@@ -3,12 +3,12 @@ from json import dumps
 from time import time
 from typing import Callable, Optional
 from .errors import PteroAPIError, RequestError
-from .events import AsyncEmitter
+from .events import Emitter
 
 
 __all__ = ('RequestManager')
 
-class RequestManager(AsyncEmitter):
+class RequestManager(Emitter):
     def __init__(self, api: str, url: str, key: str) -> None:
         super().__init__()
         self._api = api

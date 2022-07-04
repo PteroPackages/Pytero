@@ -1,4 +1,4 @@
-from typing import Callable
+from typing import Any, Callable
 
 
 def select(obj: dict, *keys: str) -> dict:
@@ -9,7 +9,7 @@ def transform(
     data: object,
     *,
     ignore: list[str] = [],
-    cast: dict[str, Callable[...]] = {},
+    cast: dict[str, Callable[..., Any]] = {},
     maps: dict[str, str] = {}
 ) -> dict[str,]:
     res = {}

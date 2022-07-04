@@ -9,7 +9,7 @@ License: MIT
 '''
 from .app import PteroApp
 from .errors import *
-from .events import AsyncEmitter
+from .events import Emitter
 from .http import RequestManager
 from .node import Node
 from .permissions import Flags, Permissions

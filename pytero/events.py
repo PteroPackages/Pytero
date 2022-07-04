@@ -3,13 +3,15 @@ from typing import Callable
 from .errors import EventError
 
 
-class AsyncEmitter:
+__all__ = ('Emitter')
+
+class Emitter:
     '''Events emitter manager for Pytero'''
     def __init__(self) -> None:
         self._slots: dict[str, tuple[bool, Callable[..., None]]] = {}
     
     def __repr__(self) -> str:
-        return '<AsyncEmitter events=%d>' % len(self.slots)
+        return '<Emitter events=%d>' % len(self.slots)
     
     def add_event(self, name: str, slot: Callable[..., None]) -> None:
         if not callable(slot):

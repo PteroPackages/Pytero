@@ -7,12 +7,13 @@ License: MIT
 
 © 2021-2022 PteroPackages
 '''
+from .app import PteroApp
 from .app.pteroapp import EggsManager, LocationManager, NestManager, \
-    NodeManager, PteroApp, UserManager
+    NodeManager, UserManager
 from .errors import *
 from .events import EventManager
 from .permissions import *
-from .requests import RequestManager
+from .http import RequestManager
 from .structures.node import Node
 from .structures.users import *
 from .types import Nest, NodeLocation, _PteroApp, _RequestManager

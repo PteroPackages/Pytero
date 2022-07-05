@@ -33,6 +33,6 @@ class Emitter:
                 else:
                     slot[1](*args, **kwargs)
             except Exception as e:
-                raise EventError('failed to run event: %s', str(e))
+                raise EventError('failed to run event: %s' % e)
         else:
             raise KeyError("no event by the name of '%s'" % name)

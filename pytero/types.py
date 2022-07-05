@@ -3,6 +3,7 @@ from typing import Optional
 
 
 __all__ = (
+    'Activity',
     'Allocation',
     'AppDatabase',
     'DeployNodeOptions',
@@ -16,6 +17,21 @@ __all__ = (
     'Nest',
     'NodeConfiguration'
 )
+
+@dataclass
+class Activity:
+    batch: str
+    event: str
+    is_api: bool
+    ip: Optional[str]
+    description: Optional[str]
+    properties: dict[str,]
+    has_additional_metadata: bool
+    timestamp: str
+
+    def __repr__(self) -> str:
+        return '<Activity event=%s>' % self.event
+
 
 @dataclass
 class Allocation:

@@ -8,6 +8,7 @@ License: MIT
 © 2021-2022 PteroPackages
 '''
 from .app import PteroApp
+from .client import PteroClient
 from .errors import *
 from .events import Emitter
 from .http import RequestManager
@@ -15,6 +16,7 @@ from .node import Node
 from .permissions import *
 from .servers import AppServer
 from .types import *
+from .users import *
 
 
 __title__ = 'Pytero'

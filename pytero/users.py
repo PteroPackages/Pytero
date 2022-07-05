@@ -2,7 +2,32 @@ from typing import Optional
 from .util import transform
 
 
-__all__ = ('User')
+__all__ = ('Account', 'User')
+
+
+class Account:
+    def __init__(self, http, data: dict[str,]) -> None:
+        self._http = http
+        self.id = data['id']
+        self._patch(data)
+    
+    def __repr__(self) -> str:
+        return '<Account id=%d>' % self.id
+    
+    def __str__(self) -> str:
+        return self.first_name +' '+ self.last_name
+    
+    def _patch(self, data: dict[str,]) -> None:
+        self.username: str = data['username']
+        self.email: str = data['email']
+        self.first_name: str = data['first_name']
+        self.last_name: str = data['last_name']
+        self.language: str = data['language']
+        self.admin: bool = data['admin']
+    
+    def to_dict(self) -> dict[str,]:
+        return transform(self, ignore=['_http'])
+
 
 class User:
     def __init__(self, http, data: dict[str,]) -> None:

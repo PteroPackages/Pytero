@@ -5,6 +5,7 @@ from typing import Optional
 __all__ = (
     'Activity',
     'Allocation',
+    'APIKey',
     'AppDatabase',
     'DeployNodeOptions',
     'DeployServerOptions',
@@ -45,6 +46,18 @@ class Allocation:
 
     def __repr__(self) -> str:
         return '<Allocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
+
+
+@dataclass
+class APIKey:
+    identifier: str
+    description: str
+    allowed_ips: list[str]
+    created_at: str
+    last_used_at: Optional[str]
+
+    def __repr__(self) -> str:
+        return '<APIKey identifier=%s>' % self.identifier
 
 
 @dataclass

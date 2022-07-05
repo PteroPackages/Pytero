@@ -1,5 +1,5 @@
 from .http import RequestManager
-from .types import Activity, SSHKey
+from .types import APIKey, Activity, SSHKey
 from .users import Account
 
 
@@ -57,6 +57,30 @@ class PteroClient:
             res.append(Activity(**datum['attributes']))
         
         return res
+    
+    async def get_api_keys(self) -> list[APIKey]:
+        data = await self._http.get('/account/api-keys')
+        res: list[APIKey] = []
+        
+        for datum in data['data']:
+            res.append(APIKey(**datum['attributes']))
+        
+        return res
+    
+    async def create_api_key(
+        self,
+        *,
+        description: str,
+        allowed_ips: list[str] = []
+    ) -> APIKey:
+        data = await self._http.post(
+            '/account/api-keys',
+            body={'description': description, 'allowed_ips': allowed_ips}
+        )
+        return APIKey(**data['attributes'])
+    
+    async def delete_api_key(self, identifier: str) -> None:
+        await self._http.delete(f'/account/api-keys/{identifier}')
     
     async def get_ssh_keys(self) -> list[SSHKey]:
         data = await self._http.get('/account/ssh-keys')

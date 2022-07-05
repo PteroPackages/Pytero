@@ -15,7 +15,8 @@ __all__ = (
     'Limits',
     'Location',
     'Nest',
-    'NodeConfiguration'
+    'NodeConfiguration',
+    'SSHKey'
 )
 
 @dataclass
@@ -206,3 +207,11 @@ class Location:
 
     def __repr__(self) -> str:
         return '<Location id=%d long=%s short=%s>' % (self.id, self.long, self.short)
+
+
+@dataclass
+class SSHKey:
+    name: str
+    fingerprint: str
+    public_key: str
+    created_at: str

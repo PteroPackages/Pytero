@@ -1,6 +1,8 @@
 from enum import Enum
 
 
+__all__ = ('Flags', 'Permissions')
+
 class Flags(Enum):
     WEBSOCKET_CONNECT = 'websocket.connect'
 

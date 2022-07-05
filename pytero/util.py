@@ -1,6 +1,8 @@
 from typing import Any, Callable
 
 
+__all__ = ('select', 'transform')
+
 def select(obj: dict, *keys: str) -> dict:
     return {k: obj[k] for k in obj if k in keys}
 

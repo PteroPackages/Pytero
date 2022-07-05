@@ -1,5 +1,5 @@
 '''# Pytero
-An updated and flexible API wrapper for the Pterodactyl API!
+A flexible API wrapper for the Pterodactyl API!
 
 Author: Devonte <https://github.com/devnote-dev>
 Repository: https://github.com/PteroPackages/Pytero

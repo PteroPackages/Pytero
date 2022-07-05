@@ -1,5 +1,5 @@
 from setuptools import setup, find_packages
-from Pytero import __version__
+from pytero import __version__
 
 
 with open('./README.md') as file:
@@ -13,7 +13,7 @@ setup(
     url='https://github.com/PteroPackages/Pytero',
     license='MIT',
     version=__version__,
-    packages=find_packages('Pytero'),
+    packages=find_packages('pytero'),
     description='A flexible API wrapper for the Pterodactyl API',
     long_description=long_desc,
     long_desription_content_type='text/markdown',

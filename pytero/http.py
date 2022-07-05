@@ -18,7 +18,7 @@ class RequestManager(Emitter):
         self.ping: float = float('nan')
     
     def __repr__(self) -> str:
-        return '<RequestManager(Emitter)>'
+        return '<RequestManager (Emitter)>'
     
     def event(self, func: Callable[[str], None]) -> Callable[[str], None]:
         super().add_event(func.__name__, func)
@@ -78,7 +78,7 @@ class RequestManager(Emitter):
         query = self._validate_query(kwargs)
         url = '%s/api/%s%s%s' % (self.url, self._api, path, query)
         await self._emit(
-            'debug',
+            'on_debug',
             'request: %s /api/%s%s' % (method, self._api, path),
             'payload: %d bytes' % getsizeof(payload)
         )
@@ -94,7 +94,7 @@ class RequestManager(Emitter):
                 response: ClientResponse
                 
                 await self._emit(
-                    'debug',
+                    'on_debug',
                     'response: %d' % response.status,
                     'content-type: %s' % response.content_type,
                     'content-length: %d' % (response.content_length or 0)
@@ -112,8 +112,8 @@ class RequestManager(Emitter):
                         return data
                 
                 if 400 <= response.status < 500:
-                    err: dict[str,] = await response.json()
-                    raise PteroAPIError(err['errors'][0]['code'], err)
+                    data: dict[str,] = await response.json()
+                    raise PteroAPIError(data['errors'][0]['code'], data)
                 
                 raise RequestError(
                     'pterodactyl api returned an invalid or unacceptable'

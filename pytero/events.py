@@ -22,11 +22,14 @@ class Emitter:
     def remove_event(self, name: str) -> None:
         del self._slots[name]
     
+    def has_event(self, name: str) -> bool:
+        return name in self._slots
+    
     def clear_slots(self) -> None:
         self._slots.clear()
     
     async def emit_event(self, name: str, *args, **kwargs) -> None:
-        if slot := self._slots[name]:
+        if slot := self._slots.get(name):
             try:
                 if slot[0]:
                     await slot[1](*args, **kwargs)
@@ -34,5 +37,3 @@ class Emitter:
                     slot[1](*args, **kwargs)
             except Exception as e:
                 raise EventError('failed to run event: %s' % e)
-        else:
-            raise KeyError("no event by the name of '%s'" % name)

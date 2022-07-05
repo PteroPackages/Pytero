@@ -17,7 +17,8 @@ __all__ = (
     'Location',
     'Nest',
     'NodeConfiguration',
-    'SSHKey'
+    'SSHKey',
+    'WebSocketAuth'
 )
 
 @dataclass
@@ -228,3 +229,9 @@ class SSHKey:
     fingerprint: str
     public_key: str
     created_at: str
+
+
+@dataclass
+class WebSocketAuth:
+    socket: str
+    token: str

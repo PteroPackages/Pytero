@@ -14,7 +14,7 @@ from .events import Emitter
 from .http import RequestManager
 from .node import Node
 from .permissions import *
-from .servers import AppServer
+from .servers import *
 from .types import *
 from .users import *
 

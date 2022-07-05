@@ -1,5 +1,6 @@
 from .http import RequestManager
-from .types import APIKey, Activity, SSHKey
+from .types import APIKey, Activity, SSHKey, WebSocketAuth
+from .servers import ClientServer
 from .users import Account
 
 
@@ -103,3 +104,20 @@ class PteroClient:
             '/account/ssh-keys/remove',
             body={'fingerprint': fingerprint}
         )
+    
+    async def get_servers(self) -> list[ClientServer]:
+        data = await self._http.get('/')
+        res: list[ClientServer] = []
+        
+        for datum in data['data']:
+            res.append(ClientServer(self._http, datum['attributes']))
+        
+        return res
+    
+    async def get_server(self, identifier: str) -> ClientServer:
+        data = await self._http.get(f'/servers/{identifier}')
+        return ClientServer(self._http, data['attributes'])
+    
+    async def get_server_ws(self, identifier: str) -> WebSocketAuth:
+        data = await self._http.get(f'/servers/{identifier}/websocket')
+        return WebSocketAuth(**data['data'])

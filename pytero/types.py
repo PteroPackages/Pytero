@@ -1,5 +1,30 @@
 from dataclasses import dataclass
-from typing import Callable
+from typing import Callable, Optional
+
+
+@dataclass
+class DeployOptions:
+    locations: list[int]
+    dedicated_ip: bool
+    port_range: list[str]
+
+
+@dataclass
+class FeatureLimits:
+    allocations: int
+    backups: int
+    databases: int
+
+
+@dataclass
+class Limits:
+    memory: int
+    disk: int
+    swap: int
+    io: int
+    cpu: int
+    threads: Optional[str]
+    oom_disabled: Optional[bool]
 
 
 class _RequestManager:

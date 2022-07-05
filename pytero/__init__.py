@@ -13,6 +13,7 @@ from .events import Emitter
 from .http import RequestManager
 from .node import Node
 from .permissions import Flags, Permissions
+from .servers import AppServer
 
 
 __title__ = 'Pytero'

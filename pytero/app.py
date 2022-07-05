@@ -131,8 +131,8 @@ class PteroApp:
             'docker_image': docker_image,
             'startup': startup,
             'environment': environment,
-            'limits': dict(limits),
-            'feature_limits': dict(feature_limits),
+            'limits': limits.to_dict(),
+            'feature_limits': feature_limits.to_dict(),
             'external_id': external_id,
             'skip_scripts': skip_scripts,
             'oom_disabled': oom_disabled,
@@ -185,8 +185,8 @@ class PteroApp:
             body={
                 'allocation': allocation or old.allocation_id,
                 'oom_disabled': oom_disabled,
-                'limits': dict(limits if limits is not None else old.limits),
-                'feature_limits': dict(feature_limits if feature_limits is not None else old.feature_limts),
+                'limits': limits.to_dict() if limits is not None else old.limits.to_dict(),
+                'feature_limits': feature_limits.to_dict() if feature_limits is not None else old.feature_limts.to_dict(),
                 'add_allocations': add_allocations,
                 'remove_allocations': remove_allocations}
         )
@@ -206,10 +206,10 @@ class PteroApp:
         data = await self._http.patch(
             f'/servers/{id}/startup',
             body={
-                'startup': startup or old.container['startup_command'],
-                'environment': environment or old.container['environment'],
-                'egg': egg or old.container['egg'],
-                'image': image or old.container['docker_image'],
+                'startup': startup or old.container.startup_command,
+                'environment': environment or old.container.environment,
+                'egg': egg or old.egg_id,
+                'image': image or old.container.image,
                 'skip_scripts': skip_scripts}
         )
         return AppServer(self._http, data['attributes'])

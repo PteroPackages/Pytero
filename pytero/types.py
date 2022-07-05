@@ -27,6 +27,15 @@ class Allocation:
             % (self.id, self.ip, self.port)
 
 
+
+@dataclass
+class Container:
+    startup_command: str
+    environment: dict[str, int | str | bool]
+    image: str
+    installed: bool
+
+
 @dataclass
 class DeployServerOptions:
     locations: list[int]

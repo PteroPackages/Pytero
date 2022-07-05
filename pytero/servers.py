@@ -1,5 +1,5 @@
 from typing import Optional
-from .types import FeatureLimits, Limits
+from .types import Container, FeatureLimits, Limits
 from .util import transform
 
 
@@ -31,7 +31,9 @@ class AppServer:
         self.user_id: int = data['user']
         self.node_id: int = data['node']
         self.allocation_id: int = data['allocation']
-        self.container: dict[str, str | int] = data['container']
+        self.nest_id: int = data['nest']
+        self.egg_id: int = data['egg']
+        self.container: Container = Container(**data['container'])
         self.updated_at: Optional[str] = data.get('updated_at')
     
     def _patch_relations(self) -> None:

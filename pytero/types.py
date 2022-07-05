@@ -4,7 +4,8 @@ from typing import Optional
 
 __all__ = (
     'Allocation',
-    'DeployOptions',
+    'DeployNodeOptions',
+    'DeployServerOptions',
     'FeatureLimits',
     'Limits',
     'Nest',
@@ -27,7 +28,7 @@ class Allocation:
 
 
 @dataclass
-class DeployOptions:
+class DeployServerOptions:
     locations: list[int]
     dedicated_ip: bool
     port_range: list[str]
@@ -37,6 +38,19 @@ class DeployOptions:
             'locations': self.locations,
             'dedicated_ip': self.dedicated_ip,
             'port_range': self.port_range}
+
+
+@dataclass
+class DeployNodeOptions:
+    memory: int
+    disk: int
+    location_ids: list[int]
+
+    def to_dict(self) -> dict[str,]:
+        return {
+            'memory': self.memory,
+            'disk': self.disk,
+            'location_ids': self.location_ids}
 
 
 @dataclass

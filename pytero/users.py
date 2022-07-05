@@ -1,97 +1,31 @@
-from .types import _PteroApp
+from typing import Optional
 from .util import transform
 
 
-class BaseUser:
-    def __init__(self, client: _PteroApp, data: dict[str,]) -> None:
-        self.client = client
-        self._patch(data)
-    
-    def _patch(self, data: dict[str,]) -> None:
+class User:
+    def __init__(self, http, data: dict[str,]) -> None:
+        self._http = http
         self.id: int = data['id']
-        self.username: str = data['username']
-        self.email: str = data['email']
-        self.firstname: str = data['first_name']
-        self.lastname: str = data['last_name']
-        self.language: str = data['language']
-    
-    def __str__(self) -> str:
-        return self.firstname +' '+ self.lastname
+        self.uuid: str = data['uuid']
+        self.created_at: str = data['created_at']
+        self._patch(data)
     
     def __repr__(self) -> str:
-        return '<%s id=%d username=%s>' \
-            % (self.__class__.__name__, self.id, self.username)
+        return '<User id=%d uuid=%s>' % (self.id, self.uuid)
+    
+    def __str__(self) -> str:
+        return self.first_name +' '+ self.last_name
+    
+    def _patch(self, data: dict[str,]) -> None:
+        self.external_id: Optional[str] = data.get('external_id')
+        self.username: str = data['username']
+        self.email: str = data['email']
+        self.first_name: str = data['first_name']
+        self.last_name: str = data['last_name']
+        self.language: str = data['language']
+        self.root_admin: bool = data['root_admin']
+        self.two_factor: bool = data['2fa']
+        self.updated_at: Optional[str] = data.get('updated_at')
     
     def to_dict(self) -> dict[str,]:
-        return transform(self, ignore=['client', 'relationships'])
-
-
-class PteroUser(BaseUser):
-    def __init__(self, client: _PteroApp, data: dict[str,]) -> None:
-        super().__init__(client, data)
-        self._patch(data)
-    
-    def _patch(self, data: dict[str,]) -> None:
-        super()._patch(data)
-        self.external_id: str = data['external_id']
-        self.uuid: str = data['uuid']
-        self.is_admin: bool = data['root_admin']
-        self.two_factor: bool = data['2fa']
-        self.created_at: str = data['created_at']
-        self.updated_at: str = data['updated_at']
-        self.relationships = NotImplemented
-    
-    async def update(self):
-        return NotImplemented
-    
-    async def delete(self):
-        return NotImplemented
-
-
-class PteroSubUser(BaseUser):
-    def __init__(self, client: _PteroApp, data: dict[str,]) -> None:
-        super().__init__(client, data)
-        self._patch(data)
-    
-    def _patch(self, data: dict[str,]) -> None:
-        super().__patch(data)
-        self.uuid: str = data['uuid']
-        self.image: str = data['image']
-        self.enabled: bool = data['2fa_enabled']
-    
-    async def set_permissions(data: object):
-        return NotImplemented
-
-
-class ClientUser(BaseUser):
-    def __init__(self, client: _PteroApp, data: dict[str,]) -> None:
-        super().__init__(client, data)
-        super()._patch(data)
-        
-        self.is_admin: bool = data['is_admin']
-        self.tokens = []
-        self.apikeys = []
-    
-    async def get_2fa_code(self):
-        return NotImplemented
-    
-    async def enable_2fa(self, code: str):
-        return NotImplemented
-    
-    async def disable_2fa(self, password: str):
-        return NotImplemented
-    
-    async def update_email(self, email: str, password: str):
-        return NotImplemented
-    
-    async def update_password(self, old_pass: str, new_pass: str):
-        return NotImplemented
-    
-    async def fetch_keys(self):
-        return NotImplemented
-    
-    async def create_key(self):
-        return NotImplemented
-    
-    async def delete_key(self, key: str):
-        return NotImplemented
+        return transform(self, ignore=['_http'], map={'two_factor': '2fa'})

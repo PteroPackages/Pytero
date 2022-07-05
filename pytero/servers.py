@@ -3,6 +3,8 @@ from .types import FeatureLimits, Limits
 from .util import transform
 
 
+__all__ = ('AppServer')
+
 class AppServer:
     def __init__(self, http, data: dict[str,]) -> None:
         self._http = http

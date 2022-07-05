@@ -1,5 +1,29 @@
 from dataclasses import dataclass
-from typing import Callable, Optional
+from typing import Optional
+
+
+__all__ = (
+    'Allocation',
+    'DeployOptions',
+    'FeatureLimits',
+    'Limits',
+    'Nest',
+    'NodeConfiguration',
+    'NodeLocation'
+)
+
+@dataclass
+class Allocation:
+    id: int
+    ip: str
+    alias: str | None
+    port: int
+    notes: str | None
+    assigned: bool
+
+    def __repr__(self) -> str:
+        return '<Allocation id=%d ip=%s port=%d>' \
+            % (self.id, self.ip, self.port)
 
 
 @dataclass
@@ -8,12 +32,24 @@ class DeployOptions:
     dedicated_ip: bool
     port_range: list[str]
 
+    def to_dict(self) -> dict[str,]:
+        return {
+            'locations': self.locations,
+            'dedicated_ip': self.dedicated_ip,
+            'port_range': self.port_range}
+
 
 @dataclass
 class FeatureLimits:
     allocations: int
     backups: int
     databases: int
+
+    def to_dict(self) -> dict[str,]:
+        return {
+            'allocations': self.allocations,
+            'backups': self.backups,
+            'databases': self.databases}
 
 
 @dataclass
@@ -26,34 +62,15 @@ class Limits:
     threads: Optional[str]
     oom_disabled: Optional[bool]
 
-
-class _RequestManager:
-    ping: float
-    get_headers: Callable[[], dict[str, str]]
-    _make: Callable[[str, str, dict | None], dict[str,] | None]
-    rget: Callable[[str], dict[str,] | None]
-    rpost: Callable[[str, dict | None], dict[str,] | None]
-    rpatch: Callable[[str, dict | None], dict[str,] | None]
-    rput: Callable[[str, dict | None], dict[str,] | None]
-    rdelete: Callable[[str], dict[str,] | None]
-    on_receive: Callable[[dict[str,]], None]
-    on_debug: Callable[[str], None]
-
-
-class _PteroApp:
-    domain: str
-    auth: str
-    requests: _RequestManager
-
-
-@dataclass
-class Allocation:
-    id: int
-    ip: str
-    alias: str | None
-    port: int
-    notes: str | None
-    assigned: bool
+    def to_dict(self) -> dict[str,]:
+        return {
+            'memory': self.memory,
+            'disk': self.disk,
+            'swap': self.swap,
+            'io': self.io,
+            'cpu': self.cpu,
+            'threads': self.threads,
+            'oom_disabled': self.oom_disabled}
 
 
 @dataclass
@@ -80,6 +97,9 @@ class NodeConfiguration:
     system: dict[str, str | dict[str, int]]
     allowed_mounts: list[str]
     remote: str
+
+    def __repr__(self) -> str:
+        return '<NodeConfiguration uuid=%s>' % self.uuid
 
 
 @dataclass

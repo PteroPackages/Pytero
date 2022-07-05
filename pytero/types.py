@@ -8,9 +8,9 @@ __all__ = (
     'DeployServerOptions',
     'FeatureLimits',
     'Limits',
+    'Location',
     'Nest',
-    'NodeConfiguration',
-    'NodeLocation'
+    'NodeConfiguration'
 )
 
 @dataclass
@@ -126,7 +126,7 @@ class NodeConfiguration:
 
 
 @dataclass
-class NodeLocation:
+class Location:
     id: int
     long: str
     short: str
@@ -134,5 +134,5 @@ class NodeLocation:
     updated_at: str | None
 
     def __repr__(self) -> str:
-        return '<NodeLocation id=%d long=%s short=%s>' \
+        return '<Location id=%d long=%s short=%s>' \
             % (self.id, self.long, self.short)

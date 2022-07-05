@@ -2,7 +2,7 @@ from .http import RequestManager
 from .node import Node
 from .servers import AppServer
 from .types import Allocation, DeployNodeOptions, DeployServerOptions, FeatureLimits, \
-    Limits, NodeConfiguration
+    Limits, NodeConfiguration, Location
 from .users import User
 
 
@@ -289,3 +289,39 @@ class PteroApp:
     
     async def delete_node_allocation(self, node: int, id: int) -> None:
         await self._http.delete(f'/nodes/{node}/allocations/{id}')
+    
+    async def get_locations(self) -> list[Location]:
+        data = await self._http.get('/locations')
+        res: list[Location] = []
+        
+        for datum in data['data']:
+            res.append(Location(**datum['attributes']))
+        
+        return res
+    
+    async def get_location(self, id: int) -> Location:
+        data = await self._http.get(f'/locations/{id}')
+        return Location(**data['attributes'])
+    
+    async def create_location(self, *, short: str, long: str) -> Location:
+        data = await self._http.post('/locations', body={'short': short, 'long': long})
+        return Location(**data['attributes'])
+    
+    async def update_location(
+        self,
+        id: int,
+        *,
+        short: str = None,
+        long: str = None
+    ) -> Location:
+        old = await self.get_location(id)
+        data = await self._http.patch(
+            f'/locations/{id}',
+            body={
+                'short': short or old.short,
+                'long': long or old.long}
+        )
+        return Location(**data['attributes'])
+    
+    async def delete_location(self, id: int, /) -> None:
+        await self._http.delete(f'/locations/{id}')

@@ -1,8 +1,8 @@
 from .http import RequestManager
 from .node import Node
 from .servers import AppServer
-from .types import Allocation, DeployNodeOptions, DeployServerOptions, Egg, \
-    FeatureLimits, Limits, Nest, NodeConfiguration, Location
+from .types import Allocation, AppDatabase, DeployNodeOptions, DeployServerOptions, \
+    Egg, FeatureLimits, Limits, Nest, NodeConfiguration, Location
 from .users import User
 
 
@@ -225,6 +225,33 @@ class PteroApp:
     
     async def delete_server(self, id: int, *, force: bool = False) -> None:
         await self._http.delete('/servers/%d%s' % (id, '/force' if force else ''))
+    
+    async def get_server_databases(self, server: int) -> list[AppDatabase]:
+        data = await self._http.get(f'/servers/{server}/databases')
+        res: list[AppDatabase] = []
+        
+        for datum in data['data']:
+            res.append(AppDatabase(**datum['attributes']))
+        
+        return res
+    
+    async def get_server_database(self, server: int, id: int) -> AppDatabase:
+        data = await self._http.get(f'/servers/{server}/databases/{id}')
+        return AppDatabase(**data['attributes'])
+    
+    async def create_database(self, server: int, *, database: str, remote: str) -> AppDatabase:
+        data = await self._http.post(
+            f'/servers/{server}/databases',
+            body={'database': database, 'remote': remote}
+        )
+        return AppDatabase(**data['attributes'])
+    
+    async def reset_database_password(self, server: int, id: int) -> AppDatabase:
+        data = await self._http.post(f'/servers/{server}/databases/{id}/reset-password')
+        return AppDatabase(**data['attributes'])
+    
+    async def delete_database(self, server: int, id: int) -> None:
+        await self._http.delete(f'/servers/{server}/databases/{id}')
     
     async def get_nodes(self) -> list[Node]:
         data = await self._http.get('/nodes')

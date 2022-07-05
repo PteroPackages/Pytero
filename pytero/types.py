@@ -4,6 +4,7 @@ from typing import Optional
 
 __all__ = (
     'Allocation',
+    'AppDatabase',
     'DeployNodeOptions',
     'DeployServerOptions',
     'EggScript',
@@ -28,6 +29,18 @@ class Allocation:
     def __repr__(self) -> str:
         return '<Allocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
 
+
+@dataclass
+class AppDatabase:
+    id: int
+    server: int
+    host: int
+    database: str
+    username: str
+    remote: str
+    max_connections: str
+    created_at: str
+    updated_at: Optional[str]
 
 
 @dataclass

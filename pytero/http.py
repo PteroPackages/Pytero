@@ -72,6 +72,7 @@ class RequestManager(Emitter):
         if body is not None:
             if ctype == 'application/json':
                 payload = dumps(body)
+                await super().emit_event('on_send', payload)
             else:
                 payload = body
         
@@ -106,6 +107,7 @@ class RequestManager(Emitter):
                 if response.status in (200, 201, 202):
                     if response.headers.get('content-type') == 'application/json':
                         data = await response.json()
+                        await super().emit_event('on_receive', data)
                         return data
                     else:
                         data = await response.text()
@@ -113,6 +115,7 @@ class RequestManager(Emitter):
                 
                 if 400 <= response.status < 500:
                     data: dict[str,] = await response.json()
+                    await super().emit_event('on_error', data)
                     raise PteroAPIError(data['errors'][0]['code'], data)
                 
                 raise RequestError(

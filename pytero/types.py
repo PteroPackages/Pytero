@@ -6,6 +6,9 @@ __all__ = (
     'Allocation',
     'DeployNodeOptions',
     'DeployServerOptions',
+    'EggScript',
+    'EggConfiguration',
+    'Egg',
     'FeatureLimits',
     'Limits',
     'Location',
@@ -23,8 +26,7 @@ class Allocation:
     assigned: bool
 
     def __repr__(self) -> str:
-        return '<Allocation id=%d ip=%s port=%d>' \
-            % (self.id, self.ip, self.port)
+        return '<Allocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
 
 
 
@@ -60,6 +62,46 @@ class DeployNodeOptions:
             'memory': self.memory,
             'disk': self.disk,
             'location_ids': self.location_ids}
+
+
+@dataclass
+class EggConfiguration:
+    files: list[str]
+    startup: dict[str, str]
+    stop: str
+    logs: list[str]
+    file_denylist: list[str]
+    extends: Optional[str]
+
+
+@dataclass
+class EggScript:
+    privileged: bool
+    install: str
+    entry: str
+    container: str
+    extends: Optional[str]
+
+
+@dataclass
+class Egg:
+    id: int
+    uuid: str
+    name: str
+    author: str
+    description: str
+    nest: int
+    # technically deprecated
+    docker_image: str
+    docker_images: dict[str, str]
+    config: EggConfiguration
+    startup: str
+    script: EggScript
+    created_at: str
+    updated_at: Optional[str]
+
+    def __repr__(self) -> str:
+        return '<Egg id=%d nest=%d name=%s>' % (self.id, self.nest, self.name)
 
 
 @dataclass
@@ -134,5 +176,4 @@ class Location:
     updated_at: str | None
 
     def __repr__(self) -> str:
-        return '<Location id=%d long=%s short=%s>' \
-            % (self.id, self.long, self.short)
+        return '<Location id=%d long=%s short=%s>' % (self.id, self.long, self.short)

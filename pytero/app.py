@@ -1,8 +1,8 @@
 from .http import RequestManager
 from .node import Node
 from .servers import AppServer
-from .types import Allocation, DeployNodeOptions, DeployServerOptions, FeatureLimits, \
-    Limits, NodeConfiguration, Location
+from .types import Allocation, DeployNodeOptions, DeployServerOptions, Egg, \
+    FeatureLimits, Limits, Nest, NodeConfiguration, Location
 from .users import User
 
 
@@ -325,3 +325,29 @@ class PteroApp:
     
     async def delete_location(self, id: int, /) -> None:
         await self._http.delete(f'/locations/{id}')
+    
+    async def get_nests(self) -> list[Nest]:
+        data = await self._http.get('/nests')
+        res: list[Nest] = []
+        
+        for datum in data['data']:
+            res.append(Nest(**datum['attributes']))
+        
+        return res
+    
+    async def get_nest(self, nest: int) -> Nest:
+        data = await self._http.get(f'/nests/{nest}')
+        return Nest(**data['attributes'])
+    
+    async def get_nest_eggs(self, nest: int) -> list[Egg]:
+        data = await self._http.get(f'/nests/{nest}/eggs')
+        res: list[Egg] = []
+        
+        for datum in data['data']:
+            res.append(Egg(**datum['attributes']))
+        
+        return res
+    
+    async def get_nest_egg(self, nest: int, id: int) -> Egg:
+        data = await self._http.get(f'/nests/{nest}/eggs/{id}')
+        return Egg(**data['attributes'])

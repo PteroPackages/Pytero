@@ -1,6 +1,8 @@
 from .http import RequestManager
+from .node import Node
 from .servers import AppServer
-from .types import DeployOptions, FeatureLimits, Limits
+from .types import Allocation, DeployNodeOptions, DeployServerOptions, FeatureLimits, \
+    Limits, NodeConfiguration
 from .users import User
 
 
@@ -117,7 +119,7 @@ class PteroApp:
         external_id: str = None,
         default_allocation: int = None,
         additional_allocations: list[int] = None,
-        deploy: DeployOptions = None,
+        deploy: DeployServerOptions = None,
         skip_scripts: bool = False,
         oom_disabled: bool = True,
         start_on_completion: bool = False
@@ -223,3 +225,67 @@ class PteroApp:
     
     async def delete_server(self, id: int, *, force: bool = False) -> None:
         await self._http.delete('/servers/%d%s' % (id, '/force' if force else ''))
+    
+    async def get_nodes(self) -> list[Node]:
+        data = await self._http.get('/nodes')
+        res: list[Node] = []
+        
+        for datum in data['data']:
+            res.append(Node(self._http, datum['attributes']))
+        
+        return res
+    
+    async def get_node(self, id: int) -> Node:
+        data = await self._http.get(f'/nodes/{id}')
+        return Node(self._http, data['attributes'])
+    
+    async def get_deployable_nodes(self, options: DeployNodeOptions, /) -> list[Node]:
+        data = await self._http.get('/nodes/deployable', body=options.to_dict())
+        res: list[Node] = []
+        
+        for datum in data['data']:
+            res.append(Node(self._http, datum['attributes']))
+        
+        return res
+    
+    async def get_node_configuration(self, id: int, /) -> NodeConfiguration:
+        data = await self._http.get(f'/nodes/{id}/configuration')
+        return NodeConfiguration(**data)
+    
+    def create_node(self) -> None:
+        return NotImplemented
+    
+    def update_node(self) -> None:
+        return NotImplemented
+    
+    async def delete_node(self, id: int, /) -> None:
+        await self._http.delete(f'/nodes/{id}')
+    
+    async def get_node_allocations(self, node: int) -> list[Allocation]:
+        data = await self._http.get(f'/nodes/{node}/allocations')
+        res: list[Allocation] = []
+        
+        for datum in data['data']:
+            res.append(Allocation(**datum['attributes']))
+        
+        return res
+    
+    async def create_node_allocation(
+        self,
+        node: int,
+        *,
+        ip: str,
+        ports: list[str],
+        alias: str = None
+    ) -> Allocation:
+        data = await self._http.post(
+            f'/nodes/{node}/allocations',
+            body={
+                'ip': ip,
+                'alias': alias,
+                'ports': ports}
+        )
+        return Allocation(**data['attributes'])
+    
+    async def delete_node_allocation(self, node: int, id: int) -> None:
+        await self._http.delete(f'/nodes/{node}/allocations/{id}')

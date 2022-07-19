@@ -1,12 +1,12 @@
 from typing import Optional
-from .types import Container, FeatureLimits, Limits
+from .types import _Http, Container, FeatureLimits, Limits
 from .util import transform
 
 
 __all__ = ('AppServer', 'ClientServer')
 
 class AppServer:
-    def __init__(self, http, data: dict[str,]) -> None:
+    def __init__(self, http: _Http, data: dict[str,]) -> None:
         self._http = http
         self.id: int = data['id']
         self.external_id: Optional[str] = data.get('external_id')
@@ -51,7 +51,7 @@ class AppServer:
 
 
 class ClientServer:
-    def __init__(self, http, data: dict[str,]) -> None:
+    def __init__(self, http: _Http, data: dict[str,]) -> None:
         self._http = http
         self.uuid: str = data['uuid']
         self.identifier: str = data['identifier']

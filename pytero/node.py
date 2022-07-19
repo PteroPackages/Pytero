@@ -1,11 +1,12 @@
 from typing import Optional
+from .types import _Http
 from .util import transform
 
 
 __all__ = ('Node')
 
 class Node:
-    def __init__(self, http, data: dict[str,]) -> None:
+    def __init__(self, http: _Http, data: dict[str,]) -> None:
         self._http = http
         self.id: int = data['id']
         self.created_at: str = data['created_at']

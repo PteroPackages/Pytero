@@ -1,4 +1,5 @@
 from typing import Optional
+from .types import _Http
 from .util import transform
 
 
@@ -6,7 +7,7 @@ __all__ = ('Account', 'User')
 
 
 class Account:
-    def __init__(self, http, data: dict[str,]) -> None:
+    def __init__(self, http: _Http, data: dict[str,]) -> None:
         self._http = http
         self.id = data['id']
         self._patch(data)
@@ -30,7 +31,7 @@ class Account:
 
 
 class User:
-    def __init__(self, http, data: dict[str,]) -> None:
+    def __init__(self, http: _Http, data: dict[str,]) -> None:
         self._http = http
         self.id: int = data['id']
         self.uuid: str = data['uuid']

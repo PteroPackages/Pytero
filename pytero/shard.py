@@ -4,13 +4,13 @@ from time import time
 from typing import Callable
 from .errors import ShardError
 from .events import Emitter
-from .types import WebSocketEvent
+from .types import _Http, WebSocketEvent
 
 
 __all__ = ('Shard')
 
 class Shard(Emitter):
-    def __init__(self, http, identifier: str) -> None:
+    def __init__(self, http: _Http, identifier: str) -> None:
         super().__init__()
         self._http = http
         self._conn: ClientWebSocketResponse = None

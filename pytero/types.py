@@ -1,8 +1,9 @@
 from dataclasses import dataclass
-from typing import Optional
+from typing import Any, Callable, Optional
 
 
 __all__ = (
+    '_Http',
     'Activity',
     'Allocation',
     'APIKey',
@@ -24,6 +25,16 @@ __all__ = (
     'WebSocketAuth',
     'WebSocketEvent'
 )
+
+class _Http:
+    url: str
+    key: str
+    get: Callable[[str], Any]
+    post: Callable[[str], Any]
+    patch: Callable[[str], Any]
+    put: Callable[[str], Any]
+    delete: Callable[[str], Any]
+
 
 @dataclass
 class Activity:

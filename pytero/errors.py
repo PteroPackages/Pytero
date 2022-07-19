@@ -4,6 +4,7 @@ __all__ = (
     'PteroAPIError',
     'RangeError',
     'RequestError',
+    'ShardError',
     'ValidationError'
 )
 
@@ -59,6 +60,11 @@ class RangeError(Exception):
 
 class RequestError(Exception):
     '''Errors received upon requesting a Pterodactyl endpoint'''
+    pass
+
+
+class ShardError(Exception):
+    '''Raised when a shard authentication or connection fails'''
     pass
 
 

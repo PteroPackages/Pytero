@@ -1,6 +1,7 @@
 from .http import RequestManager
 from .types import APIKey, Activity, SSHKey, WebSocketAuth
 from .servers import ClientServer
+from .shard import Shard
 from .users import Account
 
 
@@ -121,3 +122,6 @@ class PteroClient:
     async def get_server_ws(self, identifier: str) -> WebSocketAuth:
         data = await self._http.get(f'/servers/{identifier}/websocket')
         return WebSocketAuth(**data['data'])
+    
+    def create_shard(self, identifier: str) -> Shard:
+        return Shard(self._http, identifier)

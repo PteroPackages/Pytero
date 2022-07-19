@@ -18,7 +18,8 @@ __all__ = (
     'Nest',
     'NodeConfiguration',
     'SSHKey',
-    'WebSocketAuth'
+    'WebSocketAuth',
+    'WebSocketEvent'
 )
 
 @dataclass
@@ -235,3 +236,8 @@ class SSHKey:
 class WebSocketAuth:
     socket: str
     token: str
+
+@dataclass
+class WebSocketEvent:
+    event: str
+    args: list[str] | None

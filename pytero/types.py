@@ -17,7 +17,9 @@ __all__ = (
     'Location',
     'Nest',
     'NodeConfiguration',
+    'Resources',
     'SSHKey',
+    'Statistics',
     'WebSocketAuth',
     'WebSocketEvent'
 )
@@ -225,6 +227,20 @@ class Location:
 
 
 @dataclass
+class Resources:
+    memory_bytes: int
+    cpu_absolute: int
+    disk_bytes: int
+    network_rx_bytes: int
+    network_tx_bytes: int
+    uptime: int
+
+    def __repr__(self) -> str:
+        return '<Resources memory=%d disk=%d cpu=%d>' % \
+            (self.memory_bytes, self.disk_bytes, self.cpu_absolute)
+
+
+@dataclass
 class SSHKey:
     name: str
     fingerprint: str
@@ -233,9 +249,21 @@ class SSHKey:
 
 
 @dataclass
+class Statistics:
+    current_state: str
+    is_suspended: bool
+    resources: Resources
+
+    def __repr__(self) -> str:
+        return '<Statistics state=%s suspended=%s>' % \
+            (self.current_state, self.is_suspended)
+
+
+@dataclass
 class WebSocketAuth:
     socket: str
     token: str
+
 
 @dataclass
 class WebSocketEvent:

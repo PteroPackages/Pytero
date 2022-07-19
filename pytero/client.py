@@ -1,5 +1,5 @@
 from .http import RequestManager
-from .types import APIKey, Activity, SSHKey, WebSocketAuth
+from .types import APIKey, Activity, SSHKey, Statistics, WebSocketAuth
 from .servers import ClientServer
 from .shard import Shard
 from .users import Account
@@ -125,3 +125,28 @@ class PteroClient:
     
     def create_shard(self, identifier: str) -> Shard:
         return Shard(self._http, identifier)
+    
+    async def get_server_resources(self, identifier: str) -> Statistics:
+        data = await self._http.get(f'/servers/{identifier}/resources')
+        return Statistics(**data['attributes'])
+    
+    async def get_server_activities(self, identifier: str) -> list[Activity]:
+        data = await self._http.get(f'/servers/{identifier}/activity')
+        res: list[Activity] = []
+        
+        for datum in data['data']:
+            res.append(Activity(**datum['attributes']))
+        
+        return res
+    
+    async def send_server_command(self, identifier: str, command: str) -> None:
+        await self._http.post(
+            f'/servers/{identifier}/command',
+            body={'command': command}
+        )
+    
+    async def send_server_power(self, identifier: str, state: str) -> None:
+        await self._http.post(
+            f'/servers/{identifier}/power',
+            body={'signal': state}
+        )

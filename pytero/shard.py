@@ -1,7 +1,7 @@
 from aiohttp import ClientSession, ClientWebSocketResponse, WSMessage
 from json import loads
 from time import time
-from typing import Callable, Optional
+from typing import Callable
 from .errors import ShardError
 from .events import Emitter
 from .types import WebSocketEvent
@@ -66,21 +66,49 @@ class Shard(Emitter):
     async def _on_event(self, event: WSMessage) -> None:
         json = event.json()
         await self._debug('received event: %s' % data.event)
-        await super().emit_event('on_raw', event.json())
+        await super().emit_event('on_raw', json)
         data = WebSocketEvent(**json)
         
         match data.event:
             case 'auth success':
                 self.ping = time() - self.last_ping
                 self.last_ping = time()
+                await super().emit_event('on_auth_success')
             case 'token expiring':
                 await self._heartbeat()
             case 'token expired':
                 self.destroy()
                 await self.launch()
-            case _:
-                parsed: Optional[dict[str,]] = None
-                if data.args is not None:
-                    parsed = loads(''.join(data.args))
+            case 'daemon error' | 'jwt error':
+                if super().has_event('on_error'):
+                    await super().emit_event('on_error', ''.join(data.args))
+                else:
+                    self.destroy()
+                    raise ShardError(''.join(data.args))
+            case 'status':
+                await super().emit_event('on_status_update', data.args[0])
+            case 'stats':
+                p = loads(''.join(data.args))
+                await super().emit_event('on_stats_update', p)
+            case 'console output':
+                await super().emit_event('on_output', ''.join(data.args))
+            case 'daemon message':
+                await super().emit_event('on_daemon_log', ''.join(data.args))
+            case 'install start':
+                await super().emit_event('on_install_start')
+            case 'install output':
+                await super().emit_event('on_install_log', ''.join(data.args))
+            case 'install completed':
+                await super().emit_event('on_install_end')
+            case 'transfer logs':
+                await super().emit_event('on_transfer_log', ''.join(data.args))
+            case 'transfer status':
+                await super().emit_event('on_transfer_status', ''.join(data.args))
+            case 'backup completed':
+                p = None
+                if len(data.args) > 0:
+                    p = loads(''.join(data.args))
                 
-                await super().emit_event(data.event, parsed)
+                await super().emit_event('on_backup_complete', p)
+            case _:
+                await super().emit_event('on_error', "received unknown event '%s'" % data.event)

@@ -1,5 +1,5 @@
 from .http import RequestManager
-from .types import APIKey, Activity, SSHKey, Statistics, WebSocketAuth
+from .types import APIKey, Activity, ClientDatabase, SSHKey, Statistics, WebSocketAuth
 from .servers import ClientServer
 from .shard import Shard
 from .users import Account
@@ -150,3 +150,36 @@ class PteroClient:
             f'/servers/{identifier}/power',
             body={'signal': state}
         )
+    
+    async def get_server_databases(self, identifier: str) -> list[ClientDatabase]:
+        data = await self._http.get(f'/servers/{identifier}/databases')
+        res: list[ClientDatabase] = []
+        
+        for datum in data['data']:
+            res.append(ClientDatabase(**datum['attributes']))
+        
+        return res
+    
+    async def create_server_database(
+        self,
+        identifier: str,
+        *,
+        database: str,
+        remote: str
+    ) -> ClientDatabase:
+        data = await self._http.post(
+            f'/servers/{identifier}/databases',
+            body={
+                'database': database,
+                'remote': remote}
+        )
+        return ClientDatabase(**data['attributes'])
+    
+    async def rotate_database_password(self, identifier: str, id: str) -> ClientDatabase:
+        data = await self._http.post(
+            f'/servers/{identifier}/databases/{id}/rotate-password'
+        )
+        return ClientDatabase(**data['attributes'])
+    
+    async def delete_server_database(self, identifier: str, id: str) -> None:
+        await self._http.delete(f'/servers/{identifier}/databases/{id}')

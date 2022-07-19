@@ -7,6 +7,7 @@ __all__ = (
     'Allocation',
     'APIKey',
     'AppDatabase',
+    'ClientDatabase',
     'DeployNodeOptions',
     'DeployServerOptions',
     'EggScript',
@@ -75,6 +76,22 @@ class AppDatabase:
     max_connections: str
     created_at: str
     updated_at: Optional[str]
+
+
+@dataclass
+class ClientHost:
+    address: str
+    port: int
+
+
+@dataclass
+class ClientDatabase:
+    id: str
+    name: str
+    username: str
+    host: ClientHost
+    connections_from: str
+    max_connections: int
 
 
 @dataclass

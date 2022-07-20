@@ -16,6 +16,9 @@ class File:
         self._http = http
         self.identifier = identifier
         self.__name: str = data['name']
+        if root != '/':
+            root += '/'
+        
         self.__path: str = root + data['name']
         self.mode: str = data['mode']
         self.mode_bits: int = int(data['mode_bits'])
@@ -178,3 +181,41 @@ class Directory:
             path = path.split('..')[0]
         
         return Directory(self._http, self.identifier, path)
+    
+    async def create_dir(self, name: str):
+        await self._http.post(
+            f'/servers/{self.identifier}/files/create-folder',
+            body={'root': self.__path, 'name': name}
+        )
+        return Directory(self._http, self.identifier, self._clean(self.__path + name))
+    
+    async def delete_dir(self, name: str) -> None:
+        await self._http.post(
+            f'/servers/{self.identifier}/files/delete',
+            body={'root': self.__path, 'files':[name]}
+        )
+    
+    async def delete(self) -> None:
+        await self.delete_dir(self.__path)
+    
+    async def pull_file(
+        self,
+        url: str,
+        *,
+        directory: str = None,
+        filename: str = None,
+        use_header: bool = False,
+        foreground: bool = False
+    ) -> None:
+        if directory is None:
+            directory = self.__path
+        
+        await self._http.post(
+            f'/servers/{self.identifier}/files/pull',
+            body={
+                'url': url,
+                'directory': directory,
+                'filename': filename,
+                'use_header': use_header,
+                'foreground': foreground}
+        )

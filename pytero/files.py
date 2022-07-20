@@ -2,6 +2,8 @@ from typing import Optional
 from .types import _Http
 
 
+__all__ = ('File', 'Directory')
+
 class File:
     def __init__(
         self,

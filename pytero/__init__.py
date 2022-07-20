@@ -11,10 +11,12 @@ from .app import PteroApp
 from .client import PteroClient
 from .errors import *
 from .events import Emitter
+from .files import *
 from .http import RequestManager
 from .node import Node
 from .permissions import *
 from .servers import *
+from .shard import Shard
 from .types import *
 from .users import *
 

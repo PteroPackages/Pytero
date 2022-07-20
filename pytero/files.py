@@ -1,3 +1,4 @@
+import os
 from typing import Optional
 from .types import _Http
 
@@ -38,6 +39,79 @@ class File:
     @property
     def path(self) -> str:
         return self.__path
+    
+    @property
+    def root(self) -> str:
+        r = '/'.join(self.path.split('/')[:-1])
+        if r == '':
+            return '/'
+        
+        return r
+    
+    async def get_contents(self) -> str:
+        return await self._http.get(
+            '/servers/%s/files/contents?file=%s' % (self.identifier, self.__path),
+            ctype='text/plain'
+        )
+    
+    async def get_download_url(self) -> str:
+        data = await self._http.get(
+            '/servers/%s/files/download?file=%s' % (self.identifier, self.__path)
+        )
+        return data['attributes']['url']
+    
+    async def download_to(self, dest: str) -> None:
+        file = open(dest, 'xb')
+        url = await self.get_download_url()
+        
+        dl = await self._http._raw('GET', url, ctype='text/plain')
+        file.write(bytes(dl, 'utf-8'))
+        file.close()
+    
+    async def rename(self, name: str) -> None:
+        await self._http.put(
+            f'/servers/{self.identifier}/files/rename',
+            body={
+                'root': self.root,
+                'files':[{
+                    'from': self.__name,
+                    'to': name
+                }]}
+        )
+        self.__name = name
+    
+    async def copy_to(self, location: str) -> None:
+        await self._http.post(
+            f'/servers/{self.identifier}/files/copy',
+            body={'location': location}
+        )
+    
+    async def write(self, data: str) -> None:
+        await self._http.post(
+            '/servers/%s/files/write?file=%s' % (self.identifier, self.__path),
+            ctype='text/plain',
+            body=bytes(data, 'utf-8')
+        )
+    
+    async def compress(self):
+        print(self.root)
+        data = await self._http.post(
+            f'/servers/{self.identifier}/files/compress',
+            body={'root': self.root, 'files':[self.__name]}
+        )
+        return File(self._http, self.identifier, self.__path, data['attributes'])
+    
+    async def decompress(self) -> None:
+        await self._http.post(
+            f'/servers/{self.identifier}/files/decompress',
+            body={'root': self.root, 'file': self.__name}
+        )
+    
+    async def delete(self) -> None:
+        await self._http.post(
+            f'/servers/{self.identifier}/files/delete',
+            body={'root': self.root, 'files':[self.__name]}
+        )
 
 
 class Directory:
@@ -67,7 +141,7 @@ class Directory:
                 continue
             else:
                 res.append(File(
-                    self.__path,
+                    self._http,
                     self.identifier,
                     self.__path,
                     datum['attributes']

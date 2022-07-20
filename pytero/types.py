@@ -29,6 +29,7 @@ __all__ = (
 class _Http:
     url: str
     key: str
+    _raw: Callable[[str, str, Any | None], Any]
     get: Callable[[str], Any]
     post: Callable[[str], Any]
     patch: Callable[[str], Any]

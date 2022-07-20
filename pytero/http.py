@@ -122,6 +122,42 @@ class RequestManager(Emitter):
                     'pterodactyl api returned an invalid or unacceptable'
                     ' response (status: %d)' % response.status)
     
+    async def _raw(self, method: str, url: str, *, ctype: str, body = None):
+        if method not in ('GET', 'POST', 'PATCH', 'PUT', 'DELETE'):
+            raise KeyError("invalid http method '%s'" % method)
+        
+        headers = self.headers(ctype)
+        del headers['Authorization']
+        
+        async with ClientSession() as session:
+            async with getattr(session, method.lower())(
+                url,
+                data=body,
+                headers=headers
+            ) as response:
+                response: ClientResponse
+                
+                if response.status == 204:
+                    return None
+                
+                if response.status in (200, 201, 202):
+                    if response.headers.get('content-type') == 'application/json':
+                        data = await response.json()
+                        await super().emit_event('on_receive', data)
+                        return data
+                    else:
+                        data = await response.text()
+                        return data
+                
+                if 400 <= response.status < 500:
+                    data: dict[str,] = await response.json()
+                    await super().emit_event('on_error', data)
+                    raise RequestError(data.get('error', 'unknown api error'))
+                
+                raise RequestError(
+                    'pterodactyl api returned an invalid or unacceptable'
+                    ' response (status: %d)' % response.status)
+    
     def get(
         self,
         path: str,

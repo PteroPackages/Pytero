@@ -1,3 +1,4 @@
+from .files import Directory, File
 from .http import RequestManager
 from .types import APIKey, Activity, ClientDatabase, SSHKey, Statistics, WebSocketAuth
 from .servers import ClientServer
@@ -183,3 +184,13 @@ class PteroClient:
     
     async def delete_server_database(self, identifier: str, id: str) -> None:
         await self._http.delete(f'/servers/{identifier}/databases/{id}')
+    
+    async def get_server_files(self, identifier: str, dir: str = '/') -> list[File]:
+        return await Directory(self._http, identifier, dir).get_files()
+    
+    async def get_server_file_dirs(
+        self,
+        identifier: str,
+        root: str = '/'
+    ) -> list[Directory]:
+        return await Directory(self._http, identifier, root).get_directories()

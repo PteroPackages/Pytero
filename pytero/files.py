@@ -1,4 +1,3 @@
-import os
 from typing import Optional
 from .types import _Http
 
@@ -182,6 +181,16 @@ class Directory:
         
         return Directory(self._http, self.identifier, path)
     
+    async def rename_all(self, files: list[dict[str, str]]) -> None:
+        parsed = list(filter(lambda d: 'from' in d and 'to' in d, files))
+        if len(parsed) == 0:
+            raise SyntaxError('no files with from and to keys found')
+        
+        await self._http.post(
+            f'/servers/{self.identifier}/files/rename',
+            body={'root': self.__path, 'files': files}
+        )
+    
     async def create_dir(self, name: str):
         await self._http.post(
             f'/servers/{self.identifier}/files/create-folder',
@@ -193,6 +202,16 @@ class Directory:
         await self._http.post(
             f'/servers/{self.identifier}/files/delete',
             body={'root': self.__path, 'files':[name]}
+        )
+    
+    async def delete_all(self, files: list[dict[str, str]]) -> None:
+        parsed = list(filter(lambda d: 'from' in d and 'to' in d, files))
+        if len(parsed) == 0:
+            raise SyntaxError('no files with from and to keys found')
+        
+        await self._http.post(
+            f'/servers/{self.identifier}/files/delete',
+            body={'root': self.__path, 'files': files}
         )
     
     async def delete(self) -> None:
@@ -219,3 +238,7 @@ class Directory:
                 'use_header': use_header,
                 'foreground': foreground}
         )
+    
+    async def get_upload_url(self) -> str:
+        data = await self._http.get(f'/servers/{self.identifier}/files/upload')
+        return data['attributes']['url']

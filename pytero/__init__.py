@@ -15,6 +15,7 @@ from .files import *
 from .http import RequestManager
 from .node import Node
 from .permissions import *
+from .schedules import Schedule
 from .servers import *
 from .shard import Shard
 from .types import *

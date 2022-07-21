@@ -9,6 +9,9 @@ __all__ = (
     'APIKey',
     'AppDatabase',
     'ClientDatabase',
+    'ClientHost',
+    'Container',
+    'Cron',
     'DeployNodeOptions',
     'DeployServerOptions',
     'EggScript',
@@ -22,6 +25,7 @@ __all__ = (
     'Resources',
     'SSHKey',
     'Statistics',
+    'Task',
     'WebSocketAuth',
     'WebSocketEvent'
 )
@@ -112,6 +116,15 @@ class Container:
     environment: dict[str, int | str | bool]
     image: str
     installed: bool
+
+
+@dataclass
+class Cron:
+    day_of_week: str
+    day_of_month: str
+    month: str
+    hour: str
+    minute: str
 
 
 @dataclass
@@ -286,6 +299,19 @@ class Statistics:
     def __repr__(self) -> str:
         return '<Statistics state=%s suspended=%s>' % \
             (self.current_state, self.is_suspended)
+
+
+@dataclass
+class Task:
+    id: int
+    sequence_id: int
+    action: str
+    payload: str
+    time_offset: int
+    is_queued: bool
+    continue_on_failure: bool
+    created_at: str
+    updated_at: str | None
 
 
 @dataclass

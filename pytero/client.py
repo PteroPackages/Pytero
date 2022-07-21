@@ -1,6 +1,8 @@
+from operator import is_
 from .files import Directory, File
 from .http import RequestManager
 from .types import APIKey, Activity, ClientDatabase, SSHKey, Statistics, WebSocketAuth
+from .schedules import Schedule
 from .servers import ClientServer
 from .shard import Shard
 from .users import Account
@@ -194,3 +196,83 @@ class PteroClient:
         root: str = '/'
     ) -> list[Directory]:
         return await Directory(self._http, identifier, root).get_directories()
+    
+    async def get_server_schedules(self, identifier: str) -> list[Schedule]:
+        data = await self._http.get(f'/servers/{identifier}/schedules')
+        res: list[Schedule] = []
+        
+        for datum in data['data']:
+            res.append(Schedule(self._http, identifier, datum['attributes']))
+        
+        return res
+    
+    async def get_server_schedule(self, identifier: str, id: int) -> Schedule:
+        data = await self._http.get(f'/servers/{identifier}/schedules/{id}')
+        return Schedule(self._http, identifier, data['attributes'])
+    
+    async def create_server_schedule(
+        self,
+        identifier: str,
+        *,
+        name: str,
+        is_active: bool,
+        minute: str,
+        hour: str,
+        day_of_week: str,
+        day_of_month: str
+    ) -> Schedule:
+        data = await self._http.post(
+            f'/servers/{identifier}/schedules',
+            body={
+                'name': name,
+                'is_active': is_active,
+                'minute': minute,
+                'hour': hour,
+                'day_of_week': day_of_week,
+                'day_of_month': day_of_month}
+        )
+        return Schedule(self._http, identifier, data['attributes'])
+    
+    async def update_server_schedule(
+        self,
+        identifier: str,
+        id: int,
+        *,
+        name: str = None,
+        is_active: bool = False,
+        minute: str = None,
+        hour: str = None,
+        month: str = None,
+        day_of_week: str = None,
+        day_of_month: str = None,
+        only_when_online: bool = False
+    ) -> Schedule:
+        old = await self.get_server_schedule(identifier, id)
+        name = name or old.name
+        is_active = is_active if is_active is not None else old.is_active
+        minute = minute or old.cron.minute
+        hour = hour or old.cron.hour
+        month = month or old.cron.month
+        day_of_week = day_of_week or old.cron.day_of_week
+        day_of_month = day_of_month or old.cron.day_of_month
+        only_when_online = only_when_online if only_when_online is not None else old.only_when_online
+        
+        data = await self._http.post(
+            '/servers/%s/schedules/%d' % (identifier, id),
+            body={
+                'name': name,
+                'is_active': is_active,
+                'minute': minute,
+                'hour': hour,
+                'month': month,
+                'day_of_week': day_of_week,
+                'day_of_month': day_of_month,
+                'only_when_online': only_when_online}
+        )
+        return Schedule(self._http, identifier, data['attributes'])
+    
+    async def execute_server_schedule(self, identifier: str, id: int) -> None:
+        await self._http.post('/servers/%s/schedules/%d/execute' % (identifier, id))
+    
+    async def delete_server_schedule(self, identifier: str, id: int) -> None:
+        await self._http.delete('/servers/%s/schedules/%d' % (identifier, id))

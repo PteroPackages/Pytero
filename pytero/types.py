@@ -21,6 +21,7 @@ __all__ = (
     'Limits',
     'Location',
     'Nest',
+    'NetworkAllocation',
     'NodeConfiguration',
     'Resources',
     'SSHKey',
@@ -239,6 +240,19 @@ class Nest:
 
     def __repr__(self) -> str:
         return '<Nest id=%d name=%s>' % (self.id, self.name)
+
+
+@dataclass
+class NetworkAllocation:
+    id: int
+    ip: str
+    ip_alias: str | None
+    port: int
+    notes: str | None
+    is_default: bool
+
+    def __repr__(self) -> str:
+        return '<NetworkAllocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
 
 
 @dataclass

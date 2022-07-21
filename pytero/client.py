@@ -1,8 +1,7 @@
-from operator import is_
 from .files import Directory, File
 from .http import RequestManager
-from .types import APIKey, Activity, ClientDatabase, SSHKey, Statistics, Task, \
-    WebSocketAuth
+from .types import APIKey, Activity, ClientDatabase, NetworkAllocation, SSHKey, \
+    Statistics, Task, WebSocketAuth
 from .schedules import Schedule
 from .servers import ClientServer
 from .shard import Shard
@@ -338,4 +337,41 @@ class PteroClient:
     ) -> None:
         await self._http.delete(
             '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid)
+        )
+    
+    async def get_server_allocations(self, identifier: str) -> list[NetworkAllocation]:
+        data = await self._http.get(f'/servers/{identifier}/network/allocations')
+        res: list[NetworkAllocation] = []
+        
+        for datum in data['data']:
+            res.append(NetworkAllocation(**datum['attributes']))
+        
+        return res
+    
+    async def create_server_allocation(self, identifier: str) -> NetworkAllocation:
+        data = await self._http.post(
+            f'/servers/{identifier}/network/allocations',
+            body=None
+        )
+        return NetworkAllocation(**data['attributes'])
+    
+    async def set_server_allocation_notes(
+        self,
+        identifier: str,
+        id: int,
+        notes: str
+    ) -> None:
+        await self._http.post(
+            '/servers/%s/network/allocations/%d' % (identifier, id),
+            body={'notes': notes}
+        )
+    
+    async def set_server_primary_allocation(self, identifier: str, id: int) -> None:
+        await self._http.post(
+            '/servers/%s/network/allocations/%d/primary' % (identifier, id)
+        )
+    
+    async def delete_server_allocation(self, identifier: str, id: int) -> None:
+        await self._http.delete(
+            '/servers/%s/network/allocations/%d' % (identifier, id)
         )

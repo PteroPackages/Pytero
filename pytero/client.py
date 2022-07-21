@@ -360,16 +360,22 @@ class PteroClient:
         identifier: str,
         id: int,
         notes: str
-    ) -> None:
-        await self._http.post(
+    ) -> NetworkAllocation:
+        data = await self._http.post(
             '/servers/%s/network/allocations/%d' % (identifier, id),
             body={'notes': notes}
         )
+        return NetworkAllocation(**data['attributes'])
     
-    async def set_server_primary_allocation(self, identifier: str, id: int) -> None:
-        await self._http.post(
+    async def set_server_primary_allocation(
+        self,
+        identifier: str,
+        id: int
+    ) -> NetworkAllocation:
+        data = await self._http.post(
             '/servers/%s/network/allocations/%d/primary' % (identifier, id)
         )
+        return NetworkAllocation(**data['attributes'])
     
     async def delete_server_allocation(self, identifier: str, id: int) -> None:
         await self._http.delete(

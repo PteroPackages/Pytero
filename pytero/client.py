@@ -1,7 +1,8 @@
 from operator import is_
 from .files import Directory, File
 from .http import RequestManager
-from .types import APIKey, Activity, ClientDatabase, SSHKey, Statistics, WebSocketAuth
+from .types import APIKey, Activity, ClientDatabase, SSHKey, Statistics, Task, \
+    WebSocketAuth
 from .schedules import Schedule
 from .servers import ClientServer
 from .shard import Shard
@@ -276,3 +277,65 @@ class PteroClient:
     
     async def delete_server_schedule(self, identifier: str, id: int) -> None:
         await self._http.delete('/servers/%s/schedules/%d' % (identifier, id))
+    
+    async def get_schedule_tasks(self, identifier: str, id: int) -> list[Task]:
+        data = await self._http.get('/servers/%s/schedules/%d/tasks' % (identifier, id))
+        res: list[Task] = []
+        
+        for datum in data['data']:
+            res.append(Task(**datum['attributes']))
+        
+        return res
+    
+    async def create_schedule_task(
+        self,
+        identifier: str,
+        id: int,
+        *,
+        action: str,
+        payload: str,
+        time_offset: int,
+        sequence_id: int = None,
+        continue_on_failure: bool = False
+    ) -> Task:
+        data = await self._http.post(
+            '/servers/%s/schedules/%d/tasks' % (identifier, id),
+            body={
+                'action': action,
+                'payload': payload,
+                'time_offset': time_offset,
+                'sequence_id': sequence_id,
+                'continue_on_failure': continue_on_failure}
+        )
+        return Task(**data['attributes'])
+    
+    async def update_schedule_task(
+        self,
+        identifier: str,
+        id: int,
+        tid: int,
+        *,
+        action: str,
+        payload: str,
+        time_offset: int,
+        continue_on_failure: bool = False
+    ) -> Task:
+        data = await self._http.post(
+            '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid),
+            body={
+                'action': action,
+                'payload': payload,
+                'time_offset': time_offset,
+                'continue_on_failure': continue_on_failure}
+        )
+        return Task(**data['attributes'])
+    
+    async def delete_schedule_task(
+        self,
+        identifier: str,
+        id: int,
+        tid: int
+    ) -> None:
+        await self._http.delete(
+            '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid)
+        )

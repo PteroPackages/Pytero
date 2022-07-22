@@ -10,6 +10,7 @@ __all__ = (
     'AppDatabase',
     'ClientDatabase',
     'ClientHost',
+    'ClientVariable',
     'Container',
     'Cron',
     'DeployNodeOptions',
@@ -109,6 +110,17 @@ class ClientDatabase:
     host: ClientHost
     connections_from: str
     max_connections: int
+
+
+@dataclass
+class ClientVariable:
+    name: str
+    description: str
+    env_variable: str
+    default_value: str | None
+    server_value: str | None
+    is_editable: bool
+    rules: str
 
 
 @dataclass

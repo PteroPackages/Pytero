@@ -1,8 +1,8 @@
 from .files import Directory, File
 from .http import RequestManager
 from .permissions import Permissions
-from .types import APIKey, Activity, ClientDatabase, NetworkAllocation, SSHKey, \
-    Statistics, Task, WebSocketAuth
+from .types import APIKey, Activity, ClientDatabase, ClientVariable, NetworkAllocation, \
+    SSHKey, Statistics, Task, WebSocketAuth
 from .schedules import Schedule
 from .servers import ClientServer
 from .shard import Shard
@@ -419,3 +419,24 @@ class PteroClient:
         await self._http.delete(
             '/servers/%s/users/%s' % (identifier, uuid)
         )
+    
+    async def get_server_startup(self, identifier: str) -> list[ClientVariable]:
+        data = await self._http.get(f'/servers/{identifier}/startup')
+        res: list[ClientVariable] = []
+        
+        for datum in data['data']:
+            res.append(ClientVariable(**datum['attributes']))
+        
+        return res
+    
+    async def set_server_variable(
+        self,
+        identifier: str,
+        key: str,
+        value: int | str | bool
+    ) -> ClientVariable:
+        data = await self._http.put(
+            f'/servers/{identifier}/startup/variable',
+            body={'key': key, 'value': value}
+        )
+        return ClientVariable(**data['attributes'])

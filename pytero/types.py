@@ -57,6 +57,9 @@ class Activity:
     def __repr__(self) -> str:
         return '<Activity event=%s>' % self.event
 
+    def to_dict(self) -> dict[str,]:
+        return self.__dict__
+
 
 @dataclass
 class Allocation:
@@ -69,6 +72,11 @@ class Allocation:
 
     def __repr__(self) -> str:
         return '<Allocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
+
+    def to_dict(self) -> dict[str,]:
+        d = self.__dict__
+        del d['id']
+        return d
 
 
 @dataclass
@@ -101,6 +109,9 @@ class ClientHost:
     address: str
     port: int
 
+    def to_dict(self) -> dict[str,]:
+        return self.__dict__
+
 
 @dataclass
 class ClientDatabase:
@@ -110,6 +121,11 @@ class ClientDatabase:
     host: ClientHost
     connections_from: str
     max_connections: int
+
+    def to_dict(self) -> dict[str,]:
+        d = self.__dict__
+        del d['id']
+        return d
 
 
 @dataclass
@@ -142,6 +158,9 @@ class Cron:
     hour: str
     minute: str
 
+    def to_dict(self) -> dict[str,]:
+        return self.__dict__
+
 
 @dataclass
 class DeployServerOptions:
@@ -150,10 +169,7 @@ class DeployServerOptions:
     port_range: list[str]
 
     def to_dict(self) -> dict[str,]:
-        return {
-            'locations': self.locations,
-            'dedicated_ip': self.dedicated_ip,
-            'port_range': self.port_range}
+        return self.__dict__
 
 
 @dataclass
@@ -163,10 +179,7 @@ class DeployNodeOptions:
     location_ids: list[int]
 
     def to_dict(self) -> dict[str,]:
-        return {
-            'memory': self.memory,
-            'disk': self.disk,
-            'location_ids': self.location_ids}
+        return self.__dict__
 
 
 @dataclass
@@ -178,6 +191,9 @@ class EggConfiguration:
     file_denylist: list[str]
     extends: Optional[str]
 
+    def to_dict(self) -> dict[str,]:
+        return self.__dict__
+
 
 @dataclass
 class EggScript:
@@ -186,6 +202,9 @@ class EggScript:
     entry: str
     container: str
     extends: Optional[str]
+
+    def to_dict(self) -> dict[str,]:
+        return self.__dict__
 
 
 @dataclass
@@ -208,6 +227,11 @@ class Egg:
     def __repr__(self) -> str:
         return '<Egg id=%d nest=%d name=%s>' % (self.id, self.nest, self.name)
 
+    def to_dict(self) -> dict[str,]:
+        d = self.__dict__
+        del d['id'], d['uuid'], d['created_at'], d['updated_at']
+        return d
+
 
 @dataclass
 class FeatureLimits:
@@ -216,10 +240,7 @@ class FeatureLimits:
     databases: int
 
     def to_dict(self) -> dict[str,]:
-        return {
-            'allocations': self.allocations,
-            'backups': self.backups,
-            'databases': self.databases}
+        return self.__dict__
 
 
 @dataclass
@@ -233,14 +254,7 @@ class Limits:
     oom_disabled: Optional[bool]
 
     def to_dict(self) -> dict[str,]:
-        return {
-            'memory': self.memory,
-            'disk': self.disk,
-            'swap': self.swap,
-            'io': self.io,
-            'cpu': self.cpu,
-            'threads': self.threads,
-            'oom_disabled': self.oom_disabled}
+        return self.__dict__
 
 
 @dataclass
@@ -255,6 +269,12 @@ class Nest:
 
     def __repr__(self) -> str:
         return '<Nest id=%d name=%s>' % (self.id, self.name)
+
+    def to_dict(self) -> dict[str,]:
+        return {
+                'author': self.author,
+                'name': self.name,
+                'description': self.description}
 
 
 @dataclass

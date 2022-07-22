@@ -55,11 +55,7 @@ class Flags(Enum):
     ADMIN_WEBSOCKET_INSTALL = 'admin.websocket.install'
     ADMIN_WEBSOCKET_TRANSFER = 'admin.websocket.transfer'
 
-    def __contains__(self, key: str) -> bool:
-        return super().__contains__(key)
-
-    @staticmethod
-    def values(cls) -> list[str]:
+    def values() -> list[str]:
         return [p.value for p in Flags.__members__.values()]
 
 
@@ -123,18 +119,15 @@ class Permissions:
     @staticmethod
     def resolve(*perms: str | Flags) -> list[str]:
         res: list[str] = []
+        flags = Flags.values()
         
         for perm in perms:
-            match type(perm).__name__:
-                case 'Flags':
-                    res.append(perm.value)
-                case 'str':
-                    if perm in Flags:
-                        res.append(perm)
-                    else:
-                        raise KeyError('Invalid permission or flag')
-                case _:
-                    raise KeyError('Invalid permission or flag')
+            if perm is Flags:
+                res.append(perm.value)
+            elif perm in flags:
+                res.append(perm)
+            else:
+                raise KeyError('invalid permission or flag')
         
         return res
     

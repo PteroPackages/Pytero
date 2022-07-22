@@ -1,11 +1,12 @@
 from .files import Directory, File
 from .http import RequestManager
+from .permissions import Permissions
 from .types import APIKey, Activity, ClientDatabase, NetworkAllocation, SSHKey, \
     Statistics, Task, WebSocketAuth
 from .schedules import Schedule
 from .servers import ClientServer
 from .shard import Shard
-from .users import Account
+from .users import Account, SubUser
 
 
 __all__ = ('PteroClient')
@@ -380,4 +381,41 @@ class PteroClient:
     async def delete_server_allocation(self, identifier: str, id: int) -> None:
         await self._http.delete(
             '/servers/%s/network/allocations/%d' % (identifier, id)
+        )
+    
+    async def get_server_subusers(self, identifier: str) -> list[SubUser]:
+        data = await self._http.get(f'/servers/{identifier}/users')
+        res: list[SubUser] = []
+        
+        for datum in data['data']:
+            res.append(SubUser(self._http, datum['attributes']))
+        
+        return res
+    
+    async def get_server_subuser(self, identifier: str, uuid: str) -> SubUser:
+        data = await self._http.get('/servers/%s/users/%s' % (identifier, uuid))
+        return SubUser(self._http, data['attributes'])
+    
+    async def add_server_subuser(self, identifier: str, email: str) -> SubUser:
+        data = await self._http.post(
+            f'/servers/{identifier}/users',
+            body={'email': email}
+        )
+        return SubUser(self._http, data['attributes'])
+    
+    async def update_subuser_permissions(
+        self,
+        identifier: str,
+        uuid: str,
+        permissions: Permissions
+    ) -> SubUser:
+        data = await self._http.post(
+            '/servers/%s/users/%s' % (identifier, uuid),
+            body={'permissions': permissions.value}
+        )
+        return SubUser(self._http, data['attributes'])
+    
+    async def remove_server_subuser(self, identifier: str, uuid: str) -> None:
+        await self._http.delete(
+            '/servers/%s/users/%s' % (identifier, uuid)
         )

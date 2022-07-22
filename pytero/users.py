@@ -1,9 +1,10 @@
 from typing import Optional
+from .permissions import Permissions
 from .types import _Http
 from .util import transform
 
 
-__all__ = ('Account', 'User')
+__all__ = ('Account', 'SubUser', 'User')
 
 class Account:
     def __init__(self, http: _Http, data: dict[str,]) -> None:
@@ -27,6 +28,31 @@ class Account:
     
     def to_dict(self) -> dict[str,]:
         return transform(self, ignore=['_http'])
+
+
+class SubUser:
+    def __init__(self, http: _Http, data: dict[str,]) -> None:
+        self._http = http
+        self.uuid: str = data['uuid']
+        self.username: str = data['username']
+        self.email: str = data['email']
+        self.image: str | None = data.get('image')
+        self.permissions = Permissions(*data['permissions'])
+        self.two_factor_enabled: bool = data['2fa_enabled']
+        self.created_at: str = data['created_at']
+    
+    def __repr__(self) -> str:
+        return '<SubUser uuid=%s>' % self.uuid
+    
+    def __str__(self) -> str:
+        return self.username
+    
+    def to_dict(self) -> dict[str,]:
+        return transform(
+            self,
+            ignore=['_http'],
+            map={'two_factor_enabled': '2fa_enabled'}
+        )
 
 
 class User:

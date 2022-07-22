@@ -440,3 +440,18 @@ class PteroClient:
             body={'key': key, 'value': value}
         )
         return ClientVariable(**data['attributes'])
+    
+    async def rename_server(self, identifier: str, name: str) -> None:
+        await self._http.post(
+            f'/servers/{identifier}/settings/rename',
+            body={'name': name}
+        )
+    
+    async def reinstall_server(self, identifier: str) -> None:
+        await self._http.post(f'/servers/{identifier}/settings/reinstall')
+    
+    async def set_server_docker_image(self, identifier: str, image: str) -> None:
+        await self._http.put(
+            f'/servers/{identifier}/settings/docker-image',
+            body={'docker_image': image}
+        )

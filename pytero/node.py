@@ -1,12 +1,12 @@
 from typing import Optional
-from .types import _Http
+from .types import NodeConfiguration
 from .util import transform
 
 
 __all__ = ('Node')
 
 class Node:
-    def __init__(self, http: _Http, data: dict[str,]) -> None:
+    def __init__(self, http, data: dict[str,]) -> None:
         self._http = http
         self.id: int = data['id']
         self.created_at: str = data['created_at']
@@ -42,3 +42,9 @@ class Node:
     
     def to_dict(self) -> dict[str,]:
         return transform(self, ignore=['_http'])
+    
+    async def get_configuration(self) -> NodeConfiguration:
+        return await self._http.get_node_configuration(self.id)
+    
+    def update_node(self) -> None:
+        return NotImplemented

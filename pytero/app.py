@@ -259,20 +259,20 @@ class PteroApp:
         res: list[Node] = []
         
         for datum in data['data']:
-            res.append(Node(self._http, datum['attributes']))
+            res.append(Node(self, datum['attributes']))
         
         return res
     
     async def get_node(self, id: int) -> Node:
         data = await self._http.get(f'/nodes/{id}')
-        return Node(self._http, data['attributes'])
+        return Node(self, data['attributes'])
     
     async def get_deployable_nodes(self, options: DeployNodeOptions, /) -> list[Node]:
         data = await self._http.get('/nodes/deployable', body=options.to_dict())
         res: list[Node] = []
         
         for datum in data['data']:
-            res.append(Node(self._http, datum['attributes']))
+            res.append(Node(self, datum['attributes']))
         
         return res
     

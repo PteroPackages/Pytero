@@ -130,6 +130,9 @@ class Container:
     image: str
     installed: bool
 
+    def to_dict(self) -> dict[str,]:
+        return self.__dict__
+
 
 @dataclass
 class Cron:

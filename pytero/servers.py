@@ -27,7 +27,7 @@ class AppServer:
         self.status: Optional[str] = data.get('status')
         self.suspended: bool = data.get('suspended', False)
         self.limits: Limits = Limits(**data['limits'])
-        self.feature_limts: FeatureLimits = FeatureLimits(**data['feature_limits'])
+        self.feature_limits: FeatureLimits = FeatureLimits(**data['feature_limits'])
         self.user_id: int = data['user']
         self.node_id: int = data['node']
         self.allocation_id: int = data['allocation']
@@ -43,11 +43,92 @@ class AppServer:
         return transform(
             self,
             ignore=['_http'],
-            map={
+            maps={
                 'user_id': 'user',
                 'node_id': 'node',
-                'alloaction_id': 'allocation'}
+                'allocation_id': 'allocation',
+                'egg_id': 'egg',
+                'nest_id': 'nest'}
         )
+    
+    async def update_details(
+        self,
+        *,
+        external_id: str = None,
+        name: str = None,
+        user: int = None,
+        description: str = None
+    ) -> None:
+        external_id = external_id or self.external_id
+        name = name or self.name
+        user = user or self.user_id
+        description = description or self.description
+        
+        data: AppServer = await self._http.update_server_details(
+            self.id,
+            external_id=external_id,
+            name=name,
+            user=user,
+            description=description
+        )
+        self._patch(data.to_dict())
+    
+    async def update_build(
+        self,
+        *,
+        allocation: int = None,
+        oom_disabled: bool = True,
+        limits: Limits = None,
+        feature_limits: FeatureLimits = None,
+        add_allocations: list[int] = None,
+        remove_allocations: list[int] = None
+    ) -> None:
+        body = {
+                'allocation': allocation or self.allocation_id,
+                'limits': limits or self.limits,
+                'feature_limits': feature_limits or self.feature_limits}
+        
+        if oom_disabled is not None:
+            body['oom_disabled'] = oom_disabled
+        
+        if add_allocations is not None:
+            body['add_allocations'] = add_allocations
+        
+        if remove_allocations is not None:
+            body['remove_allocations'] = remove_allocations
+        
+        data: AppServer = await self._http.update_server_build(self.id, **body)
+        self._patch(data.to_dict())
+    
+    async def update_startup(
+        self,
+        *,
+        startup: str = None,
+        environment: dict[str, int | str | bool] = None,
+        egg: int = None,
+        image: str = None,
+        skip_scripts: bool = False
+    ) -> None:
+        data: AppServer = await self._http.update_server_startup(
+            self.id,
+            startup=startup or self.container.startup_command,
+            environment=environment or self.container.environment,
+            egg=egg or self.egg_id,
+            image=image or self.container.image,
+            skip_scripts=skip_scripts
+        )
+        self._patch(data.to_dict())
+    
+    async def suspend(self) -> None:
+        await self._http.suspend_server(self.id)
+        self.suspended = True
+    
+    async def unsuspend(self) -> None:
+        await self._http.unsuspend_server(self.id)
+        self.suspended = False
+    
+    async def reinstall(self) -> None:
+        await self._http.reinstall_server(self.id)
 
 
 class ClientServer:

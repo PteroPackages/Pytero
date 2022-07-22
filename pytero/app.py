@@ -26,17 +26,17 @@ class PteroApp:
         res: list[User] = []
         
         for datum in data['data']:
-            res.append(User(self._http, datum['attributes']))
+            res.append(User(self, datum['attributes']))
         
         return res
     
     async def get_user(self, id: int) -> User:
         data = await self._http.get(f'/users/{id}')
-        return User(self._http, data['attributes'])
+        return User(self, data['attributes'])
     
     async def get_external_user(self, id: str) -> User:
         data = await self._http.get(f'/users/external/{id}')
-        return User(self._http, data['attributes'])
+        return User(self, data['attributes'])
     
     async def create_user(
         self,
@@ -60,7 +60,7 @@ class PteroApp:
                 'external_id': external_id,
                 'root_admin': root_admin}
         )
-        return User(self._http, data['attributes'])
+        return User(self, data['attributes'])
     
     async def update_user(
         self,
@@ -75,18 +75,19 @@ class PteroApp:
         root_admin: bool = False
     ) -> User:
         old = await self.get_user(id)
-        data = await self._http.patch(
-            f'/users/{id}',
-            body={
+        body = {
                 'email': email or old.email,
                 'username': username or old.username,
                 'first_name': first_name or old.first_name,
                 'last_name': last_name or old.last_name,
-                'password': password or old.last_name,
                 'external_id': external_id or old.external_id,
                 'root_admin': root_admin if root_admin is not None else old.root_admin}
-        )
-        return User(self._http, data['attributes'])
+        
+        if password is not None:
+            body['password'] = password
+        
+        data = await self._http.patch(f'/users/{id}', body=body)
+        return User(self, data['attributes'])
     
     async def delete_user(self, id: int) -> None:
         await self._http.delete(f'/users/{id}')
@@ -96,14 +97,14 @@ class PteroApp:
         res: list[AppServer] = []
         
         for datum in data['data']:
-            res.append(AppServer(self._http, datum['attributes']))
+            res.append(AppServer(self, datum['attributes']))
         
         return res
     
     async def get_server(self, id: int | str) -> AppServer:
-        path = f'/users/{id}' if isinstance(id, int) else f'/users/external/{id}'
+        path = f'/servers/{id}' if isinstance(id, int) else f'/servers/external/{id}'
         data = await self._http.get(path)
-        return AppServer(self._http, data['attributes'])
+        return AppServer(self, data['attributes'])
     
     async def create_server(
         self,
@@ -146,7 +147,7 @@ class PteroApp:
                 'additional': additional_allocations}
         
         data = await self._http.post('/servers', body=body)
-        return AppServer(self._http, data['attributes'])
+        return AppServer(self, data['attributes'])
     
     async def update_server_details(
         self,
@@ -166,7 +167,7 @@ class PteroApp:
                 'user': user or old.user,
                 'description': description or old.description}
         )
-        return AppServer(self._http, data['attributes'])
+        return AppServer(self, data['attributes'])
     
     async def update_server_build(
         self,
@@ -190,7 +191,7 @@ class PteroApp:
                 'add_allocations': add_allocations,
                 'remove_allocations': remove_allocations}
         )
-        return AppServer(self._http, data['attributes'])
+        return AppServer(self, data['attributes'])
     
     async def update_server_startup(
         self,
@@ -212,7 +213,7 @@ class PteroApp:
                 'image': image or old.container.image,
                 'skip_scripts': skip_scripts}
         )
-        return AppServer(self._http, data['attributes'])
+        return AppServer(self, data['attributes'])
     
     async def suspend_server(self, id: int, /) -> None:
         await self._http.post(f'/servers/{id}/suspend')

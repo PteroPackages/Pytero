@@ -56,7 +56,7 @@ class SubUser:
 
 
 class User:
-    def __init__(self, http: _Http, data: dict[str,]) -> None:
+    def __init__(self, http, data: dict[str,]) -> None:
         self._http = http
         self.id: int = data['id']
         self.uuid: str = data['uuid']
@@ -81,4 +81,35 @@ class User:
         self.updated_at: Optional[str] = data.get('updated_at')
     
     def to_dict(self) -> dict[str,]:
-        return transform(self, ignore=['_http'], map={'two_factor': '2fa'})
+        return transform(self, ignore=['_http'], maps={'two_factor': '2fa'})
+    
+    async def update(
+        self,
+        *,
+        email: str = None,
+        username: str = None,
+        first_name: str = None,
+        last_name: str = None,
+        password: str = None,
+        external_id: str = None,
+        root_admin: bool = None
+    ) -> None:
+        email = email or self.email
+        username = username or self.username
+        first_name = first_name or self.first_name
+        last_name = last_name or self.last_name
+        external_id = external_id or self.external_id
+        if root_admin is None:
+            root_admin = self.root_admin
+        
+        data: User = await self._http.update_user(
+            self.id,
+            email=email,
+            username=username,
+            first_name=first_name,
+            last_name=last_name,
+            password=password,
+            external_id=external_id,
+            root_admin=root_admin
+        )
+        self._patch(data.to_dict())

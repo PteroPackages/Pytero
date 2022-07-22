@@ -2,6 +2,9 @@
 __pycache__/
 
 # Hidden files/types/executables
+*.cmd
 *.pyc
-test.py
+*.pyi
+*.sh
 *.test.py
+test.py

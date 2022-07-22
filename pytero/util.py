@@ -1,11 +1,7 @@
 from typing import Any, Callable
 
 
-__all__ = ('select', 'transform')
-
-def select(obj: dict, *keys: str) -> dict:
-    return {k: obj[k] for k in obj if k in keys}
-
+__all__ = ('transform')
 
 def transform(
     data: object,
@@ -29,6 +25,9 @@ def transform(
             except:
                 res[key] = str(value)
         else:
-            res[key] = value
+            if hasattr(value, 'to_dict'):
+                res[key] = value.to_dict()
+            else:
+                res[key] = value
     
     return res

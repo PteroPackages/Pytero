@@ -3,6 +3,7 @@ from .types import _Http, Cron, Task
 
 __all__ = ('Schedule')
 
+
 class Schedule:
     def __init__(self, http: _Http, identifier: str, data: dict[str,]) -> None:
         self._http = http

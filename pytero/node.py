@@ -5,6 +5,7 @@ from .util import transform
 
 __all__ = ('Node')
 
+
 class Node:
     def __init__(self, http, data: dict[str,]) -> None:
         self._http = http

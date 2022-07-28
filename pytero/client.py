@@ -11,6 +11,7 @@ from .users import Account, SubUser
 
 __all__ = ('PteroClient')
 
+
 class PteroClient:
     def __init__(self, url: str, key: str) -> None:
         self.url = url.removesuffix('/')
@@ -36,7 +37,7 @@ class PteroClient:
         data = await self._http.get('/account/two-factor')
         return data['data']
     
-    async def enable_account_two_factor(self, code: int) -> list[str]:
+    async def enable_account_two_factor(self, code: int, /) -> list[str]:
         data = await self._http.post('/account/two-factor', body={'code': code})
         return data['attributes']['tokens']
     
@@ -85,7 +86,7 @@ class PteroClient:
         )
         return APIKey(**data['attributes'])
     
-    async def delete_api_key(self, identifier: str) -> None:
+    async def delete_api_key(self, identifier: str, /) -> None:
         await self._http.delete(f'/account/api-keys/{identifier}')
     
     async def get_ssh_keys(self) -> list[SSHKey]:
@@ -104,7 +105,7 @@ class PteroClient:
         )
         return SSHKey(**data['attributes'])
     
-    async def remove_ssh_key(self, fingerprint: str) -> None:
+    async def remove_ssh_key(self, fingerprint: str, /) -> None:
         await self._http.post(
             '/account/ssh-keys/remove',
             body={'fingerprint': fingerprint}
@@ -119,22 +120,22 @@ class PteroClient:
         
         return res
     
-    async def get_server(self, identifier: str) -> ClientServer:
+    async def get_server(self, identifier: str, /) -> ClientServer:
         data = await self._http.get(f'/servers/{identifier}')
         return ClientServer(self._http, data['attributes'])
     
-    async def get_server_ws(self, identifier: str) -> WebSocketAuth:
+    async def get_server_ws(self, identifier: str, /) -> WebSocketAuth:
         data = await self._http.get(f'/servers/{identifier}/websocket')
         return WebSocketAuth(**data['data'])
     
-    def create_shard(self, identifier: str) -> Shard:
+    def create_shard(self, identifier: str, /) -> Shard:
         return Shard(self._http, identifier)
     
-    async def get_server_resources(self, identifier: str) -> Statistics:
+    async def get_server_resources(self, identifier: str, /) -> Statistics:
         data = await self._http.get(f'/servers/{identifier}/resources')
         return Statistics(**data['attributes'])
     
-    async def get_server_activities(self, identifier: str) -> list[Activity]:
+    async def get_server_activities(self, identifier: str, /) -> list[Activity]:
         data = await self._http.get(f'/servers/{identifier}/activity')
         res: list[Activity] = []
         
@@ -155,7 +156,7 @@ class PteroClient:
             body={'signal': state}
         )
     
-    async def get_server_databases(self, identifier: str) -> list[ClientDatabase]:
+    async def get_server_databases(self, identifier: str, /) -> list[ClientDatabase]:
         data = await self._http.get(f'/servers/{identifier}/databases')
         res: list[ClientDatabase] = []
         
@@ -198,7 +199,7 @@ class PteroClient:
     ) -> list[Directory]:
         return await Directory(self._http, identifier, root).get_directories()
     
-    async def get_server_schedules(self, identifier: str) -> list[Schedule]:
+    async def get_server_schedules(self, identifier: str, /) -> list[Schedule]:
         data = await self._http.get(f'/servers/{identifier}/schedules')
         res: list[Schedule] = []
         
@@ -340,7 +341,11 @@ class PteroClient:
             '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid)
         )
     
-    async def get_server_allocations(self, identifier: str) -> list[NetworkAllocation]:
+    async def get_server_allocations(
+        self,
+        identifier: str,
+        /
+    ) -> list[NetworkAllocation]:
         data = await self._http.get(f'/servers/{identifier}/network/allocations')
         res: list[NetworkAllocation] = []
         
@@ -349,7 +354,7 @@ class PteroClient:
         
         return res
     
-    async def create_server_allocation(self, identifier: str) -> NetworkAllocation:
+    async def create_server_allocation(self, identifier: str, /) -> NetworkAllocation:
         data = await self._http.post(
             f'/servers/{identifier}/network/allocations',
             body=None
@@ -383,7 +388,7 @@ class PteroClient:
             '/servers/%s/network/allocations/%d' % (identifier, id)
         )
     
-    async def get_server_subusers(self, identifier: str) -> list[SubUser]:
+    async def get_server_subusers(self, identifier: str, /) -> list[SubUser]:
         data = await self._http.get(f'/servers/{identifier}/users')
         res: list[SubUser] = []
         
@@ -447,7 +452,7 @@ class PteroClient:
             body={'name': name}
         )
     
-    async def reinstall_server(self, identifier: str) -> None:
+    async def reinstall_server(self, identifier: str, /) -> None:
         await self._http.post(f'/servers/{identifier}/settings/reinstall')
     
     async def set_server_docker_image(self, identifier: str, image: str) -> None:

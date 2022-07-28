@@ -2,11 +2,12 @@ from .http import RequestManager
 from .node import Node
 from .servers import AppServer
 from .types import Allocation, AppDatabase, DeployNodeOptions, DeployServerOptions, \
-    Egg, FeatureLimits, Limits, Nest, NodeConfiguration, Location
+    Egg, FeatureLimits, Limits, Location, Nest, NodeConfiguration
 from .users import User
 
 
 __all__ = ('PteroApp')
+
 
 class PteroApp:
     def __init__(self, url: str, key: str) -> None:
@@ -34,7 +35,7 @@ class PteroApp:
         data = await self._http.get(f'/users/{id}')
         return User(self, data['attributes'])
     
-    async def get_external_user(self, id: str) -> User:
+    async def get_external_user(self, id: str, /) -> User:
         data = await self._http.get(f'/users/external/{id}')
         return User(self, data['attributes'])
     
@@ -86,7 +87,7 @@ class PteroApp:
         if password is not None:
             body['password'] = password
         
-        data = await self._http.patch(f'/users/{id}', body=body)
+        data = await self._http.patch(f'/users/{id}', body)
         return User(self, data['attributes'])
     
     async def delete_user(self, id: int) -> None:
@@ -101,9 +102,12 @@ class PteroApp:
         
         return res
     
-    async def get_server(self, id: int | str) -> AppServer:
-        path = f'/servers/{id}' if isinstance(id, int) else f'/servers/external/{id}'
-        data = await self._http.get(path)
+    async def get_server(self, id: int) -> AppServer:
+        data = await self._http.get(f'/servers/{id}')
+        return AppServer(self, data['attributes'])
+    
+    async def get_external_server(self, id: str) -> AppServer:
+        data = await self._http.get(f'/servers/external/{id}')
         return AppServer(self, data['attributes'])
     
     async def create_server(
@@ -126,27 +130,27 @@ class PteroApp:
         start_on_completion: bool = False
     ) -> AppServer:
         body = {
-            'name': name,
-            'user': user,
-            'egg': egg,
-            'docker_image': docker_image,
-            'startup': startup,
-            'environment': environment,
-            'limits': limits.to_dict(),
-            'feature_limits': feature_limits.to_dict(),
-            'external_id': external_id,
-            'skip_scripts': skip_scripts,
-            'oom_disabled': oom_disabled,
-            'start_on_completion': start_on_completion}
+                'name': name,
+                'user': user,
+                'egg': egg,
+                'docker_image': docker_image,
+                'startup': startup,
+                'environment': environment,
+                'limits': limits.to_dict(),
+                'feature_limits': feature_limits.to_dict(),
+                'external_id': external_id,
+                'skip_scripts': skip_scripts,
+                'oom_disabled': oom_disabled,
+                'start_on_completion': start_on_completion}
         
         if deploy is not None:
-            body['deploy'] = dict(deploy)
+            body['deploy'] = deploy.to_dict()
         else:
             body['allocation'] = {
-                'default': default_allocation,
-                'additional': additional_allocations}
+                                'default': default_allocation,
+                                'additional': additional_allocations}
         
-        data = await self._http.post('/servers', body=body)
+        data = await self._http.post('/servers', body)
         return AppServer(self, data['attributes'])
     
     async def update_server_details(
@@ -186,8 +190,8 @@ class PteroApp:
             body={
                 'allocation': allocation or old.allocation_id,
                 'oom_disabled': oom_disabled,
-                'limits': limits.to_dict() if limits is not None else old.limits.to_dict(),
-                'feature_limits': feature_limits.to_dict() if feature_limits is not None else old.feature_limts.to_dict(),
+                'limits': (limits or old.limits).to_dict(),
+                'feature_limits': (feature_limits or old.feature_limits).to_dict(),
                 'add_allocations': add_allocations,
                 'remove_allocations': remove_allocations}
         )

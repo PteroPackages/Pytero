@@ -4,6 +4,7 @@ from .types import _Http
 
 __all__ = ('File', 'Directory')
 
+
 class File:
     def __init__(
         self,
@@ -62,7 +63,7 @@ class File:
         )
         return data['attributes']['url']
     
-    async def download_to(self, dest: str) -> None:
+    async def download_to(self, dest: str, /) -> None:
         file = open(dest, 'xb')
         url = await self.get_download_url()
         
@@ -70,7 +71,7 @@ class File:
         file.write(bytes(dl, 'utf-8'))
         file.close()
     
-    async def rename(self, name: str) -> None:
+    async def rename(self, name: str, /) -> None:
         await self._http.put(
             f'/servers/{self.identifier}/files/rename',
             body={
@@ -82,13 +83,13 @@ class File:
         )
         self.__name = name
     
-    async def copy_to(self, location: str) -> None:
+    async def copy_to(self, location: str, /) -> None:
         await self._http.post(
             f'/servers/{self.identifier}/files/copy',
             body={'location': location}
         )
     
-    async def write(self, data: str) -> None:
+    async def write(self, data: str, /) -> None:
         await self._http.post(
             '/servers/%s/files/write?file=%s' % (self.identifier, self.__path),
             ctype='text/plain',
@@ -96,7 +97,6 @@ class File:
         )
     
     async def compress(self):
-        print(self.root)
         data = await self._http.post(
             f'/servers/{self.identifier}/files/compress',
             body={'root': self.root, 'files':[self.__name]}
@@ -164,17 +164,17 @@ class Directory:
         
         return res
     
-    def _clean(self, path: str) -> str:
+    def _clean(self, path: str, /) -> str:
         if 'home/directory' in path:
             path = path.replace('home/directory', '')
         
         return '/' + path.replace('\\', '/').removeprefix('/').removesuffix('/')
     
-    def into_dir(self, dir: str):
+    def into_dir(self, dir: str, /):
         path = self._clean(self.__path + dir)
         return Directory(self._http, self.identifier, path)
     
-    def back_dir(self, dir: str):
+    def back_dir(self, dir: str, /):
         path = self._clean(self.__path + dir)
         if '..' in path:
             path = path.split('..')[0]
@@ -191,20 +191,20 @@ class Directory:
             body={'root': self.__path, 'files': files}
         )
     
-    async def create_dir(self, name: str):
+    async def create_dir(self, name: str, /):
         await self._http.post(
             f'/servers/{self.identifier}/files/create-folder',
             body={'root': self.__path, 'name': name}
         )
         return Directory(self._http, self.identifier, self._clean(self.__path + name))
     
-    async def delete_dir(self, name: str) -> None:
+    async def delete_dir(self, name: str, /) -> None:
         await self._http.post(
             f'/servers/{self.identifier}/files/delete',
             body={'root': self.__path, 'files':[name]}
         )
     
-    async def delete_all(self, files: list[dict[str, str]]) -> None:
+    async def delete_all(self, files: list[dict[str, str]], /) -> None:
         parsed = list(filter(lambda d: 'from' in d and 'to' in d, files))
         if len(parsed) == 0:
             raise SyntaxError('no files with from and to keys found')

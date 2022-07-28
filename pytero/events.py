@@ -5,6 +5,7 @@ from .errors import EventError
 
 __all__ = ('Emitter')
 
+
 class Emitter:
     '''Events emitter manager for Pytero'''
     def __init__(self) -> None:
@@ -19,7 +20,7 @@ class Emitter:
         
         self._slots[name] = (iscoroutinefunction(slot), slot)
     
-    def remove_event(self, name: str) -> None:
+    def remove_event(self, name: str, /) -> None:
         del self._slots[name]
     
     def has_event(self, name: str) -> bool:

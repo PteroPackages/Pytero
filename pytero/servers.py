@@ -5,6 +5,7 @@ from .util import transform
 
 __all__ = ('AppServer', 'ClientServer')
 
+
 class AppServer:
     def __init__(self, http: _Http, data: dict[str,]) -> None:
         self._http = http

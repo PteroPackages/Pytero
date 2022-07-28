@@ -3,6 +3,7 @@ from typing import Any, Callable
 
 __all__ = ('transform')
 
+
 def transform(
     data: object,
     *,

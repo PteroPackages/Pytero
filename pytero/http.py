@@ -9,6 +9,7 @@ from .events import Emitter
 
 __all__ = ('RequestManager')
 
+
 class RequestManager(Emitter):
     def __init__(self, api: str, url: str, key: str) -> None:
         super().__init__()

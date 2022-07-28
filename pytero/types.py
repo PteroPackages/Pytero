@@ -32,6 +32,7 @@ __all__ = (
     'WebSocketEvent'
 )
 
+
 class _Http:
     url: str
     key: str

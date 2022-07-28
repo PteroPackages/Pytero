@@ -9,6 +9,7 @@ from .types import _Http, WebSocketEvent
 
 __all__ = ('Shard')
 
+
 class Shard(Emitter):
     def __init__(self, http: _Http, identifier: str) -> None:
         super().__init__()

@@ -12,7 +12,7 @@ class Node:
         self.id: int = data['id']
         self.created_at: str = data['created_at']
         self._patch(data)
-        self._patch_relations(data['relationships'])
+        self._patch_relations(data.get('relationships'))
     
     def __repr__(self) -> str:
         return '<Node id=%d>' % self.id
@@ -42,7 +42,10 @@ class Node:
         self.upload_size: int = data['upload_size']
         self.updated_at: str | None = data.get('updated_at')
     
-    def _patch_relations(self, data: dict[str,]) -> None:
+    def _patch_relations(self, data: dict[str,] | None) -> None:
+        if data is None:
+            return
+        
         if 'allocations' in data:
             self.allocations = []
             for datum in data['allocations']['data']:

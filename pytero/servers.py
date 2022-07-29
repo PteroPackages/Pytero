@@ -15,7 +15,7 @@ class AppServer:
         self.identifier: str = data['identifier']
         self.created_at: str = data['created_at']
         self._patch(data)
-        self._patch_relations(data['relationships'])
+        self._patch_relations(data.get('relationships'))
     
     def __repr__(self) -> str:
         return '<AppServer id=%d identifier=%s>' % (self.id, self.identifier)
@@ -42,7 +42,10 @@ class AppServer:
         self.location: Location | None = None
         self.updated_at: str | None = data.get('updated_at')
     
-    def _patch_relations(self, data: dict[str,]) -> None:
+    def _patch_relations(self, data: dict[str,] | None) -> None:
+        if data is None:
+            return
+        
         if 'allocations' in data:
             self.allocations = []
             for datum in data['allocations']['data']:

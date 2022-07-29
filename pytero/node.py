@@ -1,5 +1,5 @@
-from typing import Optional
-from .types import NodeConfiguration
+from .servers import AppServer
+from .types import Allocation, Location, NodeConfiguration
 from .util import transform
 
 
@@ -12,6 +12,7 @@ class Node:
         self.id: int = data['id']
         self.created_at: str = data['created_at']
         self._patch(data)
+        self._patch_relations(data['relationships'])
     
     def __repr__(self) -> str:
         return '<Node id=%d>' % self.id
@@ -21,8 +22,11 @@ class Node:
     
     def _patch(self, data: dict[str,]) -> None:
         self.name: str = data['name']
-        self.description: Optional[str] = data.get('description')
+        self.description: str | None = data.get('description')
         self.location_id: int = data['location_id']
+        self.location: Location | None = None
+        self.allocations: list[Allocation] | None = None
+        self.servers: list[AppServer] | None = None
         self.public: bool = data['public']
         self.fqdn: str = data['fqdn']
         self.scheme: str = data['scheme']
@@ -36,10 +40,21 @@ class Node:
         self.daemon_listen: int = data['daemon_listen']
         self.maintenance_mode: bool = data['maintenance_mode']
         self.upload_size: int = data['upload_size']
-        self.updated_at: Optional[str] = data.get('updated_at')
+        self.updated_at: str | None = data.get('updated_at')
     
-    def _patch_relations(self) -> None:
-        pass
+    def _patch_relations(self, data: dict[str,]) -> None:
+        if 'allocations' in data:
+            self.allocations = []
+            for datum in data['allocations']['data']:
+                self.allocations.append(Allocation(**datum['attributes']))
+        
+        if 'location' in data:
+            self.location = Location(**data['location']['attributes'])
+        
+        if 'servers' in data:
+            self.servers = []
+            for datum in data['servers']['data']:
+                self.servers.append(AppServer(self._http, datum['attributes']))
     
     def to_dict(self) -> dict[str,]:
         return transform(self, ignore=['_http'])

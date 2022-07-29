@@ -307,8 +307,14 @@ class PteroApp:
     async def delete_database(self, server: int, id: int) -> None:
         await self._http.delete(f'/servers/{server}/databases/{id}')
     
-    async def get_nodes(self) -> list[Node]:
-        data = await self._http.get('/nodes')
+    async def get_nodes(
+        self,
+        *,
+        filter: tuple[str, str] = None,
+        include: list[str] = None,
+        sort: str = None
+    ) -> list[Node]:
+        data = await self._http.get('/nodes', filter=filter, include=include, sort=sort)
         res: list[Node] = []
         
         for datum in data['data']:
@@ -316,8 +322,17 @@ class PteroApp:
         
         return res
     
-    async def get_node(self, id: int) -> Node:
-        data = await self._http.get(f'/nodes/{id}')
+    async def get_node(
+        self,
+        id: int,
+        *,
+        filter: tuple[str, str] = None,
+        include: list[str] = None,
+        sort: str = None
+    ) -> Node:
+        data = await self._http.get(f'/nodes/{id}',
+                                    filter=filter, include=include, sort=sort)
+        
         return Node(self, data['attributes'])
     
     async def get_deployable_nodes(self, options: DeployNodeOptions, /) -> list[Node]:

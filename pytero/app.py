@@ -263,8 +263,13 @@ class PteroApp:
     async def delete_server(self, id: int, *, force: bool = False) -> None:
         await self._http.delete('/servers/%d%s' % (id, '/force' if force else ''))
     
-    async def get_server_databases(self, server: int) -> list[AppDatabase]:
-        data = await self._http.get(f'/servers/{server}/databases')
+    async def get_server_databases(
+        self,
+        server: int,
+        *,
+        include: list[str] = None
+    ) -> list[AppDatabase]:
+        data = await self._http.get(f'/servers/{server}/databases', include=include)
         res: list[AppDatabase] = []
         
         for datum in data['data']:
@@ -272,15 +277,27 @@ class PteroApp:
         
         return res
     
-    async def get_server_database(self, server: int, id: int) -> AppDatabase:
-        data = await self._http.get(f'/servers/{server}/databases/{id}')
+    async def get_server_database(
+        self,
+        server: int,
+        id: int,
+        *,
+        include: list[str] = None
+    ) -> AppDatabase:
+        data = await self._http.get(f'/servers/{server}/databases/{id}', include=include)
         return AppDatabase(**data['attributes'])
     
-    async def create_database(self, server: int, *, database: str, remote: str) -> AppDatabase:
+    async def create_database(
+        self,
+        server: int,
+        *,
+        database: str,
+        remote: str
+    ) -> AppDatabase:
         data = await self._http.post(
             f'/servers/{server}/databases',
-            body={'database': database, 'remote': remote}
-        )
+            {'database': database, 'remote': remote})
+        
         return AppDatabase(**data['attributes'])
     
     async def reset_database_password(self, server: int, id: int) -> AppDatabase:

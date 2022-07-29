@@ -103,6 +103,7 @@ class AppDatabase:
     max_connections: str
     created_at: str
     updated_at: Optional[str]
+    password: str | None = None
 
 
 @dataclass

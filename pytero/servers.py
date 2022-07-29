@@ -1,5 +1,5 @@
-from typing import Optional
-from .types import _Http, Container, FeatureLimits, Limits
+from .types import _Http, Allocation, Container, Egg, FeatureLimits, Limits, \
+    Location, Nest
 from .util import transform
 
 
@@ -7,14 +7,15 @@ __all__ = ('AppServer', 'ClientServer')
 
 
 class AppServer:
-    def __init__(self, http: _Http, data: dict[str,]) -> None:
+    def __init__(self, http, data: dict[str,]) -> None:
         self._http = http
         self.id: int = data['id']
-        self.external_id: Optional[str] = data.get('external_id')
+        self.external_id: str | None = data.get('external_id')
         self.uuid: str = data['uuid']
         self.identifier: str = data['identifier']
         self.created_at: str = data['created_at']
         self._patch(data)
+        self._patch_relations(data['relationships'])
     
     def __repr__(self) -> str:
         return '<AppServer id=%d identifier=%s>' % (self.id, self.identifier)
@@ -24,21 +25,37 @@ class AppServer:
     
     def _patch(self, data: dict[str,]) -> None:
         self.name: str = data['name']
-        self.description: Optional[str] = data.get('description')
-        self.status: Optional[str] = data.get('status')
+        self.description: str | None = data.get('description')
+        self.status: str | None = data.get('status')
         self.suspended: bool = data.get('suspended', False)
         self.limits: Limits = Limits(**data['limits'])
         self.feature_limits: FeatureLimits = FeatureLimits(**data['feature_limits'])
         self.user_id: int = data['user']
         self.node_id: int = data['node']
         self.allocation_id: int = data['allocation']
+        self.allocations: list[Allocation] | None = None
         self.nest_id: int = data['nest']
+        self.nest: Nest | None = None
         self.egg_id: int = data['egg']
+        self.egg: Egg | None = None
         self.container: Container = Container(**data['container'])
-        self.updated_at: Optional[str] = data.get('updated_at')
+        self.location: Location | None = None
+        self.updated_at: str | None = data.get('updated_at')
     
-    def _patch_relations(self) -> None:
-        pass
+    def _patch_relations(self, data: dict[str,]) -> None:
+        if 'allocations' in data:
+            self.allocations = []
+            for datum in data['allocations']['data']:
+                self.allocations.append(Allocation(**datum['attributes']))
+        
+        if 'nest' in data:
+            self.nest = Nest(**data['nest']['attributes'])
+        
+        if 'egg' in data:
+            self.egg = Egg(**data['egg']['attributes'])
+        
+        if 'location' in data:
+            self.location = Location(**data['location']['attributes'])
     
     def to_dict(self) -> dict[str,]:
         return transform(
@@ -150,14 +167,14 @@ class ClientServer:
         self.server_owner: bool = data['server_owner']
         self.name: str = data['name']
         self.node: str = data['node']
-        self.description: Optional[str] = data.get('description')
+        self.description: str | None = data.get('description')
         self.sftp_details: dict[str,] = data['sftp_details']
         self.limits: Limits = Limits(**data['limits'])
         self.feature_limits: FeatureLimits = FeatureLimits(**data['feature_limits'])
         self.invocation: str = data['invocation']
         self.docker_image: str = data['docker_image']
-        self.egg_features: Optional[list[str]] = data.get('egg_features')
-        self.status: Optional[str] = data.get('status')
+        self.egg_features: list[str] | None = data.get('egg_features')
+        self.status: str | None = data.get('status')
         self.is_suspended: bool = data['is_suspended']
         self.is_installing: bool = data['is_installing']
         self.is_transferring: bool = data['is_transferring']

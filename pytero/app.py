@@ -108,8 +108,16 @@ class PteroApp:
     async def delete_user(self, id: int, /) -> None:
         await self._http.delete(f'/users/{id}')
     
-    async def get_servers(self) -> list[AppServer]:
-        data = await self._http.get('/servers')
+    async def get_servers(
+        self,
+        *,
+        filter: tuple[str, str] = None,
+        include: list[str] = None,
+        sort: str = None
+    ) -> list[AppServer]:
+        data = await self._http.get('/servers',
+                                    filter=filter, include=include, sort=sort)
+        
         res: list[AppServer] = []
         
         for datum in data['data']:
@@ -117,11 +125,20 @@ class PteroApp:
         
         return res
     
-    async def get_server(self, id: int) -> AppServer:
-        data = await self._http.get(f'/servers/{id}')
+    async def get_server(
+        self,
+        id: int,
+        *,
+        filter: tuple[str, str] = None,
+        include: list[str] = None,
+        sort: str = None
+    ) -> AppServer:
+        data = await self._http.get(f'/servers/{id}',
+                                    filter=filter, include=include, sort=sort)
+        
         return AppServer(self, data['attributes'])
     
-    async def get_external_server(self, id: str) -> AppServer:
+    async def get_external_server(self, id: str, /) -> AppServer:
         data = await self._http.get(f'/servers/external/{id}')
         return AppServer(self, data['attributes'])
     
@@ -184,8 +201,8 @@ class PteroApp:
                 'external_id': external_id or old.external_id,
                 'name': name or old.name,
                 'user': user or old.user,
-                'description': description or old.description}
-        )
+                'description': description or old.description})
+        
         return AppServer(self, data['attributes'])
     
     async def update_server_build(
@@ -208,8 +225,8 @@ class PteroApp:
                 'limits': (limits or old.limits).to_dict(),
                 'feature_limits': (feature_limits or old.feature_limits).to_dict(),
                 'add_allocations': add_allocations,
-                'remove_allocations': remove_allocations}
-        )
+                'remove_allocations': remove_allocations})
+        
         return AppServer(self, data['attributes'])
     
     async def update_server_startup(
@@ -230,8 +247,8 @@ class PteroApp:
                 'environment': environment or old.container.environment,
                 'egg': egg or old.egg_id,
                 'image': image or old.container.image,
-                'skip_scripts': skip_scripts}
-        )
+                'skip_scripts': skip_scripts})
+        
         return AppServer(self, data['attributes'])
     
     async def suspend_server(self, id: int, /) -> None:

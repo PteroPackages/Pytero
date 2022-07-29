@@ -22,8 +22,14 @@ class PteroApp:
     def event(self):
         return self._http.event
     
-    async def get_users(self) -> list[User]:
-        data = await self._http.get('/users')
+    async def get_users(
+        self,
+        *,
+        filter: tuple[str, str] = None,
+        include: list[str] = None,
+        sort: str = None
+    ) -> list[User]:
+        data = await self._http.get('/users', filter=filter, include=include, sort=sort)
         res: list[User] = []
         
         for datum in data['data']:
@@ -31,8 +37,17 @@ class PteroApp:
         
         return res
     
-    async def get_user(self, id: int) -> User:
-        data = await self._http.get(f'/users/{id}')
+    async def get_user(
+        self,
+        id: int,
+        *,
+        filter: tuple[str, str] = None,
+        include: list[str] = None,
+        sort: str = None
+    ) -> User:
+        data = await self._http.get(f'/users/{id}',
+                                    filter=filter, include=include, sort=sort)
+        
         return User(self, data['attributes'])
     
     async def get_external_user(self, id: str, /) -> User:
@@ -59,8 +74,8 @@ class PteroApp:
                 'last_name': last_name,
                 'password': password,
                 'external_id': external_id,
-                'root_admin': root_admin}
-        )
+                'root_admin': root_admin})
+        
         return User(self, data['attributes'])
     
     async def update_user(
@@ -90,7 +105,7 @@ class PteroApp:
         data = await self._http.patch(f'/users/{id}', body)
         return User(self, data['attributes'])
     
-    async def delete_user(self, id: int) -> None:
+    async def delete_user(self, id: int, /) -> None:
         await self._http.delete(f'/users/{id}')
     
     async def get_servers(self) -> list[AppServer]:

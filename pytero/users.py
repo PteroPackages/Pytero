@@ -1,5 +1,6 @@
 from typing import Optional
 from .permissions import Permissions
+from .servers import AppServer
 from .types import _Http
 from .util import transform
 
@@ -63,6 +64,7 @@ class User:
         self.uuid: str = data['uuid']
         self.created_at: str = data['created_at']
         self._patch(data)
+        self._patch_relations(data)
     
     def __repr__(self) -> str:
         return '<User id=%d uuid=%s>' % (self.id, self.uuid)
@@ -80,6 +82,12 @@ class User:
         self.root_admin: bool = data['root_admin']
         self.two_factor: bool = data['2fa']
         self.updated_at: Optional[str] = data.get('updated_at')
+        self.servers: list[AppServer] = []
+    
+    def _patch_relations(self, data: dict[str,]) -> None:
+        if 'servers' in data['relationships']:
+            for datum in data['relationships']['servers']['data']:
+                self.servers.append(AppServer(self._http, datum['attributes']))
     
     def to_dict(self) -> dict[str,]:
         return transform(self, ignore=['_http'], maps={'two_factor': '2fa'})

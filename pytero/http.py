@@ -34,8 +34,7 @@ class RequestManager(Emitter):
             'User-Agent': '%s Pytero v0.1.0' % self._api.title(),
             'Content-Type': ctype,
             'Accept': 'application/json,text/plain',
-            'Authorization': 'Bearer %s' % self.key
-        }
+            'Authorization': 'Bearer %s' % self.key}
     
     def _validate_query(self, args: dict[str,]) -> str:
         query: list[str] = []
@@ -82,16 +81,14 @@ class RequestManager(Emitter):
         await self._emit(
             'on_debug',
             'request: %s /api/%s%s' % (method, self._api, path),
-            'payload: %d bytes' % getsizeof(payload)
-        )
+            'payload: %d bytes' % getsizeof(payload))
         
         async with ClientSession() as session:
             start = time()
             async with getattr(session, method.lower())(
                 url,
                 data=payload,
-                headers=self.headers(ctype)
-            ) as response:
+                headers=self.headers(ctype)) as response:
                 self.ping = time() - start
                 response: ClientResponse
                 
@@ -99,8 +96,7 @@ class RequestManager(Emitter):
                     'on_debug',
                     'response: %d' % response.status,
                     'content-type: %s' % response.content_type,
-                    'content-length: %d' % (response.content_length or 0)
-                )
+                    'content-length: %d' % (response.content_length or 0))
                 
                 if response.status == 204:
                     return None
@@ -134,8 +130,7 @@ class RequestManager(Emitter):
             async with getattr(session, method.lower())(
                 url,
                 data=body,
-                headers=headers
-            ) as response:
+                headers=headers) as response:
                 response: ClientResponse
                 
                 if response.status == 204:
@@ -180,8 +175,7 @@ class RequestManager(Emitter):
             include=include,
             sort=sort,
             page=page,
-            per_page=per_page
-        )
+            per_page=per_page)
     
     def post(
         self,
@@ -204,8 +198,7 @@ class RequestManager(Emitter):
             include=include,
             sort=sort,
             page=page,
-            per_page=per_page
-        )
+            per_page=per_page)
     
     def patch(
         self,
@@ -228,8 +221,7 @@ class RequestManager(Emitter):
             include=include,
             sort=sort,
             page=page,
-            per_page=per_page
-        )
+            per_page=per_page)
     
     def put(
         self,
@@ -252,8 +244,7 @@ class RequestManager(Emitter):
             include=include,
             sort=sort,
             page=page,
-            per_page=per_page
-        )
+            per_page=per_page)
     
     def delete(
         self,
@@ -276,5 +267,4 @@ class RequestManager(Emitter):
             include=include,
             sort=sort,
             page=page,
-            per_page=per_page
-        )
+            per_page=per_page)

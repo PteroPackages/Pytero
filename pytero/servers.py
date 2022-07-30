@@ -69,8 +69,7 @@ class AppServer:
                 'node_id': 'node',
                 'allocation_id': 'allocation',
                 'egg_id': 'egg',
-                'nest_id': 'nest'}
-        )
+                'nest_id': 'nest'})
     
     async def update_details(
         self,
@@ -90,8 +89,8 @@ class AppServer:
             external_id=external_id,
             name=name,
             user=user,
-            description=description
-        )
+            description=description)
+        
         self._patch(data.to_dict())
     
     async def update_build(
@@ -136,8 +135,8 @@ class AppServer:
             environment=environment or self.container.environment,
             egg=egg or self.egg_id,
             image=image or self.container.image,
-            skip_scripts=skip_scripts
-        )
+            skip_scripts=skip_scripts)
+        
         self._patch(data.to_dict())
     
     async def suspend(self) -> None:

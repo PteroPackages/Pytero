@@ -1,7 +1,7 @@
 from typing import Optional
 from .permissions import Permissions
 from .servers import AppServer
-from .types import _Http
+from .types import _Http, APIKey, Activity, SSHKey
 from .util import transform
 
 
@@ -9,7 +9,7 @@ __all__ = ('Account', 'SubUser', 'User')
 
 
 class Account:
-    def __init__(self, http: _Http, data: dict[str,]) -> None:
+    def __init__(self, http, data: dict[str,]) -> None:
         self._http = http
         self.id = data['id']
         self._patch(data)
@@ -30,6 +30,31 @@ class Account:
     
     def to_dict(self) -> dict[str,]:
         return transform(self, ignore=['_http'])
+    
+    def get_two_factor(self) -> str:
+        return self._http.get_account_two_factor()
+    
+    def enable_two_factor(self, code: int, /) -> list[str]:
+        return self._http.enable_account_two_factor(code)
+    
+    def disable_two_factor(self, password: str, /) -> None:
+        return self._http.disable_account_two_factor(password)
+    
+    async def update_email(self, email: str, password: str) -> None:
+        await self._http.update_account_email(email, password)
+        self.email = email
+    
+    def update_password(self, old: str, new: str) -> None:
+        return self._http.update_account_password(old, new)
+    
+    def get_activities(self) -> list[Activity]:
+        return self._http.get_account_activities()
+    
+    def get_api_keys(self) -> list[APIKey]:
+        return self._http.get_api_keys()
+    
+    def get_ssh_keys(self) -> list[SSHKey]:
+        return self._http.get_ssh_keys()
 
 
 class SubUser:
@@ -53,8 +78,7 @@ class SubUser:
         return transform(
             self,
             ignore=['_http'],
-            map={'two_factor_enabled': '2fa_enabled'}
-        )
+            map={'two_factor_enabled': '2fa_enabled'})
 
 
 class User:
@@ -122,6 +146,6 @@ class User:
             last_name=last_name,
             password=password,
             external_id=external_id,
-            root_admin=root_admin
-        )
+            root_admin=root_admin)
+        
         self._patch(data.to_dict())

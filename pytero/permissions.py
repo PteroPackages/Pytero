@@ -65,15 +65,13 @@ class Permissions:
         Flags.CONTROL_CONSOLE,
         Flags.CONTROL_START,
         Flags.CONTROL_STOP,
-        Flags.CONTROL_RESTART
-    )
+        Flags.CONTROL_RESTART)
     
     ALL_USER = (
         Flags.USER_CREATE,
         Flags.USER_READ,
         Flags.USER_UPDATE,
-        Flags.USER_DELETE
-    )
+        Flags.USER_DELETE)
     
     ALL_FILE = (
         Flags.FILE_CREATE,
@@ -81,22 +79,19 @@ class Permissions:
         Flags.FILE_READ_CONTENT,
         Flags.FILE_UPDATE,
         Flags.FILE_ARCHIVE,
-        Flags.FILE_SFTP
-    )
+        Flags.FILE_SFTP)
     
     ALL_BACKUP = (
         Flags.BACKUP_CREATE,
         Flags.BACKUP_READ,
         Flags.BACKUP_UPDATE,
-        Flags.BACKUP_DELETE
-    )
+        Flags.BACKUP_DELETE)
     
     ALL_ALLOCATION = (
         Flags.ALLOCATION_CREATE,
         Flags.ALLOCATION_READ,
         Flags.ALLOCATION_UPDATE,
-        Flags.ALLOCATION_DELETE
-    )
+        Flags.ALLOCATION_DELETE)
     
     ALL_STARTUP = (Flags.STARTUP_READ, Flags.STARTUP_UPDATE)
     
@@ -105,23 +100,20 @@ class Permissions:
         Flags.DATABASE_READ,
         Flags.DATABASE_UPDATE,
         Flags.DATABASE_DELETE,
-        Flags.DATABASE_VIEW_PASSWORD
-    )
+        Flags.DATABASE_VIEW_PASSWORD)
     
     ALL_SCHEDULE = (
         Flags.SCHEDULE_CREATE,
         Flags.SCHEDULE_READ,
         Flags.SCHEDULE_UPDATE,
-        Flags.SCHEDULE_DELETE
-    )
+        Flags.SCHEDULE_DELETE)
     
     ALL_SETTINGS = (Flags.SETTINGS_RENAME, Flags.SETTINGS_REINSTALL)
     
     ALL_ADMIN = (
         Flags.ADMIN_WEBSOCKET_ERRORS,
         Flags.ADMIN_WEBSOCKET_INSTALL,
-        Flags.ADMIN_WEBSOCKET_TRANSFER
-    )
+        Flags.ADMIN_WEBSOCKET_TRANSFER)
     
     def __init__(self, *perms: str | Flags) -> None:
         self.value: list[str] = self.resolve(*perms)

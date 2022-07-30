@@ -31,7 +31,7 @@ class Shard(Emitter):
         super().add_event(func.__name__, func)
         return func
     
-    async def _debug(self, msg: str) -> None:
+    async def _debug(self, msg: str, /) -> None:
         await super().emit_event('on_debug', 'debug %s: %s' % (self.identifier, msg))
     
     def _evt(self, name: str, args: list[str] = []) -> dict[str, list[str]]:
@@ -52,7 +52,8 @@ class Shard(Emitter):
         await self._debug('attempting to connect to websocket')
         
         async with ClientSession() as session:
-            async with session.ws_connect(auth['data']['socket'], origin=self.origin) as self._conn:
+            async with session.ws_connect(auth['data']['socket'],
+                                         origin=self.origin) as self._conn:
                 await self._debug('authenticating connection')
                 await self._conn.send_json(self._evt('auth', auth['data']['token']))
                 await self._debug('authentication sent')
@@ -65,7 +66,7 @@ class Shard(Emitter):
             self._conn.close()
             self._conn = None
     
-    async def _on_event(self, event: WSMessage) -> None:
+    async def _on_event(self, event: WSMessage, /) -> None:
         json = event.json()
         await self._debug('received event: %s' % data.event)
         await super().emit_event('on_raw', json)
@@ -113,7 +114,8 @@ class Shard(Emitter):
                 
                 await super().emit_event('on_backup_complete', p)
             case _:
-                await super().emit_event('on_error', "received unknown event '%s'" % data.event)
+                await super().emit_event('on_error',
+                                        "received unknown event '%s'" % data.event)
     
     def request_logs(self) -> None:
         if not self.closed:
@@ -123,10 +125,10 @@ class Shard(Emitter):
         if not self.closed:
             self._conn.send_json(self._evt('send stats'))
     
-    def send_command(self, cmd: str) -> None:
+    def send_command(self, cmd: str, /) -> None:
         if not self.closed:
             self._conn.send_json(self._evt('send command', cmd))
     
-    def send_state(self, state: str) -> None:
+    def send_state(self, state: str, /) -> None:
         if not self.closed:
             self._conn.send_json(self._evt('set state', state))

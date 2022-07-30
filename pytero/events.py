@@ -23,7 +23,7 @@ class Emitter:
     def remove_event(self, name: str, /) -> None:
         del self._slots[name]
     
-    def has_event(self, name: str) -> bool:
+    def has_event(self, name: str, /) -> bool:
         return name in self._slots
     
     def clear_slots(self) -> None:

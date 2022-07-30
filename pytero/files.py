@@ -54,13 +54,12 @@ class File:
     async def get_contents(self) -> str:
         return await self._http.get(
             '/servers/%s/files/contents?file=%s' % (self.identifier, self.__path),
-            ctype='text/plain'
-        )
+            ctype='text/plain')
     
     async def get_download_url(self) -> str:
         data = await self._http.get(
-            '/servers/%s/files/download?file=%s' % (self.identifier, self.__path)
-        )
+            '/servers/%s/files/download?file=%s' % (self.identifier, self.__path))
+        
         return data['attributes']['url']
     
     async def download_to(self, dest: str, /) -> None:
@@ -74,46 +73,39 @@ class File:
     async def rename(self, name: str, /) -> None:
         await self._http.put(
             f'/servers/{self.identifier}/files/rename',
-            body={
+            {
                 'root': self.root,
                 'files':[{
                     'from': self.__name,
                     'to': name
-                }]}
-        )
+                }]
+            })
+        
         self.__name = name
     
     async def copy_to(self, location: str, /) -> None:
-        await self._http.post(
-            f'/servers/{self.identifier}/files/copy',
-            body={'location': location}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/copy',
+                             {'location': location})
     
     async def write(self, data: str, /) -> None:
         await self._http.post(
             '/servers/%s/files/write?file=%s' % (self.identifier, self.__path),
             ctype='text/plain',
-            body=bytes(data, 'utf-8')
-        )
+            body=bytes(data, 'utf-8'))
     
     async def compress(self):
-        data = await self._http.post(
-            f'/servers/{self.identifier}/files/compress',
-            body={'root': self.root, 'files':[self.__name]}
-        )
+        data = await self._http.post(f'/servers/{self.identifier}/files/compress',
+                                    {'root': self.root, 'files':[self.__name]})
+        
         return File(self._http, self.identifier, self.__path, data['attributes'])
     
     async def decompress(self) -> None:
-        await self._http.post(
-            f'/servers/{self.identifier}/files/decompress',
-            body={'root': self.root, 'file': self.__name}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/decompress',
+                             {'root': self.root, 'file': self.__name})
     
     async def delete(self) -> None:
-        await self._http.post(
-            f'/servers/{self.identifier}/files/delete',
-            body={'root': self.root, 'files':[self.__name]}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/delete',
+                             {'root': self.root, 'files':[self.__name]})
 
 
 class Directory:
@@ -134,8 +126,8 @@ class Directory:
     
     async def get_files(self) -> list[File]:
         data = await self._http.get(
-            '/servers/%s/files/list?directory=%s' % (self.identifier, self.__path)
-        )
+            '/servers/%s/files/list?directory=%s' % (self.identifier, self.__path))
+        
         res: list[File] = []
         
         for datum in data['data']:
@@ -143,18 +135,17 @@ class Directory:
                 continue
             else:
                 res.append(File(
-                    self._http,
-                    self.identifier,
-                    self.__path,
-                    datum['attributes']
-                ))
+                        self._http,
+                        self.identifier,
+                        self.__path,
+                        datum['attributes']))
         
         return res
     
     async def get_directories(self):
         data = await self._http.get(
-            '/servers/%s/files/list?directory=%s' % (self.identifier, self.__path)
-        )
+            '/servers/%s/files/list?directory=%s' % (self.identifier, self.__path))
+        
         res: list[Directory] = []
         
         for datum in data['data']:
@@ -186,33 +177,26 @@ class Directory:
         if len(parsed) == 0:
             raise SyntaxError('no files with from and to keys found')
         
-        await self._http.post(
-            f'/servers/{self.identifier}/files/rename',
-            body={'root': self.__path, 'files': files}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/rename',
+                             {'root': self.__path, 'files': files})
     
     async def create_dir(self, name: str, /):
-        await self._http.post(
-            f'/servers/{self.identifier}/files/create-folder',
-            body={'root': self.__path, 'name': name}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/create-folder',
+                             {'root': self.__path, 'name': name})
+        
         return Directory(self._http, self.identifier, self._clean(self.__path + name))
     
     async def delete_dir(self, name: str, /) -> None:
-        await self._http.post(
-            f'/servers/{self.identifier}/files/delete',
-            body={'root': self.__path, 'files':[name]}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/delete',
+                             {'root': self.__path, 'files':[name]})
     
     async def delete_all(self, files: list[dict[str, str]], /) -> None:
         parsed = list(filter(lambda d: 'from' in d and 'to' in d, files))
         if len(parsed) == 0:
             raise SyntaxError('no files with from and to keys found')
         
-        await self._http.post(
-            f'/servers/{self.identifier}/files/delete',
-            body={'root': self.__path, 'files': files}
-        )
+        await self._http.post(f'/servers/{self.identifier}/files/delete',
+                             {'root': self.__path, 'files': files})
     
     async def delete(self) -> None:
         await self.delete_dir(self.__path)
@@ -231,13 +215,13 @@ class Directory:
         
         await self._http.post(
             f'/servers/{self.identifier}/files/pull',
-            body={
+            {
                 'url': url,
                 'directory': directory,
                 'filename': filename,
                 'use_header': use_header,
-                'foreground': foreground}
-        )
+                'foreground': foreground
+            })
     
     async def get_upload_url(self) -> str:
         data = await self._http.get(f'/servers/{self.identifier}/files/upload')

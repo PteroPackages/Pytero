@@ -31,30 +31,30 @@ class PteroClient:
     
     async def get_account(self) -> Account:
         data = await self._http.get('/account')
-        return Account(self._http, data['attributes'])
+        return Account(self, data['attributes'])
     
     async def get_account_two_factor(self) -> dict[str, str]:
         data = await self._http.get('/account/two-factor')
         return data['data']
     
     async def enable_account_two_factor(self, code: int, /) -> list[str]:
-        data = await self._http.post('/account/two-factor', body={'code': code})
+        data = await self._http.post('/account/two-factor', {'code': code})
         return data['attributes']['tokens']
     
-    async def disable_account_two_factor(self, password: str) -> None:
-        await self._http.delete('/account/two-factor', body={'password': password})
+    async def disable_account_two_factor(self, password: str, /) -> None:
+        await self._http.delete('/account/two-factor', {'password': password})
     
     async def update_account_email(self, email: str, password: str) -> None:
         await self._http.put('/account/email', {'email': email, 'password': password})
     
     async def update_account_password(self, old: str, new: str) -> None:
         await self._http.put(
-            self,
-            body={
+            '/account/password',
+            {
                 'current_password': old,
                 'new_password': new,
-                'password_confirmation': new}
-        )
+                'password_confirmation': new
+            })
     
     async def get_account_activities(self) -> list[Activity]:
         data = await self._http.get('/account/activity')
@@ -82,8 +82,8 @@ class PteroClient:
     ) -> APIKey:
         data = await self._http.post(
             '/account/api-keys',
-            body={'description': description, 'allowed_ips': allowed_ips}
-        )
+            {'description': description, 'allowed_ips': allowed_ips})
+        
         return APIKey(**data['attributes'])
     
     async def delete_api_key(self, identifier: str, /) -> None:
@@ -99,17 +99,14 @@ class PteroClient:
         return res
     
     async def create_ssh_key(self, *, name: str, public_key: str) -> SSHKey:
-        data = await self._http.post(
-            '/account/ssh-keys',
-            body={'name': name, 'public_key': public_key}
-        )
+        data = await self._http.post('/account/ssh-keys',
+                                    {'name': name, 'public_key': public_key})
+        
         return SSHKey(**data['attributes'])
     
     async def remove_ssh_key(self, fingerprint: str, /) -> None:
-        await self._http.post(
-            '/account/ssh-keys/remove',
-            body={'fingerprint': fingerprint}
-        )
+        await self._http.post('/account/ssh-keys/remove',
+                             {'fingerprint': fingerprint})
     
     async def get_servers(self) -> list[ClientServer]:
         data = await self._http.get('/')
@@ -145,16 +142,12 @@ class PteroClient:
         return res
     
     async def send_server_command(self, identifier: str, command: str) -> None:
-        await self._http.post(
-            f'/servers/{identifier}/command',
-            body={'command': command}
-        )
+        await self._http.post(f'/servers/{identifier}/command',
+                             {'command': command})
     
     async def send_server_power(self, identifier: str, state: str) -> None:
-        await self._http.post(
-            f'/servers/{identifier}/power',
-            body={'signal': state}
-        )
+        await self._http.post(f'/servers/{identifier}/power',
+                             {'signal': state})
     
     async def get_server_databases(self, identifier: str, /) -> list[ClientDatabase]:
         data = await self._http.get(f'/servers/{identifier}/databases')
@@ -172,32 +165,32 @@ class PteroClient:
         database: str,
         remote: str
     ) -> ClientDatabase:
-        data = await self._http.post(
-            f'/servers/{identifier}/databases',
-            body={
-                'database': database,
-                'remote': remote}
-        )
+        data = await self._http.post(f'/servers/{identifier}/databases',
+                                    {'database': database, 'remote': remote})
+        
         return ClientDatabase(**data['attributes'])
     
     async def rotate_database_password(self, identifier: str, id: str) -> ClientDatabase:
         data = await self._http.post(
-            f'/servers/{identifier}/databases/{id}/rotate-password'
-        )
+            f'/servers/{identifier}/databases/{id}/rotate-password')
+        
         return ClientDatabase(**data['attributes'])
     
     async def delete_server_database(self, identifier: str, id: str) -> None:
         await self._http.delete(f'/servers/{identifier}/databases/{id}')
     
-    async def get_server_files(self, identifier: str, dir: str = '/') -> list[File]:
-        return await Directory(self._http, identifier, dir).get_files()
+    def get_directory(self, identifier: str, dir: str) -> Directory:
+        return Directory(self._http, identifier, dir)
     
-    async def get_server_file_dirs(
+    def get_server_files(self, identifier: str, dir: str = '/') -> list[File]:
+        return Directory(self._http, identifier, dir).get_files()
+    
+    def get_server_file_dirs(
         self,
         identifier: str,
         root: str = '/'
     ) -> list[Directory]:
-        return await Directory(self._http, identifier, root).get_directories()
+        return Directory(self._http, identifier, root).get_directories()
     
     async def get_server_schedules(self, identifier: str, /) -> list[Schedule]:
         data = await self._http.get(f'/servers/{identifier}/schedules')
@@ -225,14 +218,15 @@ class PteroClient:
     ) -> Schedule:
         data = await self._http.post(
             f'/servers/{identifier}/schedules',
-            body={
+            {
                 'name': name,
                 'is_active': is_active,
                 'minute': minute,
                 'hour': hour,
                 'day_of_week': day_of_week,
-                'day_of_month': day_of_month}
-        )
+                'day_of_month': day_of_month
+            })
+        
         return Schedule(self._http, identifier, data['attributes'])
     
     async def update_server_schedule(
@@ -257,11 +251,13 @@ class PteroClient:
         month = month or old.cron.month
         day_of_week = day_of_week or old.cron.day_of_week
         day_of_month = day_of_month or old.cron.day_of_month
-        only_when_online = only_when_online if only_when_online is not None else old.only_when_online
+        only_when_online = only_when_online \
+            if only_when_online is not None \
+                else old.only_when_online
         
         data = await self._http.post(
             '/servers/%s/schedules/%d' % (identifier, id),
-            body={
+            {
                 'name': name,
                 'is_active': is_active,
                 'minute': minute,
@@ -269,8 +265,9 @@ class PteroClient:
                 'month': month,
                 'day_of_week': day_of_week,
                 'day_of_month': day_of_month,
-                'only_when_online': only_when_online}
-        )
+                'only_when_online': only_when_online
+            })
+        
         return Schedule(self._http, identifier, data['attributes'])
     
     async def execute_server_schedule(self, identifier: str, id: int) -> None:
@@ -301,13 +298,14 @@ class PteroClient:
     ) -> Task:
         data = await self._http.post(
             '/servers/%s/schedules/%d/tasks' % (identifier, id),
-            body={
+            {
                 'action': action,
                 'payload': payload,
                 'time_offset': time_offset,
                 'sequence_id': sequence_id,
-                'continue_on_failure': continue_on_failure}
-        )
+                'continue_on_failure': continue_on_failure
+            })
+        
         return Task(**data['attributes'])
     
     async def update_schedule_task(
@@ -323,12 +321,13 @@ class PteroClient:
     ) -> Task:
         data = await self._http.post(
             '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid),
-            body={
+            {
                 'action': action,
                 'payload': payload,
                 'time_offset': time_offset,
-                'continue_on_failure': continue_on_failure}
-        )
+                'continue_on_failure': continue_on_failure
+            })
+        
         return Task(**data['attributes'])
     
     async def delete_schedule_task(
@@ -338,8 +337,7 @@ class PteroClient:
         tid: int
     ) -> None:
         await self._http.delete(
-            '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid)
-        )
+            '/servers/%s/schedules/%d/tasks/%d' % (identifier, id, tid))
     
     async def get_server_allocations(
         self,
@@ -355,10 +353,7 @@ class PteroClient:
         return res
     
     async def create_server_allocation(self, identifier: str, /) -> NetworkAllocation:
-        data = await self._http.post(
-            f'/servers/{identifier}/network/allocations',
-            body=None
-        )
+        data = await self._http.post(f'/servers/{identifier}/network/allocations', None)
         return NetworkAllocation(**data['attributes'])
     
     async def set_server_allocation_notes(
@@ -369,8 +364,8 @@ class PteroClient:
     ) -> NetworkAllocation:
         data = await self._http.post(
             '/servers/%s/network/allocations/%d' % (identifier, id),
-            body={'notes': notes}
-        )
+            {'notes': notes})
+        
         return NetworkAllocation(**data['attributes'])
     
     async def set_server_primary_allocation(
@@ -379,14 +374,12 @@ class PteroClient:
         id: int
     ) -> NetworkAllocation:
         data = await self._http.post(
-            '/servers/%s/network/allocations/%d/primary' % (identifier, id)
-        )
+            '/servers/%s/network/allocations/%d/primary' % (identifier, id))
+        
         return NetworkAllocation(**data['attributes'])
     
     async def delete_server_allocation(self, identifier: str, id: int) -> None:
-        await self._http.delete(
-            '/servers/%s/network/allocations/%d' % (identifier, id)
-        )
+        await self._http.delete('/servers/%s/network/allocations/%d' % (identifier, id))
     
     async def get_server_subusers(self, identifier: str, /) -> list[SubUser]:
         data = await self._http.get(f'/servers/{identifier}/users')
@@ -402,10 +395,9 @@ class PteroClient:
         return SubUser(self._http, data['attributes'])
     
     async def add_server_subuser(self, identifier: str, email: str) -> SubUser:
-        data = await self._http.post(
-            f'/servers/{identifier}/users',
-            body={'email': email}
-        )
+        data = await self._http.post(f'/servers/{identifier}/users',
+                                    {'email': email})
+        
         return SubUser(self._http, data['attributes'])
     
     async def update_subuser_permissions(
@@ -414,16 +406,13 @@ class PteroClient:
         uuid: str,
         permissions: Permissions
     ) -> SubUser:
-        data = await self._http.post(
-            '/servers/%s/users/%s' % (identifier, uuid),
-            body={'permissions': permissions.value}
-        )
+        data = await self._http.post('/servers/%s/users/%s' % (identifier, uuid),
+                                    {'permissions': permissions.value})
+        
         return SubUser(self._http, data['attributes'])
     
     async def remove_server_subuser(self, identifier: str, uuid: str) -> None:
-        await self._http.delete(
-            '/servers/%s/users/%s' % (identifier, uuid)
-        )
+        await self._http.delete('/servers/%s/users/%s' % (identifier, uuid))
     
     async def get_server_startup(self, identifier: str) -> list[ClientVariable]:
         data = await self._http.get(f'/servers/{identifier}/startup')
@@ -440,23 +429,18 @@ class PteroClient:
         key: str,
         value: int | str | bool
     ) -> ClientVariable:
-        data = await self._http.put(
-            f'/servers/{identifier}/startup/variable',
-            body={'key': key, 'value': value}
-        )
+        data = await self._http.put(f'/servers/{identifier}/startup/variable',
+                                    {'key': key, 'value': value})
+        
         return ClientVariable(**data['attributes'])
     
     async def rename_server(self, identifier: str, name: str) -> None:
-        await self._http.post(
-            f'/servers/{identifier}/settings/rename',
-            body={'name': name}
-        )
+        await self._http.post(f'/servers/{identifier}/settings/rename',
+                             {'name': name})
     
     async def reinstall_server(self, identifier: str, /) -> None:
         await self._http.post(f'/servers/{identifier}/settings/reinstall')
     
     async def set_server_docker_image(self, identifier: str, image: str) -> None:
-        await self._http.put(
-            f'/servers/{identifier}/settings/docker-image',
-            body={'docker_image': image}
-        )
+        await self._http.put(f'/servers/{identifier}/settings/docker-image',
+                            {'docker_image': image})

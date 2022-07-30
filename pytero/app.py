@@ -423,10 +423,11 @@ class PteroApp:
         old = await self.get_location(id)
         data = await self._http.patch(
             f'/locations/{id}',
-            body={
+            {
                 'short': short or old.short,
-                'long': long or old.long}
-        )
+                'long': long or old.long
+            })
+        
         return Location(**data['attributes'])
     
     async def delete_location(self, id: int, /) -> None:

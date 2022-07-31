@@ -1,7 +1,10 @@
 from enum import Enum
+from typing import TypeVar
 
 
 __all__ = ('Flags', 'Permissions')
+
+P = TypeVar('P', bound='Permissions')
 
 
 class Flags(Enum):
@@ -118,45 +121,50 @@ class Permissions:
     def __init__(self, *perms: str | Flags) -> None:
         self.value: list[str] = self.resolve(*perms)
     
-    @staticmethod
-    def resolve(*perms: str | Flags) -> list[str]:
-        res: list[str] = []
-        flags = Flags.values()
-        
-        for perm in perms:
-            if perm is Flags:
-                res.append(perm.value)
-            elif perm in flags:
-                res.append(perm)
-            else:
-                raise KeyError('invalid permission or flag')
-        
-        return res
-    
     def __repr__(self) -> str:
         return '<Permissions total=%d>' % len(self.value)
     
     def __len__(self) -> int:
         return len(self.value)
     
+    def __bool__(self) -> bool:
+        return len(self.value) != 0
+    
     def __contains__(self, perm: str):
         return perm in self.value
     
-    def any(self, *perms) -> bool:
-        res = self.__class__.resolve(*perms)
-        for perm in self.value:
-            if perm in res:
-                return True
-        
-        return False
+    def __eq__(self, other: P) -> bool:
+        return self.value == other.value
     
-    def all(self, *perms) -> bool:
-        res = self.__class__.resolve(*perms)
-        for perm in self.value:
-            if perm not in res:
-                return False
+    def __add__(self, other: P) -> P:
+        return Permissions(*(self.value + other.value))
+    
+    def __sub__(self, other: P) -> P:
+        perms = list(filter(lambda p: p not in other.value, self.value))
+        return Permissions(*perms)
+    
+    @staticmethod
+    def resolve(*perms: str | Flags) -> list[str]:
+        res: list[str] = []
+        flags = Flags.values()
         
-        return True
+        for perm in perms:
+            if isinstance(perm, Flags):
+                res.append(perm.value)
+            elif perm in flags:
+                res.append(perm)
+            else:
+                raise KeyError(f"invalid permission or flag '{perm}'")
+        
+        return res
+    
+    def any(self, *perms: str | Flags) -> bool:
+        res = self.__class__.resolve(*perms)
+        return any(map(lambda p: p in self.value, res))
+    
+    def all(self, *perms: str | Flags) -> bool:
+        res = self.__class__.resolve(*perms)
+        return all(map(lambda p: p in self.value, res))
     
     def is_admin(self) -> bool:
         return any(filter(lambda p: 'admin' in p, self.value))

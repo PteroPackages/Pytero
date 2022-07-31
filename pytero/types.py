@@ -46,6 +46,7 @@ class _Http:
 
 @dataclass
 class Activity:
+    id: str
     batch: str
     event: str
     is_api: bool

@@ -29,7 +29,8 @@ __all__ = (
     'Statistics',
     'Task',
     'WebSocketAuth',
-    'WebSocketEvent'
+    'WebSocketEvent',
+    'Backup'
 )
 
 

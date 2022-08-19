@@ -1,7 +1,7 @@
 from .files import Directory, File
 from .http import RequestManager
 from .permissions import Permissions
-from .types import APIKey, Activity, ClientDatabase, ClientVariable, NetworkAllocation, \
+from .types import APIKey, Activity, Backup, ClientDatabase, ClientVariable, NetworkAllocation, \
     SSHKey, Statistics, Task, WebSocketAuth
 from .schedules import Schedule
 from .servers import ClientServer
@@ -413,6 +413,25 @@ class PteroClient:
     
     async def remove_server_subuser(self, identifier: str, uuid: str) -> None:
         await self._http.delete('/servers/%s/users/%s' % (identifier, uuid))
+        
+    async def list_backups(self, identifier: str, /) -> list[Backup]:
+        data = await self._http.get('/servers/%s/backups' % identifier)
+        return [Backup(**datum['attributes']) for datum in data['data']]
+
+    async def create_backup(self, identifier: str, *, name: str | None = None, ignore_files: list[str] | None = None, locked: bool = False) -> Backup:
+        data = await self._http.post('/servers/%s/backups' % identifier, {"name": name, "ignore_files": "ignore_files", "locked": locked})
+        return Backup(**data['attributes'])
+
+    async def get_backup(self, identifier: str, uuid: str) -> Backup:
+        data = await self._http.get('/servers/%s/backups/%s' % (identifier, uuid))
+        return Backup(**data['attributes'])
+
+    async def get_backup_download_url(self, identifier: str, uuid: str) -> str:
+        data = await self._http.get('/servers/%s/backups/%s/download' % (identifier, uuid))
+        return data['attributes']['url']
+
+    async def delete_backup(self, identifier: str, uuid: str) -> None:
+        await self._http.delete('/servers/%s/backups/%s' % (identifier, uuid))
     
     async def get_server_startup(self, identifier: str) -> list[ClientVariable]:
         data = await self._http.get(f'/servers/{identifier}/startup')

@@ -8,7 +8,7 @@ with open('./README.md') as file:
 
 
 setup(
-    name='Pytero',
+    name='pytero',
     author='Devonte',
     url='https://github.com/PteroPackages/Pytero',
     license='MIT',

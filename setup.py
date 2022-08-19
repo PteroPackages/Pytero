@@ -1,4 +1,4 @@
-from setuptools import find_packages, setup
+from setuptools import setup
 from pytero import __version__
 
 
@@ -13,7 +13,7 @@ setup(
     url='https://github.com/PteroPackages/Pytero',
     license='MIT',
     version=__version__,
-    packages=find_packages('pytero'),
+    packages=['pytero'],
     description='A flexible API wrapper for Pterodactyl in Python',
     long_description=long_desc,
     long_desription_content_type='text/markdown',

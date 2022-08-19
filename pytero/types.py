@@ -381,9 +381,11 @@ class WebSocketEvent:
 @dataclass
 class Backup:
     uuid: str
+    is_successful: bool
+    is_locked: bool
     name: str
     ignored_files: list[str]
-    sha256_hash: str | None
+    checksum: str | None
     bytes: int
     created_at: str
     completed_at: str | None

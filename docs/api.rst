@@ -1,9 +1,14 @@
+.. currentmodule:: pytero
+
+API Reference
+=============
 .. toctree::
     :maxdepth: 6
-    :caption: API Reference
 
 Application
 -----------
+.. autoclass:: PteroApp
+    :members:
+    :exclude-members: event
 
-.. automodule:: pytero.app
-    :members: PteroApp
+    .. autodecorator:: pytero.app.PteroApp.event()

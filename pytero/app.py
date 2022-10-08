@@ -14,10 +14,10 @@ class PteroApp:
 
     Parameters
     ----------
-    url: :class:`string`
+    url: :class:`str`
         The URL of the Pterodactyl domain. This must be an absolute URL, not one that contains
         paths (trailing forward slash is allowed).
-    key: :class:`string`
+    key: :class:`str`
         The API key to use for HTTP requests. This can be either an application API key or a Client
         API key (as of Pterodactyl v1.8).
     '''
@@ -31,6 +31,7 @@ class PteroApp:
     
     @property
     def event(self):
+        '''Returns the HTTP class event decorator for registering events to trigger on.'''
         return self._http.event
     
     async def get_users(

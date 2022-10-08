@@ -23,6 +23,9 @@ the `Github repo <https://github.com/PteroPackages/Pytero/issues>`_ for support.
    :maxdepth: 1
    :caption: Contents:
    
+   introduction
+   examples
+   advanced
    api
 
 Indices and tables

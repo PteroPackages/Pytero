@@ -41,28 +41,55 @@ class PteroApp:
         include: list[str] = None,
         sort: str = None
     ) -> list[User]:
+        '''Returns a list of users from the API with the given options if specified.
+        
+        Parameters
+        ----------
+        filter: Optional[tuple[:class:`str`, :class:`str`]]
+            A tuple containing the filter type and argument to filter by (default is ``None``).
+            This supports:
+            * email
+            * uuid
+            * username
+            * external_id
+        include: Optional[list[:class:`str`]]
+            A list of additional resources to include (default is ``None``). This supports:
+            * servers
+        sort: Optional[:class:`str`]
+            The order to sort the results in (default is ``None``). This supports:
+            * id
+            * uuid
+        '''
         data = await self._http.get('/users', filter=filter, include=include, sort=sort)
-        res: list[User] = []
-        
-        for datum in data['data']:
-            res.append(User(self, datum['attributes']))
-        
-        return res
+        return [User(self, datum['attributes']) for datum in data]
     
     async def get_user(
         self,
         id: int,
         *,
-        filter: tuple[str, str] = None,
-        include: list[str] = None,
-        sort: str = None
+        include: list[str] = None
     ) -> User:
-        data = await self._http.get(f'/users/{id}',
-                                    filter=filter, include=include, sort=sort)
+        '''Returns a user from the API with the given ID.
         
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the user.
+        include: Optional[list[:class:`str`]]
+            A list of additional resources to include (default is ``None``). This supports:
+                * servers
+        '''
+        data = await self._http.get(f'/users/{id}', include=include)
         return User(self, data['attributes'])
     
     async def get_external_user(self, id: str, /) -> User:
+        '''Returns a user from the API with the given external identifier.
+        
+        Parameters
+        ----------
+        id: :class:`str`
+            The external identifier of the user.
+        '''
         data = await self._http.get(f'/users/external/{id}')
         return User(self, data['attributes'])
     
@@ -77,6 +104,25 @@ class PteroApp:
         external_id: str = None,
         root_admin: bool = False
     ) -> User:
+        '''Creates a new user account with the given fields.
+        
+        Parameters
+        ----------
+        email: :class:`str`
+            The email for the user.        
+        username: :class:`str`
+            The username for the user.
+        fist_name: :class:`str`
+            The first name of the user.
+        last_name: :class:`str`
+            The last name of the user.
+        password: Optional[:class:`str`]
+            The password for the user (default is ``None``).
+        external_id: Optional[:class:`str`]
+            An external identifier for the user (default is ``None``).
+        root_admin: Optional[:class:`bool`]
+            Whether the user should be considered an admin (default is ``False``).
+        '''
         data = await self._http.post(
             '/users',
             {
@@ -95,14 +141,35 @@ class PteroApp:
         self,
         id: int,
         *,
-        email: str,
-        username: str,
-        first_name: str,
-        last_name: str,
+        email: str = None,
+        username: str = None,
+        first_name: str = None,
+        last_name: str = None,
         password: str = None,
         external_id: str = None,
         root_admin: bool = False
     ) -> User:
+        '''Updates a specified user with the given fields.
+        
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the user to update.
+        email: Optional[:class:`str`]
+            The email for the user (default is the current value).
+        username: Optional[:class:`str`]
+            The username for the user (default is the current value).
+        fist_name: Optional[:class:`str`]
+            The first name of the user (default is the current value).
+        last_name: Optional[:class:`str`]
+            The last name of the user (default is the current value).
+        password: Optional[:class:`str`]
+            The password for the user (default is ``None``).
+        external_id: Optional[:class:`str`]
+            An external identifier for the user (default is the current value).
+        root_admin: Optional[:class:`bool`]
+            Whether the user should be considered an admin (default is the current value).
+        '''
         old = await self.get_user(id)
         body = {
                 'email': email or old.email,
@@ -119,6 +186,13 @@ class PteroApp:
         return User(self, data['attributes'])
     
     async def delete_user(self, id: int, /) -> None:
+        '''Deletes a user by its ID.
+        
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the user to delete.
+        '''
         await self._http.delete(f'/users/{id}')
     
     async def get_servers(

@@ -1,5 +1,6 @@
-API Reference
-=============
+.. toctree::
+    :maxdepth: 6
+    :caption: API Reference
 
 Application
 -----------

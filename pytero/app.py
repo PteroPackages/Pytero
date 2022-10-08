@@ -10,6 +10,17 @@ __all__ = ('PteroApp')
 
 
 class PteroApp:
+    '''A class/interface for interacting with the application API.
+
+    Parameters
+    ----------
+    url: :class:`string`
+        The URL of the Pterodactyl domain. This must be an absolute URL, not one that contains
+        paths (trailing forward slash is allowed).
+    key: :class:`string`
+        The API key to use for HTTP requests. This can be either an application API key or a Client
+        API key (as of Pterodactyl v1.8).
+    '''
     def __init__(self, url: str, key: str) -> None:
         self.url = url.removesuffix('/')
         self.key = key

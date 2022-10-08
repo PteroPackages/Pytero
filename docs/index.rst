@@ -10,9 +10,9 @@ Python using ``async``/``await`` syntax and up-to-date typings for proper type-c
 
 Getting Started
 ---------------
-* :doc:`Introduction`
-* :doc:`Examples`
-* :doc:`Advanced`
+* :doc:`introduction`
+* :doc:`examples`
+* :doc:`advanced`
 
 Support
 -------
@@ -24,4 +24,8 @@ the `Github repo <https://github.com/PteroPackages/Pytero/issues>`_ for support.
    :caption: Contents:
    
    api
-   `Changelog <https://github.com/PteroPackages/Pytero/tree/main/CHANGELOG.md>`
+
+Indices and tables
+==================
+* :ref:`genindex`
+* :ref:`modindex`

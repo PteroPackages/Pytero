@@ -10,18 +10,22 @@ Python using ``async``/``await`` syntax and up-to-date typings for proper type-c
 
 Getting Started
 ---------------
-* :doc:`Introduction`
-* :doc:`Examples`
-* :doc:`Advanced`
+* :doc:`introduction`
+* :doc:`examples`
+* :doc:`advanced`
 
 Support
 -------
-Feel free to join our `Discord server <https://discord.com/invite/dwcfTjgn7S>`_ or open an issue on the
-`Github repo <https://github.com/PteroPackages/Pytero/issues>`_ for support.
+Feel free to join our `Discord server <https://discord.com/invite/dwcfTjgn7S>`_ or open an issue on
+the `Github repo <https://github.com/PteroPackages/Pytero/issues>`_ for support.
 
 .. toctree::
    :maxdepth: 1
    :caption: Contents:
    
    api
-   `Changelog <https://github.com/PteroPackages/Pytero/tree/main/CHANGELOG.md>`
+
+Indices and tables
+==================
+* :ref:`genindex`
+* :ref:`modindex`

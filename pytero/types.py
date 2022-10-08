@@ -29,7 +29,8 @@ __all__ = (
     'Statistics',
     'Task',
     'WebSocketAuth',
-    'WebSocketEvent'
+    'WebSocketEvent',
+    'Backup'
 )
 
 
@@ -376,3 +377,18 @@ class WebSocketAuth:
 class WebSocketEvent:
     event: str
     args: list[str] | None
+
+@dataclass
+class Backup:
+    uuid: str
+    is_successful: bool
+    is_locked: bool
+    name: str
+    ignored_files: list[str]
+    checksum: str | None
+    bytes: int
+    created_at: str
+    completed_at: str | None
+    
+    def __repr__(self) -> str:
+        return '<Backup uuid=%s>' % self.uuid

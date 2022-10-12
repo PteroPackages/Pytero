@@ -1,0 +1,195 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" /><meta name="generator" content="Docutils 0.19: https://docutils.sourceforge.io/" />
+
+    <title>Getting Started &#8212; Pytero 1.0.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="_static/alabaster.css" />
+    <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js"></script>
+    <script src="_static/jquery.js"></script>
+    <script src="_static/underscore.js"></script>
+    <script src="_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="_static/doctools.js"></script>
+    <script src="_static/sphinx_highlight.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Examples" href="examples.html" />
+    <link rel="prev" title="Welcome to Pytero’s documentation!" href="index.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head><body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          
+
+          <div class="body" role="main">
+            
+  <section id="getting-started">
+<h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this heading">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<section id="installing">
+<h2>Installing<a class="headerlink" href="#installing" title="Permalink to this heading">¶</a></h2>
+<p>Using pip:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">PteroPackages</span><span class="o">/</span><span class="n">Pytero</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+<p>From Sources:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">git</span> <span class="n">clone</span> <span class="n">https</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">PteroPackages</span><span class="o">/</span><span class="n">Pytero</span><span class="o">.</span><span class="n">git</span>
+</pre></div>
+</div>
+</section>
+<section id="structure">
+<h2>Structure<a class="headerlink" href="#structure" title="Permalink to this heading">¶</a></h2>
+<p>All of Pytero’s API methods are asynchronous and make use of futures which makes use of the native
+<code class="docutils literal notranslate"><span class="pre">asyncio</span></code> library to run async programs. If you do not want to use asynchronous code for your
+program, we recommend using the <a class="reference external" href="https://github.com/iamkubi/pydactyl">Pydactyl</a> API wrapper.</p>
+</section>
+<section id="application-api">
+<h2>Application API<a class="headerlink" href="#application-api" title="Permalink to this heading">¶</a></h2>
+<p>First, import the <code class="xref py py-class docutils literal notranslate"><span class="pre">PteroApp</span></code> class in your file, this holds all the functions for
+interacting with the application API. Make sure to also import the <code class="docutils literal notranslate"><span class="pre">asyncio</span></code> library (we will
+need this later).</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">pytero</span> <span class="kn">import</span> <span class="n">PteroApp</span>
+</pre></div>
+</div>
+<p>The class takes 2 values for initializing: your Pterodactyl panel URL, and your API key. This
+supports the use of both application keys and client keys, but we recommend that you use a
+client key as application keys are deprecated.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="n">app</span> <span class="o">=</span> <span class="n">PteroApp</span><span class="p">(</span><span class="s1">&#39;https://your.pterodactyl.domain&#39;</span><span class="p">,</span> <span class="s1">&#39;ptlc_Your_4pi_k3y&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Next, define a <code class="docutils literal notranslate"><span class="pre">main</span></code> function to run your program, in this example we will be fetching all users
+from the API.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">get_users</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal notranslate"><span class="pre">PteroApp</span></code> method naming convention is designed to be straightforward: all <code class="docutils literal notranslate"><span class="pre">fetch_</span></code> or
+<code class="docutils literal notranslate"><span class="pre">get_</span></code> methods will fetch a specific resource, all <code class="docutils literal notranslate"><span class="pre">set_</span></code> or <code class="docutils literal notranslate"><span class="pre">update_</span></code> will update a specific
+resource, all <code class="docutils literal notranslate"><span class="pre">delete_</span></code> or <code class="docutils literal notranslate"><span class="pre">remove_</span></code> methods will delete a specific resource, and so on. These
+methods are also documented in the <a class="reference internal" href="api.html"><span class="doc">API Reference</span></a>.</p>
+<p>Finally, run your program with the <code class="docutils literal notranslate"><span class="pre">asyncio.run()</span></code> method. It’s good practice to wrap the call in
+a name check like below, but you can omit it for this program if you want.</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>If you’ve done this correctly, you should see a list of <code class="docutils literal notranslate"><span class="pre">User</span></code> objects in <code class="docutils literal notranslate"><span class="pre">repr</span></code> form printed
+to the console:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="o">&lt;</span><span class="n">User</span> <span class="nb">id</span><span class="o">=</span><span class="mi">1</span> <span class="n">uuid</span><span class="o">=</span><span class="n">d5aa40ee</span><span class="o">-</span><span class="mf">8e7</span><span class="n">f</span><span class="o">-</span><span class="mi">4</span><span class="n">af5</span><span class="o">-</span><span class="n">af72</span><span class="o">-</span><span class="mi">420</span><span class="n">ea383c432</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">User</span> <span class="nb">id</span><span class="o">=</span><span class="mi">2</span> <span class="n">uuid</span><span class="o">=</span><span class="mi">66</span><span class="n">fdb4ae</span><span class="o">-</span><span class="mi">2</span><span class="n">ff8</span><span class="o">-</span><span class="mi">4467</span><span class="o">-</span><span class="mf">95e0</span><span class="o">-</span><span class="mi">65</span><span class="n">d613d11da4</span><span class="o">&gt;</span>
+<span class="o">&lt;</span><span class="n">User</span> <span class="nb">id</span><span class="o">=</span><span class="mi">4</span> <span class="n">uuid</span><span class="o">=</span><span class="n">e9d12be2</span><span class="o">-</span><span class="mi">7</span><span class="n">bfb</span><span class="o">-</span><span class="mi">419</span><span class="n">d</span><span class="o">-</span><span class="mi">8888</span><span class="o">-</span><span class="mi">3958</span><span class="n">a71c5cac</span><span class="o">&gt;</span>
+</pre></div>
+</div>
+<p>The full program:</p>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">pytero</span> <span class="kn">import</span> <span class="n">PteroApp</span>
+
+<span class="n">app</span> <span class="o">=</span> <span class="n">PteroApp</span><span class="p">(</span><span class="s1">&#39;https://your.pterodactyl.domain&#39;</span><span class="p">,</span> <span class="s1">&#39;ptlc_Your_4pi_k3y&#39;</span><span class="p">)</span>
+
+<span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+    <span class="n">users</span> <span class="o">=</span> <span class="k">await</span> <span class="n">app</span><span class="o">.</span><span class="n">get_users</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">user</span> <span class="ow">in</span> <span class="n">users</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="nb">repr</span><span class="p">(</span><span class="n">user</span><span class="p">))</span>
+
+
+<span class="k">if</span> <span class="vm">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span>
+</pre></div>
+</div>
+</section>
+<section id="next-steps">
+<h2>Next Steps<a class="headerlink" href="#next-steps" title="Permalink to this heading">¶</a></h2>
+<p>Well done for completing this guide! Feel free to take a look at the <a class="reference internal" href="advanced.html"><span class="doc">Advanced</span></a> section for
+more advanced usage of the package and API, or the <a class="reference internal" href="api.html"><span class="doc">API Reference</span></a> for more information about the
+library.</p>
+</section>
+</section>
+
+
+          </div>
+          
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<h1 class="logo"><a href="index.html">Pytero</a></h1>
+
+
+
+
+
+
+
+
+<h3>Navigation</h3>
+<ul class="current">
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="examples.html">Examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="advanced.html">Advanced</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api.html">API Reference</a></li>
+</ul>
+
+<div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+      <li>Previous: <a href="index.html" title="previous chapter">Welcome to Pytero’s documentation!</a></li>
+      <li>Next: <a href="examples.html" title="next chapter">Examples</a></li>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+
+
+
+
+
+
+
+
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2022, Devonte W.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 5.2.3</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.12</a>
+      
+      |
+      <a href="_sources/getting_started.rst.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

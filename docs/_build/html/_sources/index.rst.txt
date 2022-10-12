@@ -10,7 +10,7 @@ Python using ``async``/``await`` syntax and up-to-date typings for proper type-c
 
 Getting Started
 ---------------
-* :doc:`introduction`
+* :doc:`getting_started`
 * :doc:`examples`
 * :doc:`advanced`
 
@@ -21,9 +21,8 @@ the `Github repo <https://github.com/PteroPackages/Pytero/issues>`_ for support.
 
 .. toctree::
    :maxdepth: 1
-   :caption: Contents:
    
-   introduction
+   getting_started
    examples
    advanced
    api

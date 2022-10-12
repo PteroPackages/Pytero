@@ -61,7 +61,7 @@ class PteroApp:
             * uuid
         '''
         data = await self._http.get('/users', filter=filter, include=include, sort=sort)
-        return [User(self, datum['attributes']) for datum in data]
+        return [User(self, datum['attributes']) for datum in data['data']]
     
     async def get_user(
         self,

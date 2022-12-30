@@ -60,4 +60,4 @@ Please see the [contributing guide](https://github.com/PteroPackages/Pytero/blob
 
 This repository is managed under the MIT license.
 
-© 2021-2022 PteroPackages
+© 2021-present PteroPackages

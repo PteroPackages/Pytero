@@ -1,26 +1,28 @@
+from typing import Any
 from .servers import AppServer
 from .types import Allocation, Location, NodeConfiguration
 from .util import transform
 
+# pylint: disable=C0103
 
-__all__ = ('Node')
+__all__ = ('Node',)
 
 
 class Node:
-    def __init__(self, http, data: dict[str,]) -> None:
+    def __init__(self, http, data: dict[str, Any]) -> None:
         self._http = http
         self.id: int = data['id']
         self.created_at: str = data['created_at']
         self._patch(data)
         self._patch_relations(data.get('relationships'))
-    
+
     def __repr__(self) -> str:
-        return '<Node id=%d>' % self.id
-    
+        return f'<Node id={self.id}>'
+
     def __str__(self) -> str:
         return self.name
-    
-    def _patch(self, data: dict[str,]) -> None:
+
+    def _patch(self, data: dict[str, Any]) -> None:
         self.name: str = data['name']
         self.description: str | None = data.get('description')
         self.location_id: int = data['location_id']
@@ -41,29 +43,29 @@ class Node:
         self.maintenance_mode: bool = data['maintenance_mode']
         self.upload_size: int = data['upload_size']
         self.updated_at: str | None = data.get('updated_at')
-    
-    def _patch_relations(self, data: dict[str,] | None) -> None:
+
+    def _patch_relations(self, data: dict[str, Any] | None) -> None:
         if data is None:
             return
-        
+
         if 'allocations' in data:
             self.allocations = []
             for datum in data['allocations']['data']:
                 self.allocations.append(Allocation(**datum['attributes']))
-        
+
         if 'location' in data:
             self.location = Location(**data['location']['attributes'])
-        
+
         if 'servers' in data:
             self.servers = []
             for datum in data['servers']['data']:
                 self.servers.append(AppServer(self._http, datum['attributes']))
-    
-    def to_dict(self) -> dict[str,]:
+
+    def to_dict(self) -> dict[str, Any]:
         return transform(self, ignore=['_http'])
-    
+
     async def get_configuration(self) -> NodeConfiguration:
         return await self._http.get_node_configuration(self.id)
-    
+
     def update_node(self) -> None:
         return NotImplemented

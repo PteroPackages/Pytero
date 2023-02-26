@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
 
+# pylint: disable=C0103
 
 __all__ = (
     '_Http',
@@ -53,14 +54,14 @@ class Activity:
     is_api: bool
     ip: Optional[str]
     description: Optional[str]
-    properties: dict[str,]
+    properties: dict[str, Any]
     has_additional_metadata: bool
     timestamp: str
 
     def __repr__(self) -> str:
-        return '<Activity event=%s>' % self.event
+        return f'<Activity event={self.event}>'
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -74,9 +75,9 @@ class Allocation:
     assigned: bool
 
     def __repr__(self) -> str:
-        return '<Allocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
+        return f'<Allocation id={self.id} ip={self.ip} port={self.port}>'
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         d = self.__dict__
         del d['id']
         return d
@@ -91,7 +92,7 @@ class APIKey:
     last_used_at: Optional[str]
 
     def __repr__(self) -> str:
-        return '<APIKey identifier=%s>' % self.identifier
+        return f'<APIKey identifier={self.identifier}>'
 
 
 @dataclass
@@ -113,7 +114,7 @@ class ClientHost:
     address: str
     port: int
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -126,7 +127,7 @@ class ClientDatabase:
     connections_from: str
     max_connections: int
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         d = self.__dict__
         del d['id']
         return d
@@ -150,7 +151,7 @@ class Container:
     image: str
     installed: bool
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -162,7 +163,7 @@ class Cron:
     hour: str
     minute: str
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -172,7 +173,7 @@ class DeployServerOptions:
     dedicated_ip: bool
     port_range: list[str]
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -182,7 +183,7 @@ class DeployNodeOptions:
     disk: int
     location_ids: list[int]
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -195,7 +196,7 @@ class EggConfiguration:
     file_denylist: list[str]
     extends: Optional[str]
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -207,7 +208,7 @@ class EggScript:
     container: str
     extends: Optional[str]
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -229,9 +230,9 @@ class Egg:
     updated_at: Optional[str]
 
     def __repr__(self) -> str:
-        return '<Egg id=%d nest=%d name=%s>' % (self.id, self.nest, self.name)
+        return f'<Egg id={self.id} nest=#{self.nest} name={self.name}>'
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         d = self.__dict__
         del d['id'], d['uuid'], d['created_at'], d['updated_at']
         return d
@@ -243,7 +244,7 @@ class FeatureLimits:
     backups: int
     databases: int
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -257,7 +258,7 @@ class Limits:
     threads: Optional[str]
     oom_disabled: Optional[bool]
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return self.__dict__
 
 
@@ -272,13 +273,13 @@ class Nest:
     updated_at: str | None
 
     def __repr__(self) -> str:
-        return '<Nest id=%d name=%s>' % (self.id, self.name)
+        return f'<Nest id={self.id} name={self.name}>'
 
-    def to_dict(self) -> dict[str,]:
+    def to_dict(self) -> dict[str, Any]:
         return {
-                'author': self.author,
-                'name': self.name,
-                'description': self.description}
+            'author': self.author,
+            'name': self.name,
+            'description': self.description}
 
 
 @dataclass
@@ -291,7 +292,8 @@ class NetworkAllocation:
     is_default: bool
 
     def __repr__(self) -> str:
-        return '<NetworkAllocation id=%d ip=%s port=%d>' % (self.id, self.ip, self.port)
+        return f'<NetworkAllocation id={self.id} ip={self.ip} \
+            port={self.port}>'
 
 
 @dataclass
@@ -306,7 +308,7 @@ class NodeConfiguration:
     remote: str
 
     def __repr__(self) -> str:
-        return '<NodeConfiguration uuid=%s>' % self.uuid
+        return f'<NodeConfiguration uuid={self.uuid}>'
 
 
 @dataclass
@@ -318,7 +320,7 @@ class Location:
     updated_at: str | None
 
     def __repr__(self) -> str:
-        return '<Location id=%d long=%s short=%s>' % (self.id, self.long, self.short)
+        return f'<Location id={self.id} long={self.long} short={self.short}>'
 
 
 @dataclass
@@ -331,8 +333,8 @@ class Resources:
     uptime: int
 
     def __repr__(self) -> str:
-        return '<Resources memory=%d disk=%d cpu=%d>' % \
-            (self.memory_bytes, self.disk_bytes, self.cpu_absolute)
+        return f'<Resources memory={self.memory_bytes} disk={self.disk_bytes} \
+            cpu={self.cpu_absolute}>'
 
 
 @dataclass
@@ -350,8 +352,8 @@ class Statistics:
     resources: Resources
 
     def __repr__(self) -> str:
-        return '<Statistics state=%s suspended=%s>' % \
-            (self.current_state, self.is_suspended)
+        return f'<Statistics state={self.current_state} \
+            suspended={self.is_suspended}>'
 
 
 @dataclass
@@ -378,6 +380,7 @@ class WebSocketEvent:
     event: str
     args: list[str] | None
 
+
 @dataclass
 class Backup:
     uuid: str
@@ -389,6 +392,6 @@ class Backup:
     bytes: int
     created_at: str
     completed_at: str | None
-    
+
     def __repr__(self) -> str:
-        return '<Backup uuid=%s>' % self.uuid
+        return f'<Backup uuid={self.uuid}>'

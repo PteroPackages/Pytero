@@ -59,7 +59,8 @@ class Flags(Enum):
     ADMIN_WEBSOCKET_INSTALL = 'admin.websocket.install'
     ADMIN_WEBSOCKET_TRANSFER = 'admin.websocket.transfer'
 
-    def values() -> list[str]:
+    # FIX THIS IMMEDIATELY!!!
+    def values(self) -> list[str]:
         return [p.value for p in Flags.__members__.values()]
 
 
@@ -69,13 +70,13 @@ class Permissions:
         Flags.CONTROL_START,
         Flags.CONTROL_STOP,
         Flags.CONTROL_RESTART)
-    
+
     ALL_USER = (
         Flags.USER_CREATE,
         Flags.USER_READ,
         Flags.USER_UPDATE,
         Flags.USER_DELETE)
-    
+
     ALL_FILE = (
         Flags.FILE_CREATE,
         Flags.FILE_READ,
@@ -83,71 +84,71 @@ class Permissions:
         Flags.FILE_UPDATE,
         Flags.FILE_ARCHIVE,
         Flags.FILE_SFTP)
-    
+
     ALL_BACKUP = (
         Flags.BACKUP_CREATE,
         Flags.BACKUP_READ,
         Flags.BACKUP_UPDATE,
         Flags.BACKUP_DELETE)
-    
+
     ALL_ALLOCATION = (
         Flags.ALLOCATION_CREATE,
         Flags.ALLOCATION_READ,
         Flags.ALLOCATION_UPDATE,
         Flags.ALLOCATION_DELETE)
-    
+
     ALL_STARTUP = (Flags.STARTUP_READ, Flags.STARTUP_UPDATE)
-    
+
     ALL_DATABASE = (
         Flags.DATABASE_CREATE,
         Flags.DATABASE_READ,
         Flags.DATABASE_UPDATE,
         Flags.DATABASE_DELETE,
         Flags.DATABASE_VIEW_PASSWORD)
-    
+
     ALL_SCHEDULE = (
         Flags.SCHEDULE_CREATE,
         Flags.SCHEDULE_READ,
         Flags.SCHEDULE_UPDATE,
         Flags.SCHEDULE_DELETE)
-    
+
     ALL_SETTINGS = (Flags.SETTINGS_RENAME, Flags.SETTINGS_REINSTALL)
-    
+
     ALL_ADMIN = (
         Flags.ADMIN_WEBSOCKET_ERRORS,
         Flags.ADMIN_WEBSOCKET_INSTALL,
         Flags.ADMIN_WEBSOCKET_TRANSFER)
-    
+
     def __init__(self, *perms: str | Flags) -> None:
         self.value: list[str] = self.resolve(*perms)
-    
+
     def __repr__(self) -> str:
-        return '<Permissions total=%d>' % len(self.value)
-    
+        return f'<Permissions total={len(self.value)}>'
+
     def __len__(self) -> int:
         return len(self.value)
-    
+
     def __bool__(self) -> bool:
         return len(self.value) != 0
-    
+
     def __contains__(self, perm: str):
         return perm in self.value
-    
+
     def __eq__(self, other: P) -> bool:
         return self.value == other.value
-    
+
     def __add__(self, other: P) -> P:
         return Permissions(*(self.value + other.value))
-    
+
     def __sub__(self, other: P) -> P:
         perms = list(filter(lambda p: p not in other.value, self.value))
         return Permissions(*perms)
-    
+
     @staticmethod
     def resolve(*perms: str | Flags) -> list[str]:
         res: list[str] = []
-        flags = Flags.values()
-        
+        flags = Flags.values(Flags)
+
         for perm in perms:
             if isinstance(perm, Flags):
                 res.append(perm.value)
@@ -155,19 +156,19 @@ class Permissions:
                 res.append(perm)
             else:
                 raise KeyError(f"invalid permission or flag '{perm}'")
-        
+
         return res
-    
+
     def any(self, *perms: str | Flags) -> bool:
         res = self.__class__.resolve(*perms)
         return any(map(lambda p: p in self.value, res))
-    
+
     def all(self, *perms: str | Flags) -> bool:
         res = self.__class__.resolve(*perms)
         return all(map(lambda p: p in self.value, res))
-    
+
     def is_admin(self) -> bool:
         return any(filter(lambda p: 'admin' in p, self.value))
-    
+
     def serialize(self) -> dict[str, bool]:
-        return {k: k in self.value for k in Flags.values()}
+        return {k: k in self.value for k in Flags.values(Flags)}

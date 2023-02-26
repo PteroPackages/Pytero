@@ -3,7 +3,7 @@
 <p align="center"><a href="https://discord.com/invite/dwcfTjgn7S" type="_blank"><img src="https://img.shields.io/badge/discord-invite-5865f2?style=for-the-badge&logo=discord&logoColor=white"></a> <img src="https://img.shields.io/badge/version-0.1.0-3572A5?style=for-the-badge"> <img src="https://img.shields.io/github/issues/PteroPackages/Pytero.svg?style=for-the-badge"></p>
 
 ## About
-Pytero is a flexible API wrapper for the [Pterodactyl Game Panel](https://pterodactyl.io) written Python using `async`/`await` syntax and up-to-date typings for proper type-checker support.
+Pytero is a flexible API wrapper for the [Pterodactyl Game Panel](https://pterodactyl.io) written Python using `async`/`await` syntax and up-to-date typings for proper type-checker support. If you are looking for an API wrapper with sync support, consider using [Pydactyl](https://github.com/iamkubi/pydactyl).
 
 ## Installing
 ```
@@ -52,11 +52,13 @@ def on_status_update(status):
 shard.launch()
 ```
 
+<!-- TODO
 ## Contributing
 Please see the [contributing guide](https://github.com/PteroPackages/Pytero/blob/main/CONTRIBUTING.md) for more.
+-->
 
 ## Contributors
-- [Devonte](https://github.com/devnote-dev) - Owner, maintainer
+- [Devonte W](https://github.com/devnote-dev) - Owner, maintainer
 
 This repository is managed under the MIT license.
 

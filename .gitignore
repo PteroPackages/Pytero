@@ -1,5 +1,6 @@
 # Hidden directories
 __pycache__/
+.vscode/
 
 # Hidden files/types/executables
 *.cmd

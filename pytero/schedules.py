@@ -1,11 +1,14 @@
+from typing import Any
 from .types import _Http, Cron, Task
 
+# pylint: disable=C0103
 
-__all__ = ('Schedule')
+__all__ = ('Schedule',)
 
 
 class Schedule:
-    def __init__(self, http: _Http, identifier: str, data: dict[str,]) -> None:
+    def __init__(self, http: _Http, identifier: str,
+                 data: dict[str, Any]) -> None:
         self._http = http
         self.identifier = identifier
         self.tasks: list[Task] = []
@@ -19,10 +22,10 @@ class Schedule:
         self.updated_at: str | None = data.get('updated_at')
         self.last_run_at: str | None = data.get('last_run_at')
         self.next_run_at: str | None = data.get('next_run_at')
-    
+
     def __repr__(self) -> str:
-        return '<Schedule id=%d name=%s tasks=%d>' % \
-            (self.id, self.name, len(self.tasks))
-    
+        return f'<Schedule id={self.id} name={self.name} \
+            tasks={len(self.tasks)}>'
+
     def __str__(self) -> str:
         return self.name

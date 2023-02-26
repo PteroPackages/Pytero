@@ -1,12 +1,15 @@
 '''# Pytero
-A flexible API wrapper for the Pterodactyl API!
+A flexible API wrapper for the Pterodactyl API
 
-Author: Devonte <https://github.com/devnote-dev>
+Author: Devonte W <https://github.com/devnote-dev>
 Repository: https://github.com/PteroPackages/Pytero
 License: MIT
 
-© 2021-2022 PteroPackages
+© 2021-present PteroPackages
 '''
+
+# flake8: noqa
+
 from .app import PteroApp
 from .client import PteroClient
 from .errors import *

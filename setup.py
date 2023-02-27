@@ -1,4 +1,4 @@
-'''# Pytero
+"""# Pytero
 A flexible API wrapper for the Pterodactyl API
 
 Author: Devonte W <https://github.com/devnote-dev>
@@ -6,7 +6,7 @@ Repository: https://github.com/PteroPackages/Pytero
 License: MIT
 
 © 2021-present PteroPackages
-'''
+"""
 
 from setuptools import setup
 from pytero import __version__

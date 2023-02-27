@@ -1,4 +1,4 @@
-'''Utility functions for Pytero.'''
+"""Utility functions for Pytero."""
 
 from typing import Any, Callable
 
@@ -13,7 +13,7 @@ def transform(
     cast: dict[str, Callable[..., Any]] = None,
     maps: dict[str, str] = None
 ) -> dict[str, Any]:
-    '''Transforms an object into its JSON object form.'''
+    """Transforms an object into its JSON object form."""
     res = {}
     if ignore is None:
         ignore = []

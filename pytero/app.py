@@ -11,7 +11,7 @@ __all__ = ('PteroApp',)
 
 
 class PteroApp:
-    '''A class/interface for interacting with the application API.
+    """A class/interface for interacting with the application API.
 
     Parameters
     ----------
@@ -21,7 +21,7 @@ class PteroApp:
     key: :class:`str`
         The API key to use for HTTP requests. This can be either an
         application API key or a Client API key (as of Pterodactyl v1.8).
-    '''
+    """
 
     def __init__(self, url: str, key: str) -> None:
         self.url = url.removesuffix('/')
@@ -33,9 +33,9 @@ class PteroApp:
 
     @property
     def event(self):
-        '''Returns the HTTP class event decorator for registering events to
+        """Returns the HTTP class event decorator for registering events to
         trigger on.
-        '''
+        """
         return self._http.event
 
     async def get_users(
@@ -45,7 +45,7 @@ class PteroApp:
         include: list[str] = None,
         sort: str = None
     ) -> list[User]:
-        '''Returns a list of users from the API with the given options if
+        """Returns a list of users from the API with the given options if
         specified.
 
         Parameters
@@ -66,7 +66,7 @@ class PteroApp:
             supports:
             * id
             * uuid
-        '''
+        """
         data = await self._http.get('/users', _filter=_filter, include=include,
                                     sort=sort)
         return [User(self, datum['attributes']) for datum in data['data']]
@@ -77,7 +77,7 @@ class PteroApp:
         *,
         include: list[str] = None
     ) -> User:
-        '''Returns a user from the API with the given ID.
+        """Returns a user from the API with the given ID.
 
         Parameters
         ----------
@@ -87,18 +87,18 @@ class PteroApp:
             A list of additional resources to include (default is ``None``).
             This supports:
                 * servers
-        '''
+        """
         data = await self._http.get(f'/users/{_id}', include=include)
         return User(self, data['attributes'])
 
     async def get_external_user(self, _id: str, /) -> User:
-        '''Returns a user from the API with the given external identifier.
+        """Returns a user from the API with the given external identifier.
 
         Parameters
         ----------
         id: :class:`str`
             The external identifier of the user.
-        '''
+        """
         data = await self._http.get(f'/users/external/{_id}')
         return User(self, data['attributes'])
 
@@ -113,7 +113,7 @@ class PteroApp:
         external_id: str = None,
         root_admin: bool = False
     ) -> User:
-        '''Creates a new user account with the given fields.
+        """Creates a new user account with the given fields.
 
         Parameters
         ----------
@@ -132,7 +132,7 @@ class PteroApp:
         root_admin: Optional[:class:`bool`]
             Whether the user should be considered an admin (default is
             ``False``).
-        '''
+        """
         data = await self._http.post(
             '/users',
             {
@@ -159,7 +159,7 @@ class PteroApp:
         external_id: str = None,
         root_admin: bool = False
     ) -> User:
-        '''Updates a specified user with the given fields.
+        """Updates a specified user with the given fields.
 
         Parameters
         ----------
@@ -180,7 +180,7 @@ class PteroApp:
         root_admin: Optional[:class:`bool`]
             Whether the user should be considered an admin (default is the
             current value).
-        '''
+        """
         old = await self.get_user(_id)
         body = {
             'email': email or old.email,
@@ -197,13 +197,13 @@ class PteroApp:
         return User(self, data['attributes'])
 
     def delete_user(self, _id: int, /) -> None:
-        '''Deletes a user by its ID.
+        """Deletes a user by its ID.
 
         Parameters
         ----------
         id: :class:`int`
             The ID of the user to delete.
-        '''
+        """
         return self._http.delete(f'/users/{_id}')
 
     async def get_servers(

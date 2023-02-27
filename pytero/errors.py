@@ -10,7 +10,7 @@ __all__ = (
 
 
 class AccessError(Exception):
-    '''Raised when a resource cannot/should not be accessed yet'''
+    """Raised when a resource cannot/should not be accessed yet"""
 
     def __init__(self, cls) -> None:
         super().__init__(
@@ -18,11 +18,11 @@ class AccessError(Exception):
 
 
 class EventError(Exception):
-    '''Raised when there is an error with an event'''
+    """Raised when there is an error with an event"""
 
 
 class PteroAPIError(Exception):
-    '''The error object received from Pterodactyl when there is an error'''
+    """The error object received from Pterodactyl when there is an error"""
 
     def __init__(
             self,
@@ -52,16 +52,16 @@ class PteroAPIError(Exception):
 
 
 class RangeError(Exception):
-    '''Errors received for invalid ranges'''
+    """Errors received for invalid ranges"""
 
 
 class RequestError(Exception):
-    '''Errors received upon requesting a Pterodactyl endpoint'''
+    """Errors received upon requesting a Pterodactyl endpoint"""
 
 
 class ShardError(Exception):
-    '''Raised when a shard authentication or connection fails'''
+    """Raised when a shard authentication or connection fails"""
 
 
 class ValidationError(Exception):
-    '''Errors received when a request validation fails'''
+    """Errors received when a request validation fails"""

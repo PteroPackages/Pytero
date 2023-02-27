@@ -7,7 +7,7 @@ __all__ = ('Emitter',)
 
 
 class Emitter:
-    '''Events emitter manager for Pytero'''
+    """Events emitter manager for Pytero"""
 
     def __init__(self) -> None:
         self._slots: dict[str, tuple[bool, Callable[..., None]]] = {}

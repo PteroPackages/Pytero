@@ -1,14 +1,18 @@
+""""""
+
 from typing import Any, Optional
 from .permissions import Permissions
 from .servers import AppServer
 from .types import _Http, APIKey, Activity, SSHKey
 from .util import transform
 
+# pylint: disable=R0902
 
 __all__ = ('Account', 'SubUser', 'User')
 
 
 class Account:
+    """Represents an account object in the client API."""
     def __init__(self, http, data: dict[str, Any]) -> None:
         self._http = http
         self._id = data['id']
@@ -92,7 +96,7 @@ class User:
         self._patch_relations(data.get('relationships'))
 
     def __repr__(self) -> str:
-        return '<User id=%d uuid=%s>' % (self._id, self.uuid)
+        return f'<User id={self._id} uuid={self.uuid}>'
 
     def __str__(self) -> str:
         return self.first_name + ' ' + self.last_name

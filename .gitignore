@@ -2,6 +2,11 @@
 __pycache__/
 .vscode/
 
+# Documentation directories
+docs/_build
+docs/_static
+docs/_templates
+
 # Hidden files/types/executables
 *.cmd
 *.pyc

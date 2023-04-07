@@ -24,8 +24,6 @@ class Emitter:
         function can be synchronous or asynchronous as both will be handled
         when emitted.
 
-        Parameters
-        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         slot: Callable[..., None]
@@ -39,8 +37,6 @@ class Emitter:
     def remove_event(self, name: str, /) -> None:
         """Removes a callback function for a specified event.
 
-        Parameters
-        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         """
@@ -49,8 +45,6 @@ class Emitter:
     def has_event(self, name: str, /) -> bool:
         """Returns ``True`` if the specified event has a callback function.
 
-        Parameters
-        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         """
@@ -63,8 +57,6 @@ class Emitter:
     async def emit_event(self, name: str, *args, **kwargs) -> None:
         """Emits an event callback with the given arguments.
 
-        Parameters
-        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         args: Any

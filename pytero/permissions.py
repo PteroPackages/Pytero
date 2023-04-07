@@ -154,8 +154,6 @@ class Permissions:
     def resolve(*perms: str | Flags) -> list[str]:
         """Resolves the given permissions into a list of valid API permissions.
 
-        Parameters
-        ~~~~~~~~~~
         perms: tuple[:class:`str` | :class:`Flags`]
             A tuple of strings or permission flags.
         """
@@ -176,8 +174,6 @@ class Permissions:
         """Returns ``True`` if any of the specified permissions exist in the
         permission instance.
 
-        Parameters
-        ~~~~~~~~~~
         perms: tuple[:class:`str` | :class:`Flags`]
             A tuple of strings or permission flags.
         """
@@ -188,8 +184,6 @@ class Permissions:
         """Returns ``True`` is all of the specified permissions exist in the
         permission instance.
 
-        Parameters
-        ~~~~~~~~~~
         perms: tuple[:class:`str` | :class:`Flags`]
             A tuple of strings or permission flags.
         """

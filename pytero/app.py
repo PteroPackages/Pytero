@@ -23,8 +23,6 @@ __all__ = ('PteroApp',)
 class PteroApp:
     """A class/interface for interacting with the application API.
 
-    Parameters
-    ~~~~~~~~~~
     url: :class:`str`
         The URL of the Pterodactyl domain. This must be an absolute URL, not
         one that contains paths (trailing forward slash is allowed).
@@ -58,8 +56,6 @@ class PteroApp:
         """Returns a list of users from the API with the given options if
         specified.
 
-        Parameters
-        ~~~~~~~~~~
         filter: Optional[tuple[:class:`str`, :class:`str`]]
             A tuple containing the filter type and argument to filter by
             (default is ``None``). This supports:
@@ -89,8 +85,6 @@ class PteroApp:
     ) -> User:
         """Returns a user from the API with the given ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the user.
         include: Optional[list[:class:`str`]]
@@ -104,8 +98,6 @@ class PteroApp:
     async def get_external_user(self, _id: str, /) -> User:
         """Returns a user from the API with the given external identifier.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`str`
             The external identifier of the user.
         """
@@ -125,8 +117,6 @@ class PteroApp:
     ) -> User:
         """Creates a new user account with the given fields.
 
-        Parameters
-        ~~~~~~~~~~
         email: :class:`str`
             The email for the user.
         username: :class:`str`
@@ -171,8 +161,6 @@ class PteroApp:
     ) -> User:
         """Updates a specified user with the given fields.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the user to update.
         email: Optional[:class:`str`]
@@ -209,8 +197,6 @@ class PteroApp:
     def delete_user(self, _id: int, /) -> None:
         """Deletes a user by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the user to delete.
         """
@@ -226,8 +212,6 @@ class PteroApp:
         """Returns a list of servers from the API with the given options if
         specified.
 
-        Parameters
-        ~~~~~~~~~~
         filter: Optional[tuple[:class:`str`, :class:`str`]]
             A tuple containing the filter type and argument to filter by
             (default is ``None``). This supports:
@@ -264,8 +248,6 @@ class PteroApp:
     ) -> AppServer:
         """Returns a server from the API with the given ID.
 
-        Parameters
-        ~~~~~~~~~~
         include: Optional[list[:class:`str`]]
             A list of additional resources to include (default is ``None``).
             This supports:
@@ -280,8 +262,6 @@ class PteroApp:
     async def get_external_server(self, _id: str, /) -> AppServer:
         """Returns a server from the API with the given external identifier.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`str`
             The external identifier of the server.
         """
@@ -309,8 +289,6 @@ class PteroApp:
     ) -> AppServer:
         """Creates a new server with the given fields.
 
-        Parameters
-        ~~~~~~~~~~
         name: :class:`str`
             The name of the server.
         user: :class:`int`
@@ -446,8 +424,6 @@ class PteroApp:
     def suspend_server(self, _id: int, /) -> None:
         """Suspends a server by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -456,8 +432,6 @@ class PteroApp:
     def unsuspend_server(self, _id: int, /) -> None:
         """Unsuspends a server by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -466,8 +440,6 @@ class PteroApp:
     def reinstall_server(self, _id: int, /) -> None:
         """Triggers the reinstall process of a server by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -476,8 +448,6 @@ class PteroApp:
     def delete_server(self, _id: int, *, force: bool = False) -> None:
         """Deletes a server by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -523,8 +493,6 @@ class PteroApp:
                                       _id: int) -> AppDatabase:
         """Resets the password for a specified database.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server database.
         """
@@ -537,8 +505,6 @@ class PteroApp:
     def delete_database(self, server: int, _id: int) -> None:
         """Deletes a server database by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server database.
         """
@@ -575,8 +541,6 @@ class PteroApp:
     async def get_node_configuration(self, _id: int, /) -> NodeConfiguration:
         """Returns the configuration of a specified node.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the node.
         """
@@ -594,8 +558,6 @@ class PteroApp:
     def delete_node(self, _id: int, /) -> None:
         """Deletes a node by its ID.
 
-        Parameters
-        ~~~~~~~~~~
         id: :class:`int`
             The ID of the node.
         """
@@ -626,8 +588,6 @@ class PteroApp:
     def delete_node_allocation(self, node: int, _id: int) -> None:
         """Deletes an allocation from a node.
 
-        Parameters
-        ~~~~~~~~~~
         node: :class:`int`
             The ID of the node.
         id: :class:`int`

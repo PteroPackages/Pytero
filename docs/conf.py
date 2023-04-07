@@ -13,14 +13,15 @@ import sys
 sys.path.insert(0, os.path.abspath('..'))
 
 project = 'Pytero'
-copyright = '2022, Devonte W'
+copyright = '2022-present, Devonte W'
 author = 'Devonte W'
 release = '1.0.0'
 
 extensions = [
     'sphinx.ext.autodoc',
     'sphinx.ext.extlinks',
-    'sphinx.ext.intersphinx'
+    'sphinx.ext.intersphinx',
+    'sphinx_rtd_theme'
 ]
 
 intersphinx_mapping = {'py': ('https://docs.python.org/3', None)}
@@ -28,4 +29,9 @@ intersphinx_mapping = {'py': ('https://docs.python.org/3', None)}
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 html_static_path = ['_static']
-html_theme = 'alabaster'
+html_theme = 'sphinx_rtd_theme'
+
+resource_links = {
+    'discord': 'https://discord.com/invite/dwcfTjgn7S',
+    'issues': 'https://github.com/PteroPackages/Pytero/issues'
+}

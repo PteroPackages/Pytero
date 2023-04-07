@@ -25,7 +25,7 @@ class Emitter:
         when emitted.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         slot: Callable[..., None]
@@ -40,7 +40,7 @@ class Emitter:
         """Removes a callback function for a specified event.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         """
@@ -50,7 +50,7 @@ class Emitter:
         """Returns ``True`` if the specified event has a callback function.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         """
@@ -64,7 +64,7 @@ class Emitter:
         """Emits an event callback with the given arguments.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         name: :class:`str`
             The name of the event.
         args: Any

@@ -26,7 +26,7 @@ class PteroClient:
     """A class/interface for interacting with the client API.
 
     Parameters
-    ----------
+    ~~~~~~~~~~
     url: :class:`str`
         The URL of the Pterodactyl domain. This must be an absolute URL, not
         one that contains paths (trailing forward slash is allowed).
@@ -70,7 +70,7 @@ class PteroClient:
         API key.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         code: :class:`int`
             The TOTP code generated with the authentication details.
         """
@@ -82,7 +82,7 @@ class PteroClient:
         API key.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         password: :class:`str`
             The password for the account associated with the API key.
         """
@@ -93,7 +93,7 @@ class PteroClient:
         """Updates the email for the user account associated with the API key.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         email: :class:`str`
             The new email for the account.
         password: :class:`str`
@@ -107,7 +107,7 @@ class PteroClient:
         key.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         old: :class:`str`
             The old password of the account.
         new: :class:`str`

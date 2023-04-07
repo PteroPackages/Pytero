@@ -155,7 +155,7 @@ class Permissions:
         """Resolves the given permissions into a list of valid API permissions.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         perms: tuple[:class:`str` | :class:`Flags`]
             A tuple of strings or permission flags.
         """
@@ -177,7 +177,7 @@ class Permissions:
         permission instance.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         perms: tuple[:class:`str` | :class:`Flags`]
             A tuple of strings or permission flags.
         """
@@ -189,7 +189,7 @@ class Permissions:
         permission instance.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         perms: tuple[:class:`str` | :class:`Flags`]
             A tuple of strings or permission flags.
         """

@@ -24,7 +24,7 @@ class PteroApp:
     """A class/interface for interacting with the application API.
 
     Parameters
-    ----------
+    ~~~~~~~~~~
     url: :class:`str`
         The URL of the Pterodactyl domain. This must be an absolute URL, not
         one that contains paths (trailing forward slash is allowed).
@@ -59,7 +59,7 @@ class PteroApp:
         specified.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         filter: Optional[tuple[:class:`str`, :class:`str`]]
             A tuple containing the filter type and argument to filter by
             (default is ``None``). This supports:
@@ -90,7 +90,7 @@ class PteroApp:
         """Returns a user from the API with the given ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the user.
         include: Optional[list[:class:`str`]]
@@ -105,7 +105,7 @@ class PteroApp:
         """Returns a user from the API with the given external identifier.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`str`
             The external identifier of the user.
         """
@@ -126,7 +126,7 @@ class PteroApp:
         """Creates a new user account with the given fields.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         email: :class:`str`
             The email for the user.
         username: :class:`str`
@@ -172,7 +172,7 @@ class PteroApp:
         """Updates a specified user with the given fields.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the user to update.
         email: Optional[:class:`str`]
@@ -210,7 +210,7 @@ class PteroApp:
         """Deletes a user by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the user to delete.
         """
@@ -227,7 +227,7 @@ class PteroApp:
         specified.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         filter: Optional[tuple[:class:`str`, :class:`str`]]
             A tuple containing the filter type and argument to filter by
             (default is ``None``). This supports:
@@ -265,7 +265,7 @@ class PteroApp:
         """Returns a server from the API with the given ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         include: Optional[list[:class:`str`]]
             A list of additional resources to include (default is ``None``).
             This supports:
@@ -281,7 +281,7 @@ class PteroApp:
         """Returns a server from the API with the given external identifier.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`str`
             The external identifier of the server.
         """
@@ -310,7 +310,7 @@ class PteroApp:
         """Creates a new server with the given fields.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         name: :class:`str`
             The name of the server.
         user: :class:`int`
@@ -447,7 +447,7 @@ class PteroApp:
         """Suspends a server by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -457,7 +457,7 @@ class PteroApp:
         """Unsuspends a server by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -467,7 +467,7 @@ class PteroApp:
         """Triggers the reinstall process of a server by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -477,7 +477,7 @@ class PteroApp:
         """Deletes a server by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server.
         """
@@ -524,7 +524,7 @@ class PteroApp:
         """Resets the password for a specified database.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server database.
         """
@@ -538,7 +538,7 @@ class PteroApp:
         """Deletes a server database by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the server database.
         """
@@ -576,7 +576,7 @@ class PteroApp:
         """Returns the configuration of a specified node.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the node.
         """
@@ -595,7 +595,7 @@ class PteroApp:
         """Deletes a node by its ID.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         id: :class:`int`
             The ID of the node.
         """
@@ -627,7 +627,7 @@ class PteroApp:
         """Deletes an allocation from a node.
 
         Parameters
-        ----------
+        ~~~~~~~~~~
         node: :class:`int`
             The ID of the node.
         id: :class:`int`

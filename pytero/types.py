@@ -1,3 +1,5 @@
+"""General data, enum and typing classes for Pytero."""
+
 from dataclasses import dataclass
 from typing import Any, Callable, Optional
 

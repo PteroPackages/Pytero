@@ -1,4 +1,4 @@
-""""""
+"""Account and user definitions for user objects in the Pterodactyl API."""
 
 from typing import Any, Optional
 from .permissions import Permissions
@@ -13,6 +13,7 @@ __all__ = ('Account', 'SubUser', 'User')
 
 class Account:
     """Represents an account object in the client API."""
+
     def __init__(self, http, data: dict[str, Any]) -> None:
         self._http = http
         self._id = data['id']

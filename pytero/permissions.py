@@ -1,3 +1,5 @@
+"""Permissions definitions for the Pterodactyl API."""
+
 from enum import Enum
 from typing import TypeVar
 
@@ -8,6 +10,8 @@ P = TypeVar('P', bound='Permissions')
 
 
 class Flags(Enum):
+    """An enum class containing all the permission keys for the API."""
+
     WEBSOCKET_CONNECT = 'websocket.connect'
 
     CONTROL_CONSOLE = 'control.console'
@@ -65,6 +69,8 @@ class Flags(Enum):
 
 
 class Permissions:
+    """The base class for managing permissions with the API."""
+
     ALL_CONSOLE = (
         Flags.CONTROL_CONSOLE,
         Flags.CONTROL_START,
@@ -146,6 +152,13 @@ class Permissions:
 
     @staticmethod
     def resolve(*perms: str | Flags) -> list[str]:
+        """Resolves the given permissions into a list of valid API permissions.
+
+        Parameters
+        ----------
+        perms: tuple[:class:`str` | :class:`Flags`]
+            A tuple of strings or permission flags.
+        """
         res: list[str] = []
         flags = Flags.values(Flags)
 
@@ -160,15 +173,37 @@ class Permissions:
         return res
 
     def any(self, *perms: str | Flags) -> bool:
+        """Returns ``True`` if any of the specified permissions exist in the
+        permission instance.
+
+        Parameters
+        ----------
+        perms: tuple[:class:`str` | :class:`Flags`]
+            A tuple of strings or permission flags.
+        """
         res = self.__class__.resolve(*perms)
         return any(map(lambda p: p in self.value, res))
 
     def all(self, *perms: str | Flags) -> bool:
+        """Returns ``True`` is all of the specified permissions exist in the
+        permission instance.
+
+        Parameters
+        ----------
+        perms: tuple[:class:`str` | :class:`Flags`]
+            A tuple of strings or permission flags.
+        """
         res = self.__class__.resolve(*perms)
         return all(map(lambda p: p in self.value, res))
 
     def is_admin(self) -> bool:
+        """Returns ``True`` if any of the permissions in the instance are
+        administrative.
+        """
         return any(filter(lambda p: 'admin' in p, self.value))
 
     def serialize(self) -> dict[str, bool]:
+        """Returns a dict of permission keys mapping to their presence in the
+        permission instance.
+        """
         return {k: k in self.value for k in Flags.values(Flags)}

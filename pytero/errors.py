@@ -1,3 +1,5 @@
+"""Error definitions for Pytero."""
+
 __all__ = (
     'AccessError',
     'EventError',

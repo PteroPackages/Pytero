@@ -67,9 +67,9 @@ class Emitter:
         ----------
         name: :class:`str`
             The name of the event.
-        *args:
+        args: Any
             A tuple of arguments to be passed on to the event callback.
-        **kwargs:
+        kwargs: Any
             A dict of arguments to be passed on to the event callback.
         """
         if slot := self._slots.get(name):

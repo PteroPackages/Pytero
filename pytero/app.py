@@ -96,7 +96,7 @@ class PteroApp:
         include: Optional[list[:class:`str`]]
             A list of additional resources to include (default is ``None``).
             This supports:
-                * servers
+            * servers
         """
         data = await self._http.get(f'/users/{_id}', include=include)
         return User(self, data['attributes'])

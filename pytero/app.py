@@ -1,3 +1,13 @@
+"""The main class/interface for interacting with the Pterodactyl application
+API.
+
+This supports application and client API keys at:
+https://your.pterodactyl.domain/admin/api or
+https://your.pterodactyl.domain/account/api.
+"""
+
+# pylint: disable=R0904
+
 from .http import RequestManager
 from .node import Node
 from .servers import AppServer
@@ -213,32 +223,68 @@ class PteroApp:
         include: list[str] = None,
         sort: str = None
     ) -> list[AppServer]:
+        """Returns a list of servers from the API with the given options if
+        specified.
+
+        Parameters
+        ----------
+        filter: Optional[tuple[:class:`str`, :class:`str`]]
+            A tuple containing the filter type and argument to filter by
+            (default is ``None``). This supports:
+            * uuid
+            * uuidShort
+            * name
+            * description
+            * image
+            * external_id
+        include: Optional[list[:class:`str`]]
+            A list of additional resources to include (default is ``None``).
+            This supports:
+            * allocations
+            * nest
+            * egg
+            * location
+        sort: Optional[:class:`str`]
+            The order to sort the results in (default is ``None``). This
+            supports:
+            * id
+            * uuid
+        """
         data = await self._http.get('/servers',
                                     _filter=_filter, include=include,
                                     sort=sort)
 
-        res: list[AppServer] = []
-
-        for datum in data['data']:
-            res.append(AppServer(self, datum['attributes']))
-
-        return res
+        return [AppServer(self, datum['attributes']) for datum in data['data']]
 
     async def get_server(
         self,
         _id: int,
         *,
-        _filter: tuple[str, str] = None,
-        include: list[str] = None,
-        sort: str = None
+        include: list[str] = None
     ) -> AppServer:
-        data = await self._http.get(f'/servers/{_id}',
-                                    _filter=_filter, include=include,
-                                    sort=sort)
+        """Returns a server from the API with the given ID.
 
+        Parameters
+        ----------
+        include: Optional[list[:class:`str`]]
+            A list of additional resources to include (default is ``None``).
+            This supports:
+            * allocations
+            * nest
+            * egg
+            * location
+        """
+        data = await self._http.get(f'/servers/{_id}', include=include)
         return AppServer(self, data['attributes'])
 
     async def get_external_server(self, _id: str, /) -> AppServer:
+        """Returns a server from the API with the given external identifier.
+
+        Parameters
+        ----------
+        id: :class:`str`
+            The external identifier of the server.
+        """
         data = await self._http.get(f'/servers/external/{_id}')
         return AppServer(self, data['attributes'])
 
@@ -261,6 +307,48 @@ class PteroApp:
         oom_disabled: bool = True,
         start_on_completion: bool = False
     ) -> AppServer:
+        """Creates a new server with the given fields.
+
+        Parameters
+        ----------
+        name: :class:`str`
+            The name of the server.
+        user: :class:`int`
+            The ID of the user that will own the server.
+        egg: :class:`int`
+            The ID of the egg to use for the server.
+        docker_image: :class:`str`
+            The docker image to use for the server.
+        startup: :class:`str`
+            The startup command for the server.
+        environment: :class:`dict`
+            The environment variables to set for the server.
+        limits: :class:`Limits`
+            The server resource limits.
+        feature_limits: :class:`FeatureLimits`
+            The server feature limits.
+        external_id: Optional[:class:`str`]
+            The external identifier for the server (default is ``None``).
+        default_allocation: Optional[:class:`int`]
+            The ID of the default allocation for the server. This must be
+            specified unless the `deploy` object options is set (default is
+            ``None``).
+        additional_allocations: Optional[list[:class:`int`]]
+            A list of additional allocation IDs to be added to the server
+            (default is ``None``).
+        deploy: Optional[:class:`DeployServerOptions`]
+            An object containing the deploy options for the server. This must
+            be specified unless the `default_allocation` option is set (default
+            is ``None``).
+        skip_scripts: Optional[:class:`bool`]
+            Whether the server should skip the egg install script during
+            installation (default is ``false``).
+        oom_disabled: Optional[:class:`bool`]
+            Whether the OOM killer should be disabled (default is ``True``).
+        start_on_completion: Optional[:class:`bool`]
+            Whether the server should start once the installation is complete
+            (default is ``False``).
+        """
         body = {
             'name': name,
             'user': user,
@@ -356,15 +444,43 @@ class PteroApp:
         return AppServer(self, data['attributes'])
 
     def suspend_server(self, _id: int, /) -> None:
+        """Suspends a server by its ID.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the server.
+        """
         return self._http.post(f'/servers/{_id}/suspend', None)
 
     def unsuspend_server(self, _id: int, /) -> None:
+        """Unsuspends a server by its ID.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the server.
+        """
         return self._http.post(f'/servers/{_id}/unsuspend', None)
 
     def reinstall_server(self, _id: int, /) -> None:
+        """Triggers the reinstall process of a server by its ID.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the server.
+        """
         return self._http.post(f'/servers/{_id}/reinstall', None)
 
     def delete_server(self, _id: int, *, force: bool = False) -> None:
+        """Deletes a server by its ID.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the server.
+        """
         return self._http.delete(
             f'/servers/{_id}' + ('/force' if force else ''))
 
@@ -376,12 +492,8 @@ class PteroApp:
     ) -> list[AppDatabase]:
         data = await self._http.get(f'/servers/{server}/databases',
                                     include=include)
-        res: list[AppDatabase] = []
 
-        for datum in data['data']:
-            res.append(AppDatabase(**datum['attributes']))
-
-        return res
+        return [AppDatabase(**datum['attributes']) for datum in data['data']]
 
     async def get_server_database(
         self,
@@ -390,9 +502,8 @@ class PteroApp:
         *,
         include: list[str] = None
     ) -> AppDatabase:
-        data = await self._http.get(
-            f'/servers/{server}/databases/{_id}',
-            include=include)
+        data = await self._http.get(f'/servers/{server}/databases/{_id}',
+                                    include=include)
 
         return AppDatabase(**data['attributes'])
 
@@ -410,6 +521,13 @@ class PteroApp:
 
     async def reset_database_password(self, server: int,
                                       _id: int) -> AppDatabase:
+        """Resets the password for a specified database.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the server database.
+        """
         data = await self._http.post(
             f'/servers/{server}/databases/{_id}/reset-password',
             None)
@@ -417,6 +535,13 @@ class PteroApp:
         return AppDatabase(**data['attributes'])
 
     def delete_database(self, server: int, _id: int) -> None:
+        """Deletes a server database by its ID.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the server database.
+        """
         return self._http.delete(f'/servers/{server}/databases/{_id}')
 
     async def get_nodes(
@@ -428,59 +553,57 @@ class PteroApp:
     ) -> list[Node]:
         data = await self._http.get('/nodes', _filter=_filter,
                                     include=include, sort=sort)
-        res: list[Node] = []
 
-        for datum in data['data']:
-            res.append(Node(self, datum['attributes']))
-
-        return res
+        return [Node(self, datum['attributes']) for datum in data['data']]
 
     async def get_node(
         self,
         _id: int,
         *,
-        _filter: tuple[str, str] = None,
-        include: list[str] = None,
-        sort: str = None
+        include: list[str] = None
     ) -> Node:
-        data = await self._http.get(f'/nodes/{_id}',
-                                    _filter=_filter, include=include,
-                                    sort=sort)
-
+        data = await self._http.get(f'/nodes/{_id}', include=include)
         return Node(self, data['attributes'])
 
     async def get_deployable_nodes(self,
                                    options: DeployNodeOptions, /) -> list[Node]:  # noqa: E501
         data = await self._http.get('/nodes/deployable',
                                     body=options.to_dict())
-        res: list[Node] = []
 
-        for datum in data['data']:
-            res.append(Node(self, datum['attributes']))
-
-        return res
+        return [Node(self, datum['attributes']) for datum in data['data']]
 
     async def get_node_configuration(self, _id: int, /) -> NodeConfiguration:
+        """Returns the configuration of a specified node.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the node.
+        """
         data = await self._http.get(f'/nodes/{_id}/configuration')
         return NodeConfiguration(**data)
 
     def create_node(self) -> None:
+        """TODO: Creates a new node with the given fields."""
         return NotImplemented
 
     def update_node(self) -> None:
+        """TODO: Updates a specified node with the given fields."""
         return NotImplemented
 
     def delete_node(self, _id: int, /) -> None:
+        """Deletes a node by its ID.
+
+        Parameters
+        ----------
+        id: :class:`int`
+            The ID of the node.
+        """
         return self._http.delete(f'/nodes/{_id}')
 
     async def get_node_allocations(self, node: int, /) -> list[Allocation]:
         data = await self._http.get(f'/nodes/{node}/allocations')
-        res: list[Allocation] = []
-
-        for datum in data['data']:
-            res.append(Allocation(**datum['attributes']))
-
-        return res
+        return [Allocation(**datum['attributes']) for datum in data['data']]
 
     async def create_node_allocation(
         self,
@@ -501,16 +624,20 @@ class PteroApp:
         return Allocation(**data['attributes'])
 
     def delete_node_allocation(self, node: int, _id: int) -> None:
+        """Deletes an allocation from a node.
+
+        Parameters
+        ----------
+        node: :class:`int`
+            The ID of the node.
+        id: :class:`int`
+            The ID of the allocation.
+        """
         return self._http.delete(f'/nodes/{node}/allocations/{_id}')
 
     async def get_locations(self) -> list[Location]:
         data = await self._http.get('/locations')
-        res: list[Location] = []
-
-        for datum in data['data']:
-            res.append(Location(**datum['attributes']))
-
-        return res
+        return [Location(**datum['attributes']) for datum in data['data']]
 
     async def get_location(self, _id: int) -> Location:
         data = await self._http.get(f'/locations/{_id}')
@@ -519,6 +646,7 @@ class PteroApp:
     async def create_location(self, *, short: str, long: str) -> Location:
         data = await self._http.post('/locations',
                                      {'short': short, 'long': long})
+
         return Location(**data['attributes'])
 
     async def update_location(
@@ -528,9 +656,9 @@ class PteroApp:
         short: str = None,
         long: str = None
     ) -> Location:
-        old = await self.get_location(id)
+        old = await self.get_location(_id)
         data = await self._http.patch(
-            f'/locations/{id}',
+            f'/locations/{_id}',
             {
                 'short': short or old.short,
                 'long': long or old.long
@@ -538,17 +666,12 @@ class PteroApp:
 
         return Location(**data['attributes'])
 
-    async def delete_location(self, _id: int, /) -> None:
-        await self._http.delete(f'/locations/{_id}')
+    def delete_location(self, _id: int, /) -> None:
+        return self._http.delete(f'/locations/{_id}')
 
     async def get_nests(self) -> list[Nest]:
         data = await self._http.get('/nests')
-        res: list[Nest] = []
-
-        for datum in data['data']:
-            res.append(Nest(**datum['attributes']))
-
-        return res
+        return [Nest(**datum['attributes']) for datum in data['data']]
 
     async def get_nest(self, nest: int) -> Nest:
         data = await self._http.get(f'/nests/{nest}')
@@ -556,12 +679,7 @@ class PteroApp:
 
     async def get_nest_eggs(self, nest: int) -> list[Egg]:
         data = await self._http.get(f'/nests/{nest}/eggs')
-        res: list[Egg] = []
-
-        for datum in data['data']:
-            res.append(Egg(**datum['attributes']))
-
-        return res
+        return [Egg(**datum['attributes']) for datum in data['data']]
 
     async def get_nest_egg(self, nest: int, _id: int) -> Egg:
         data = await self._http.get(f'/nests/{nest}/eggs/{_id}')

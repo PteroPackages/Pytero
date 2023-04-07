@@ -237,7 +237,6 @@ class PteroApp:
         data = await self._http.get('/servers',
                                     _filter=_filter, include=include,
                                     sort=sort)
-
         return [AppServer(self, datum['attributes']) for datum in data['data']]
 
     async def get_server(
@@ -360,6 +359,20 @@ class PteroApp:
         user: int = None,
         description: str = None
     ) -> AppServer:
+        """Updates the details for a specified server.
+
+        id: :class:`int`
+            The ID of the server.
+        external_id: Optional[:class:`str`]
+            The external identifier of the server (defaults to the original if
+            unset).
+        name: Optional[:class:`str`]
+            The name of the server (defaults to the original if unset).
+        user: Optional[:class:`int`]
+            The ID of the server owner (defaults to the original if unset).
+        description: Optional[:class:`str`]
+            The description of the server (defaults to the original if unset).
+        """
         old = await self.get_server(_id)
         data = await self._http.patch(
             f'/servers/{_id}/details',
@@ -383,6 +396,29 @@ class PteroApp:
         add_allocations: list[int] = None,
         remove_allocations: list[int] = None
     ) -> AppServer:
+        """Updates the build details of a specified server.
+
+        id: :class:`int`
+            The ID of the server.
+        allocation: Optional[:class:`int`]
+            The ID of the primary allocation for the server (defaults to the
+            original if unset).
+        oom_disabled: Optional[:class:`bool`]
+            Whether OOM should be disabled for the server (defaults to the
+            original if unset).
+        limits: Optional[:class:`Limits`]
+            The resource limits for the server (defaults to the original if
+            unset).
+        feature_limits: Optional[:class:`FeatureLimits`]
+            The feature limits for the server (defaults to the original if
+            unset).
+        add_allocations: Optional[list[:class:`int`]]
+            A list of allocation IDs to add to the server (defaults to
+            ``None``).
+        remove_allocations: Optional[list[:class:`int`]]
+            A list of allocation IDs to remove from the server (defaults to
+            ``None``).
+        """
         old = await self.get_server(_id)
         data = await self._http.patch(
             f'/servers/{_id}/build',
@@ -408,6 +444,26 @@ class PteroApp:
         image: str = None,
         skip_scripts: bool = False
     ) -> AppServer:
+        """Updates the startup configuration for a specified server.
+
+        id: :class:`int`
+            The ID of the server.
+        startup: Optional[:class:`str`]
+            The startup command for the server (defaults to the original if
+            unset).
+        environment: Optional[:class:`dict`]
+            The environment variables to set for the server (defaults to
+            ``None``). This will update all variables at the same time and
+            remove any variables that aren't specified from the server.
+        egg: Optional[:class:`int`]
+            The ID of the egg to use (defaults to the original if unset).
+        image: Optional[:class:`str`]
+            The docker image to use for the serverd (defaults to the original
+            if unset).
+        skip_scripts: Optional[:class:`bool`]
+            Whether the server should skip the egg install script during
+            installation (defaults to the original if unset).
+        """
         old = await self.get_server(_id)
         data = await self._http.patch(
             f'/servers/{_id}/startup',
@@ -450,6 +506,8 @@ class PteroApp:
 
         id: :class:`int`
             The ID of the server.
+        force: Optional[:class:`bool`]
+            Whether the server should be deleted with force.
         """
         return self._http.delete(
             f'/servers/{_id}' + ('/force' if force else ''))
@@ -493,6 +551,8 @@ class PteroApp:
                                       _id: int) -> AppDatabase:
         """Resets the password for a specified database.
 
+        server: :class:`int`
+            The ID of the server.
         id: :class:`int`
             The ID of the server database.
         """
@@ -519,7 +579,6 @@ class PteroApp:
     ) -> list[Node]:
         data = await self._http.get('/nodes', _filter=_filter,
                                     include=include, sort=sort)
-
         return [Node(self, datum['attributes']) for datum in data['data']]
 
     async def get_node(
@@ -535,7 +594,6 @@ class PteroApp:
                                    options: DeployNodeOptions, /) -> list[Node]:  # noqa: E501
         data = await self._http.get('/nodes/deployable',
                                     body=options.to_dict())
-
         return [Node(self, datum['attributes']) for datum in data['data']]
 
     async def get_node_configuration(self, _id: int, /) -> NodeConfiguration:

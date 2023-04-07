@@ -1,35 +1,35 @@
 @ECHO OFF
 
-pushd %~dp0
+PUSHD %~dp0
 
-REM Command file for Sphinx documentation
+:: Command file for Sphinx documentation
 
-if "%SPHINXBUILD%" == "" (
-	set SPHINXBUILD=sphinx-build
+IF "%SPHINXBUILD%" == "" (
+	SET SPHINXBUILD=sphinx-build
 )
-set SOURCEDIR=.
-set BUILDDIR=_build
+SET SOURCEDIR=.
+SET BUILDDIR=_build
 
 %SPHINXBUILD% >NUL 2>NUL
-if errorlevel 9009 (
-	echo.
-	echo.The 'sphinx-build' command was not found. Make sure you have Sphinx
-	echo.installed, then set the SPHINXBUILD environment variable to point
-	echo.to the full path of the 'sphinx-build' executable. Alternatively you
-	echo.may add the Sphinx directory to PATH.
-	echo.
-	echo.If you don't have Sphinx installed, grab it from
-	echo.https://www.sphinx-doc.org/
-	exit /b 1
+IF ERRORLEVEL 9009 (
+	ECHO.
+	ECHO.The 'sphinx-build' command was not found. Make sure you have Sphinx
+	ECHO.installed, then set the SPHINXBUILD environment variable to point
+	ECHO.to the full path of the 'sphinx-build' executable. Alternatively you
+	ECHO.may add the Sphinx directory to PATH.
+	ECHO.
+	ECHO.If you don't have Sphinx installed, grab it from
+	ECHO.https://www.sphinx-doc.org/
+	EXIT /b 1
 )
 
-if "%1" == "" goto help
+IF "%1" == "" GOTO help
 
 %SPHINXBUILD% -M %1 %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
-goto end
+GOTO end
 
 :help
 %SPHINXBUILD% -M help %SOURCEDIR% %BUILDDIR% %SPHINXOPTS% %O%
 
 :end
-popd
+POPD

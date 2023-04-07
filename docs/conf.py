@@ -28,7 +28,6 @@ intersphinx_mapping = {'py': ('https://docs.python.org/3', None)}
 
 templates_path = ['_templates']
 exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
-html_static_path = ['_static']
 html_theme = 'sphinx_rtd_theme'
 
 resource_links = {

@@ -1,3 +1,12 @@
+"""The main class/interface for interacting with the Pterodactyl client
+API.
+
+This only supports client API keys, NOT application API keys, found at:
+https://your.pterodactyl.domain/account/api.
+"""
+
+# pylint: disable=R0904
+
 from typing import Any
 from .files import Directory, File
 from .http import RequestManager
@@ -14,6 +23,18 @@ __all__ = ('PteroClient',)
 
 
 class PteroClient:
+    """A class/interface for interacting with the client API.
+
+    Parameters
+    ----------
+    url: :class:`str`
+        The URL of the Pterodactyl domain. This must be an absolute URL, not
+        one that contains paths (trailing forward slash is allowed).
+    key: :class:`str`
+        The API key to use for HTTP requests. This must be a client API key,
+        NOT an application API key.
+    """
+
     def __init__(self, url: str, key: str) -> None:
         self.url = url.removesuffix('/')
         self.key = key
@@ -24,82 +45,107 @@ class PteroClient:
 
     @property
     def event(self):
+        """A decorator shorthand function for :meth:`RequestManager#event`."""
         return self._http.event
 
     async def get_permission_keys(self) -> dict[str, Any]:
+        """Returns a dict containing the permission keys, values and
+        descriptions for the client API."""
         data = await self._http.get('/permissions')
         return data['attributes']
 
     async def get_account(self) -> Account:
+        """Returns an account object for the user associated with the API key
+        being used."""
         data = await self._http.get('/account')
         return Account(self, data['attributes'])
 
     async def get_account_two_factor(self) -> dict[str, str]:
+        """Returns a dict containing the two-factor authentication details."""
         data = await self._http.get('/account/two-factor')
         return data['data']
 
     async def enable_account_two_factor(self, code: int, /) -> list[str]:
+        """Enables two-factor authentication for the user associated with the
+        API key.
+
+        Parameters
+        ----------
+        code: :class:`int`
+            The TOTP code generated with the authentication details.
+        """
         data = await self._http.post('/account/two-factor', {'code': code})
         return data['attributes']['tokens']
 
     def disable_account_two_factor(self, password: str, /) -> None:
+        """Disables two-factor authentication for the user associated with the
+        API key.
+
+        Parameters
+        ----------
+        password: :class:`str`
+            The password for the account associated with the API key.
+        """
         return self._http.delete('/account/two-factor',
                                  body={'password': password})
 
-    async def update_account_email(self, email: str,
-                                   password: str) -> None:
-        await self._http.put('/account/email', {'email': email, 'password': password})
+    def update_account_email(self, email: str, password: str) -> None:
+        """Updates the email for the user account associated with the API key.
 
-    async def update_account_password(self, old: str, new: str) -> None:
-        await self._http.put(
-            '/account/password',
-            {
-                'current_password': old,
-                'new_password': new,
-                'password_confirmation': new
-            })
+        Parameters
+        ----------
+        email: :class:`str`
+            The new email for the account.
+        password: :class:`str`
+            The password for the account.
+        """
+        return self._http.put('/account/email', {'email': email,
+                                                 'password': password})
+
+    def update_account_password(self, old: str, new: str) -> None:
+        """Updates the password for the user account associated with the API
+        key.
+
+        Parameters
+        ----------
+        old: :class:`str`
+            The old password of the account.
+        new: :class:`str`
+            The new password for the account.
+        """
+        return self._http.put('/account/password',
+                              {
+                                  'current_password': old,
+                                  'new_password': new,
+                                  'password_confirmation': new
+                              })
 
     async def get_account_activities(self) -> list[Activity]:
         data = await self._http.get('/account/activity')
-        res: list[Activity] = []
-
-        for datum in data['data']:
-            res.append(Activity(**datum['attributes']))
-
-        return res
+        return [Activity(**datum['attributes']) for datum in data['data']]
 
     async def get_api_keys(self) -> list[APIKey]:
         data = await self._http.get('/account/api-keys')
-        res: list[APIKey] = []
-
-        for datum in data['data']:
-            res.append(APIKey(**datum['attributes']))
-
-        return res
+        return [APIKey(**datum['attributes']) for datum in data['data']]
 
     async def create_api_key(
         self,
         *,
         description: str,
-        allowed_ips: list[str] = []
+        allowed_ips: list[str] = None
     ) -> APIKey:
         data = await self._http.post(
             '/account/api-keys',
-            {'description': description, 'allowed_ips': allowed_ips})
+            {'description': description, 'allowed_ips': allowed_ips or []})
 
         return APIKey(**data['attributes'])
 
-    async def delete_api_key(self, identifier: str, /) -> None:
-        await self._http.delete(f'/account/api-keys/{identifier}')
+    def delete_api_key(self, identifier: str, /) -> None:
+        return self._http.delete(f'/account/api-keys/{identifier}')
 
     async def get_ssh_keys(self) -> list[SSHKey]:
         data = await self._http.get('/account/ssh-keys')
-        res: list[Activity] = []
-
-        for datum in data['data']:
-            res.append(SSHKey(**datum['attributes']))
-
-        return res
+        return [SSHKey(**datum['attributes']) for datum in data['data']]
 
     async def create_ssh_key(self, *, name: str, public_key: str) -> SSHKey:
         data = await self._http.post('/account/ssh-keys',
@@ -107,18 +153,14 @@ class PteroClient:
 
         return SSHKey(**data['attributes'])
 
-    async def remove_ssh_key(self, fingerprint: str, /) -> None:
-        await self._http.post('/account/ssh-keys/remove',
-                              {'fingerprint': fingerprint})
+    def remove_ssh_key(self, fingerprint: str, /) -> None:
+        return self._http.post('/account/ssh-keys/remove',
+                               {'fingerprint': fingerprint})
 
     async def get_servers(self) -> list[ClientServer]:
         data = await self._http.get('/')
-        res: list[ClientServer] = []
-
-        for datum in data['data']:
-            res.append(ClientServer(self._http, datum['attributes']))
-
-        return res
+        return [ClientServer(self._http, datum['attributes'])
+                for datum in data['data']]
 
     async def get_server(self, identifier: str, /) -> ClientServer:
         data = await self._http.get(f'/servers/{identifier}')
@@ -138,30 +180,21 @@ class PteroClient:
     async def get_server_activities(self,
                                     identifier: str, /) -> list[Activity]:
         data = await self._http.get(f'/servers/{identifier}/activity')
-        res: list[Activity] = []
+        return [Activity(**datum['attributes']) for datum in data['data']]
 
-        for datum in data['data']:
-            res.append(Activity(**datum['attributes']))
+    def send_server_command(self, identifier: str, command: str) -> None:
+        return self._http.post(f'/servers/{identifier}/command',
+                               {'command': command})
 
-        return res
-
-    async def send_server_command(self, identifier: str, command: str) -> None:
-        await self._http.post(f'/servers/{identifier}/command',
-                              {'command': command})
-
-    async def send_server_power(self, identifier: str, state: str) -> None:
-        await self._http.post(f'/servers/{identifier}/power',
-                              {'signal': state})
+    def send_server_power(self, identifier: str, state: str) -> None:
+        return self._http.post(f'/servers/{identifier}/power',
+                               {'signal': state})
 
     async def get_server_databases(self,
                                    identifier: str, /) -> list[ClientDatabase]:
         data = await self._http.get(f'/servers/{identifier}/databases')
-        res: list[ClientDatabase] = []
-
-        for datum in data['data']:
-            res.append(ClientDatabase(**datum['attributes']))
-
-        return res
+        return [ClientDatabase(**datum['attributes'])
+                for datum in data['data']]
 
     async def create_server_database(
         self,
@@ -182,8 +215,8 @@ class PteroClient:
 
         return ClientDatabase(**data['attributes'])
 
-    async def delete_server_database(self, identifier: str, _id: str) -> None:
-        await self._http.delete(f'/servers/{identifier}/databases/{_id}')
+    def delete_server_database(self, identifier: str, _id: str) -> None:
+        return self._http.delete(f'/servers/{identifier}/databases/{_id}')
 
     def get_directory(self, identifier: str, _dir: str) -> Directory:
         return Directory(self._http, identifier, _dir)
@@ -200,12 +233,8 @@ class PteroClient:
 
     async def get_server_schedules(self, identifier: str, /) -> list[Schedule]:
         data = await self._http.get(f'/servers/{identifier}/schedules')
-        res: list[Schedule] = []
-
-        for datum in data['data']:
-            res.append(Schedule(self._http, identifier, datum['attributes']))
-
-        return res
+        return [Schedule(self._http, identifier, datum['attributes'])
+                for datum in data['data']]
 
     async def get_server_schedule(self, identifier: str, _id: int) -> Schedule:
         data = await self._http.get(f'/servers/{identifier}/schedules/{_id}')
@@ -277,20 +306,18 @@ class PteroClient:
         return Schedule(self._http, identifier, data['attributes'])
 
     def execute_server_schedule(self, identifier: str, _id: int) -> None:
-        return self._http.post(f'/servers/{identifier}/schedules/{_id}/execute')
+        return self._http.post(
+            f'/servers/{identifier}/schedules/{_id}/execute', None)
 
     def delete_server_schedule(self, identifier: str, _id: int) -> None:
         return self._http.delete(f'/servers/{identifier}/schedules/{_id}')
 
     async def get_schedule_tasks(self, identifier: str,
                                  _id: int) -> list[Task]:
-        data = await self._http.get(f'/servers/{identifier}/schedules/{_id}/tasks')
-        res: list[Task] = []
+        data = await self._http.get(
+            f'/servers/{identifier}/schedules/{_id}/tasks')
 
-        for datum in data['data']:
-            res.append(Task(**datum['attributes']))
-
-        return res
+        return [Task(**datum['attributes']) for datum in data['data']]
 
     async def create_schedule_task(
         self,
@@ -353,12 +380,8 @@ class PteroClient:
     ) -> list[NetworkAllocation]:
         data = await self._http.get(
             f'/servers/{identifier}/network/allocations')
-        res: list[NetworkAllocation] = []
-
-        for datum in data['data']:
-            res.append(NetworkAllocation(**datum['attributes']))
-
-        return res
+        return [NetworkAllocation(**datum['attributes'])
+                for datum in data['data']]
 
     async def create_server_allocation(self, identifier: str, /) \
             -> NetworkAllocation:
@@ -395,12 +418,8 @@ class PteroClient:
 
     async def get_server_subusers(self, identifier: str, /) -> list[SubUser]:
         data = await self._http.get(f'/servers/{identifier}/users')
-        res: list[SubUser] = []
-
-        for datum in data['data']:
-            res.append(SubUser(self._http, datum['attributes']))
-
-        return res
+        return [SubUser(self._http, datum['attributes'])
+                for datum in data['data']]
 
     async def get_server_subuser(self, identifier: str, uuid: str) -> SubUser:
         data = await self._http.get(f'/servers/{identifier}/users/{uuid}')
@@ -437,6 +456,7 @@ class PteroClient:
                                      {"name": name,
                                       "ignore_files": ignore_files,
                                       "locked": locked})
+
         return Backup(**data['attributes'])
 
     async def get_backup(self, identifier: str, uuid: str) -> Backup:
@@ -446,6 +466,7 @@ class PteroClient:
     async def get_backup_download_url(self, identifier: str, uuid: str) -> str:
         data = await self._http.get(
             f'/servers/{identifier}/backups/{uuid}/download')
+
         return data['attributes']['url']
 
     def delete_backup(self, identifier: str, uuid: str) -> None:
@@ -454,12 +475,8 @@ class PteroClient:
     async def get_server_startup(self,
                                  identifier: str) -> list[ClientVariable]:
         data = await self._http.get(f'/servers/{identifier}/startup')
-        res: list[ClientVariable] = []
-
-        for datum in data['data']:
-            res.append(ClientVariable(**datum['attributes']))
-
-        return res
+        return [ClientVariable(**datum['attributes'])
+                for datum in data['data']]
 
     async def set_server_variable(self, identifier: str, key: str,
                                   value: int | str | bool) -> ClientVariable:
@@ -473,7 +490,8 @@ class PteroClient:
                                {'name': name})
 
     def reinstall_server(self, identifier: str, /) -> None:
-        return self._http.post(f'/servers/{identifier}/settings/reinstall')
+        return self._http.post(
+            f'/servers/{identifier}/settings/reinstall', None)
 
     def set_server_docker_image(self, identifier: str, image: str) -> None:
         return self._http.put(f'/servers/{identifier}/settings/docker-image',

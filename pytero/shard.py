@@ -1,6 +1,6 @@
 from json import loads
 from time import time
-from typing import Any, Callable
+from typing import Any, Callable, Coroutine, overload
 from aiohttp import ClientSession, ClientWebSocketResponse, WSMessage
 from .errors import ShardError
 from .events import Emitter
@@ -26,6 +26,12 @@ class Shard(Emitter):
     @property
     def closed(self) -> bool:
         return self._conn is None
+
+    @overload
+    def event(self,
+              func: Coroutine[Any, Any, Callable[[str], None]]
+              ) -> Coroutine[Any, Any, Callable[[str], None]]:
+        ...
 
     def event(self, func: Callable[[str], None]) -> Callable[[str], None]:
         super().add_event(func.__name__, func)

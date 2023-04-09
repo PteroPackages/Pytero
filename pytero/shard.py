@@ -58,8 +58,9 @@ class Shard(Emitter):
         if not self.closed:
             return
 
+        await self._debug(f'connecting to {self.identifier}')
         auth: dict[str, Any] = await self._http.get(
-            f'/servers/{self.identifier}/websocket')
+            '/servers/%s/websocket' % self.identifier)
         await self._debug('attempting to connect to websocket')
 
         async with ClientSession() as session:

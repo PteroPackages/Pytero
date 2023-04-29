@@ -78,7 +78,7 @@ class RequestManager(Emitter):
                 payload = body
 
         query = self._validate_query(kwargs)
-        url = f'{self.url}/api/{self._api}/{path}/{query}'
+        url = f'{self.url}/api/{self._api}{path}/{query}'
         await self._emit(
             'on_debug',
             f'request: {method} /api/{self._api}{path}',

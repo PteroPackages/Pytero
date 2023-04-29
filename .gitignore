@@ -1,6 +1,7 @@
 # Hidden directories
 __pycache__/
 .vscode/
+.idea/
 
 # Documentation directories
 docs/_build

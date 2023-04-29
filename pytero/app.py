@@ -200,7 +200,7 @@ class PteroApp:
         id: :class:`int`
             The ID of the user to delete.
         """
-        return self._http.delete(f'users/{_id}')
+        return self._http.delete(f'/users/{_id}')
 
     async def get_servers(
         self,
@@ -510,7 +510,7 @@ class PteroApp:
             Whether the server should be deleted with force.
         """
         return self._http.delete(
-            f'/servers/{_id}' + ('force' if force else ''))
+            f'/servers/{_id}' + ('/force' if force else ''))
 
     async def get_server_databases(
         self,

@@ -632,7 +632,18 @@ class PteroApp:
         ip: str,
         ports: list[str],
         alias: str = None
-    ) -> Allocation:
+    ) -> None:
+        """ Create a new node.
+
+        node: :class:`int`
+            The ID of the node.
+        ip: :class:`str`
+            The ip of the node.
+        ports: :class:`list[str]`
+            A list of ports to be used by the node.
+        alias: :class:`str`
+            Alias name of the node.
+        """
         data = await self._http.post(
             f'/nodes/{node}/allocations',
             {
@@ -640,8 +651,6 @@ class PteroApp:
                 'alias': alias,
                 'ports': ports
             })
-
-        return Allocation(**data['attributes'])
 
     def delete_node_allocation(self, node: int, _id: int) -> None:
         """Deletes an allocation from a node.

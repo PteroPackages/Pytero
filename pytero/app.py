@@ -695,10 +695,38 @@ class PteroApp:
         data = await self._http.get(f'/nests/{nest}')
         return Nest(**data['attributes'])
 
-    async def get_nest_eggs(self, nest: int) -> list[Egg]:
-        data = await self._http.get(f'/nests/{nest}/eggs')
+    async def get_nest_eggs(self, nest: int, include: list[str] = None) -> list[Egg]:
+        """ Retrieves a list of eggs.
+
+        nest: :class:`int`
+            The ID of the nest.
+        include: Optional[list[:class:`str`]]
+            A list of additional resources to include (default is ``None``).
+            This supports:
+            * nest
+            * servers
+            * config
+            * script
+            * variable
+        """
+        data = await self._http.get(f'/nests/{nest}/eggs', include=include)
         return [Egg(**datum['attributes']) for datum in data['data']]
 
-    async def get_nest_egg(self, nest: int, _id: int) -> Egg:
-        data = await self._http.get(f'/nests/{nest}/eggs/{_id}')
+    async def get_nest_egg(self, nest: int, _id: int, include: list[str] = None) -> Egg:
+        """ Retrieves the specified eggs.
+
+        nest: :class:`int`
+            The ID of the nest.
+        _id: :class:`int`
+            The ID of the egg.
+        include: Optional[list[:class:`str`]]
+            A list of additional resources to include (default is ``None``).
+            This supports:
+            * nest
+            * servers
+            * config
+            * script
+            * variable
+        """
+        data = await self._http.get(f'/nests/{nest}/eggs/{_id}', include=include)
         return Egg(**data['attributes'])

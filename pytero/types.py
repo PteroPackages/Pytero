@@ -20,6 +20,7 @@ __all__ = (
     'DeployServerOptions',
     'EggScript',
     'EggConfiguration',
+    'EggRelashionships',
     'Egg',
     'FeatureLimits',
     'Limits',
@@ -215,6 +216,16 @@ class EggScript:
 
 
 @dataclass
+class EggRelashionships:
+    config: dict
+    script: dict
+    variables: dict
+
+    def to_dict(self) -> dict[str, Any]:
+        return self.__dict__
+
+
+@dataclass
 class Egg:
     id: int
     uuid: str
@@ -229,7 +240,8 @@ class Egg:
     startup: str
     script: EggScript
     created_at: str
-    updated_at: Optional[str]
+    updated_at: Optional[str] = None
+    relationships: Optional[dict] = None
 
     def __repr__(self) -> str:
         return f'<Egg id={self.id} nest=#{self.nest} name={self.name}>'

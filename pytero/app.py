@@ -644,7 +644,7 @@ class PteroApp:
         alias: :class:`str`
             Alias name of the node.
         """
-        data = await self._http.post(
+        await self._http.post(
             f'/nodes/{node}/allocations',
             {
                 'ip': ip,

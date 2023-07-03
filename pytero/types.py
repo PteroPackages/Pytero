@@ -20,7 +20,6 @@ __all__ = (
     'DeployServerOptions',
     'EggScript',
     'EggConfiguration',
-    'EggRelashionships',
     'Egg',
     'FeatureLimits',
     'Limits',
@@ -210,16 +209,6 @@ class EggScript:
     entry: str
     container: str
     extends: Optional[str]
-
-    def to_dict(self) -> dict[str, Any]:
-        return self.__dict__
-
-
-@dataclass
-class EggRelashionships:
-    config: dict
-    script: dict
-    variables: dict
 
     def to_dict(self) -> dict[str, Any]:
         return self.__dict__

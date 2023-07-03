@@ -633,16 +633,16 @@ class PteroApp:
         ports: list[str],
         alias: str = None
     ) -> None:
-        """ Create a new node.
+        """ Create a new allocated node.
 
         node: :class:`int`
-            The ID of the node.
+            The ID of the allocation.
         ip: :class:`str`
             The IP for the allocation.
         ports: :class:`list[str]`
             A list of ports or port ranges for the allocation.
         alias: :class:`str`
-            Alias name of the node.
+            Alias name of the allocation.
         """
         await self._http.post(
             f'/nodes/{node}/allocations',

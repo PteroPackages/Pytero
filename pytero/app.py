@@ -633,10 +633,10 @@ class PteroApp:
         ports: list[str],
         alias: str = None
     ) -> None:
-        """ Create a new allocated node.
+        """ Create a new node allocation.
 
         node: :class:`int`
-            The ID of the allocation.
+            The ID of the node.
         ip: :class:`str`
             The IP for the allocation.
         ports: :class:`list[str]`

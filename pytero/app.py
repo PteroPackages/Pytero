@@ -638,9 +638,9 @@ class PteroApp:
         node: :class:`int`
             The ID of the node.
         ip: :class:`str`
-            The ip of the node.
+            The IP for the allocation.
         ports: :class:`list[str]`
-            A list of ports to be used by the node.
+            A list of ports or port ranges for the allocation.
         alias: :class:`str`
             Alias name of the node.
         """
